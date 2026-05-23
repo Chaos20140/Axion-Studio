@@ -6,6 +6,7 @@
 (() => {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const isTouch = window.matchMedia("(hover: none)").matches;
+  const isMobile = window.matchMedia("(max-width: 900px)").matches;
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
   const lerp  = (a, b, n) => a + (b - a) * n;
@@ -267,6 +268,46 @@
   });
 
   /* =========================================================
+     BACKGROUND VIDEO — two strategies branched on isMobile.
+     - Mobile: autoplay loop with the 9:16 clip (no scroll-scrub).
+       Phones can't reliably hold ~90 ImageBitmaps in GPU mem and
+       the seek-based scrub is jankier than a clean loop anyway.
+     - Desktop: frame-renderer below (canvas + ImageBitmap cache).
+     ========================================================= */
+  if (isMobile) {
+    const wrap  = $("#bgScroll");
+    const video = $("#bgScrollVideo");
+    const canvas = $("#bgScrollCanvas");
+    const startEl = $("#manifesto");
+    const endEl   = $(".contact") || $("#contact");
+    if (wrap && video && startEl && endEl) {
+      canvas?.remove();   // canvas only needed on desktop
+      const src = document.createElement("source");
+      src.src = "assets/video/scroll-mobile.mp4?v=20260523f";
+      src.type = "video/mp4";
+      video.appendChild(src);
+      video.loop = true;
+      video.autoplay = true;
+      video.muted = true;
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.load();
+      const tryPlay = () => video.play().catch(() => {});
+      video.addEventListener("loadeddata", tryPlay, { once: true });
+      document.addEventListener("touchstart", tryPlay, { once: true });
+
+      const onScroll = () => {
+        const sTop = startEl.getBoundingClientRect().top + window.scrollY;
+        const eBox = endEl.getBoundingClientRect();
+        const eBottom = eBox.top + window.scrollY + eBox.height * 0.7;
+        const mid = window.scrollY + window.innerHeight * 0.5;
+        wrap.classList.toggle("is-active", mid > sTop && mid < eBottom);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+    }
+  } else {
+  /* =========================================================
      SCROLL-SCRUB BACKGROUND VIDEO — canvas-based frame renderer
      Strategy:
        1. After metadata loads, extract N frames by playing the
@@ -488,6 +529,7 @@
     if (document.readyState === "complete") attachSource();
     else window.addEventListener("load", attachSource, { once: true });
   })();
+  }  // end of else (desktop scrub branch)
 
   /* =========================================================
      ENGINEERING — KINETIC TYPOGRAPHY + COLOR-PLAY
@@ -641,4 +683,53 @@
       scrollTrigger: { trigger: ".footer", start: "top 80%" },
     });
   }
+
+  /* =========================================================
+     MOBILE NAV — burger toggle + overlay
+     ========================================================= */
+  (() => {
+    const burger = $("#navBurger");
+    const overlay = $("#mobileNav");
+    if (!burger || !overlay) return;
+    const links = $$("[data-mobile-link]", overlay);
+    links.forEach((a, i) => a.style.setProperty("--i", i));
+
+    const setOpen = (open) => {
+      burger.setAttribute("aria-expanded", open ? "true" : "false");
+      overlay.classList.toggle("is-open", open);
+      overlay.setAttribute("aria-hidden", open ? "false" : "true");
+      document.body.classList.toggle("nav-open", open);
+      if (lenis) open ? lenis.stop() : lenis.start();
+    };
+
+    burger.addEventListener("click", () => {
+      const isOpen = burger.getAttribute("aria-expanded") === "true";
+      setOpen(!isOpen);
+    });
+
+    links.forEach((a) => {
+      a.addEventListener("click", (e) => {
+        const id = a.getAttribute("href");
+        setOpen(false);
+        if (id && id.startsWith("#")) {
+          e.preventDefault();
+          // wait a tick so the overlay starts closing before we scroll
+          setTimeout(() => {
+            const el = document.querySelector(id);
+            if (el) {
+              if (lenis) lenis.scrollTo(el, { offset: -60, duration: 1.2 });
+              else el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 80);
+        }
+      });
+    });
+
+    // close on resize past breakpoint
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 900 && burger.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+      }
+    });
+  })();
 })();

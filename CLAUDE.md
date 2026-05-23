@@ -7,9 +7,10 @@
 ## 0. Selbstcheck vor jeder Änderung
 
 1. **Was will der Nutzer wirklich?** Nicht das wörtliche Brief abarbeiten, sondern das ästhetische Ziel: *aggressiv, schwarz/rot, Neon, kompromisslos, Top-Animationsqualität.*
-2. **Bricht meine Änderung den Designvertrag?** (Siehe §2.) Wenn ja → zurück zum Briefing.
-3. **Performance-Budget eingehalten?** (Siehe §6.)
-4. **Habe ich bestehendes hinterfragt?** Ich darf bestehenden Code immer optimieren — aber nie verstecken statt fixen. Wenn eine Animation stottert → root cause finden, nicht weichspülen.
+2. **MOBILE IST PFLICHT** — jede neue Section, jedes neue Element, jede Animation MUSS auch auf 375 px Breite funktionieren. Nie nur Desktop bauen und Mobile später nachreichen. Mobile-Checks in der Browser-DevTools-Resize sind kein Bonus, sondern Mindestanforderung.
+3. **Bricht meine Änderung den Designvertrag?** (Siehe §2.) Wenn ja → zurück zum Briefing.
+4. **Performance-Budget eingehalten?** (Siehe §6.)
+5. **Habe ich bestehendes hinterfragt?** Ich darf bestehenden Code immer optimieren — aber nie verstecken statt fixen. Wenn eine Animation stottert → root cause finden, nicht weichspülen.
 
 ---
 
@@ -49,8 +50,9 @@
     ├── css/style.css      # Komplettes Stylesheet (Single-File-Strategie)
     ├── js/main.js         # IIFE, alle Module in einer Datei
     ├── video/
-    │   ├── hero.mp4       # Hero-Loop (autoplay)
-    │   └── scroll.mp4     # Scroll-scrubbing Background
+    │   ├── hero.mp4           # Hero-Loop (autoplay)
+    │   ├── scroll.mp4         # Desktop Scroll-Scrub Background (16:9)
+    │   └── scroll-mobile.mp4  # Mobile Background-Loop (9:16)
     └── images/            # frei für echte Case-Visuals
 ```
 
@@ -108,6 +110,18 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 - Hoverables-Selector erweitern, wenn neue interaktive Klassen dazukommen.
 - Wird auf Touch-Geräten deaktiviert (`@media (hover: none)`).
 
+### 5.6 Mobile-Strategie
+- **Breakpoint**: `max-width: 900px` für Tablets/Phones, `420px` für ganz kleine Phones (Feintuning).
+- **Background-Video auf Mobile**: KEIN Scroll-Scrub. Stattdessen reiner `autoplay loop muted playsinline` mit `scroll-mobile.mp4` (9:16). Reason: 90 ImageBitmaps in GPU-Memory + Frame-Extraktion ist auf Phones unzuverlässig und ruckelt mehr als ein sauberer Loop.
+- **Hamburger-Nav**: ab 900 px wird die Inline-Nav versteckt und durch `#navBurger` + `.mobile-nav`-Overlay ersetzt. Animation: Linkliste fliegt von links rein mit per-Link `--i` Stagger.
+- **Engineering-Phasen**: Section bleibt sticky, aber `min-height` von 320vh auf 240vh reduziert auf Mobile. Schrift mit `clamp()` getuned.
+- **Work-Grid**: ab 900 px werden alle Cases zu 1 Spalte (`grid-column: span 1`).
+- **Process-Track**: vertikale Linie und Step-Index sind schmaler skaliert.
+- **Form**: padding und font-size schrumpfen, chips bleiben aber lesbar.
+- **Lenis auf Touch**: `smoothTouch: false` — native Touch-Scrolling bleibt erhalten, Lenis greift nur ins Wheel ein.
+
+**Pflicht-Check** für jede neue Komponente: in DevTools auf 375 px resizen, sicherstellen dass nichts overflowt und alle Schriften lesbar bleiben.
+
 ---
 
 ## 6. Performance-Budget
@@ -153,7 +167,7 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 - **Case-Visuals sind CSS-Gradienten**: ersetzen mit echten Bildern in `assets/images/` und `background-image: url(...)` in `.case__visual--0X`.
 - **Scroll-Video braucht Keyframe-Dense-Encoding** für echten Butter-Scrub.
 - **Three.js Sektion hat keine Post-Processing** — bewusst, für Performance. Wenn Bloom gewünscht: `EffectComposer` einbauen, aber Mobile-Fallback prüfen.
-- **Mobile-Nav fehlt**: oberhalb 900px geht's, drunter ist die Nav versteckt. Hamburger-Menü ist offen.
+- ~~**Mobile-Nav fehlt**~~: erledigt — `#navBurger` + `.mobile-nav` Overlay (siehe §5.6).
 - **`mailto:`-Fallback** ist nicht GDPR-elegant — der User klickt, Mail-Client öffnet sich, der User sendet. Kein Tracking, das ist okay, aber für richtige Leads sollte ein Backend ran.
 
 ---
