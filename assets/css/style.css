@@ -266,18 +266,22 @@ input, textarea, select { font: inherit; color: inherit; }
 .nav__logo-mark {
   --logo-accent: var(--red);
   display: inline-flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px;
+  width: 42px; height: 42px;
   color: var(--ink);
-  transition: color 0.3s, transform 0.4s var(--ease-out), filter 0.3s;
-  filter: drop-shadow(0 0 14px rgba(var(--red-glow), 0.45));
+  transition: transform 0.4s var(--ease-out), filter 0.3s;
+  filter: drop-shadow(0 0 14px rgba(var(--red-glow), 0.45)) invert(1);
+  /* The user's helmet PNG is black-on-white. invert(1) on a dark site
+     flips it to white-on-transparent. The drop-shadow stays red. */
 }
+.nav__logo-mark img,
 .nav__logo-mark svg {
   width: 100%; height: 100%;
   display: block;
+  object-fit: contain;
 }
 .nav__logo:hover .nav__logo-mark {
   transform: translateX(2px) rotate(-3deg);
-  filter: drop-shadow(0 0 22px rgba(var(--red-glow), 0.7));
+  filter: drop-shadow(0 0 22px rgba(var(--red-glow), 0.85)) invert(1);
 }
 .nav__logo-text span { color: var(--red); }
 .nav__links {
@@ -395,9 +399,9 @@ input, textarea, select { font: inherit; color: inherit; }
   position: relative;
   z-index: 2;
   color: var(--ink);
-  width: 64px; height: 64px;
-  margin-bottom: 28px;
-  filter: drop-shadow(0 0 22px rgba(var(--red-glow), 0.55));
+  width: 84px; height: 84px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 0 22px rgba(var(--red-glow), 0.55)) invert(1);
   opacity: 0;
   transform: scale(0.9);
   transition: opacity 0.5s var(--ease-out) 0.1s,
@@ -406,7 +410,8 @@ input, textarea, select { font: inherit; color: inherit; }
 .mobile-nav.is-open .mobile-nav__brand {
   opacity: 1; transform: scale(1);
 }
-.mobile-nav__brand svg { width: 100%; height: 100%; display: block; }
+.mobile-nav__brand img,
+.mobile-nav__brand svg { width: 100%; height: 100%; display: block; object-fit: contain; }
 
 .mobile-nav__links {
   display: flex; flex-direction: column;
