@@ -36,6 +36,8 @@
 html { scroll-behavior: smooth; }
 
 html {
+  /* Solid fallback before the video element loads. Painted FIRST in the stacking
+     order, so .bg-scroll (z-index: -3) sits between this fallback and the body. */
   background: var(--bg);
   color: var(--ink);
   /* NOTE: do not use overflow-x: hidden on html — it breaks position: sticky.
@@ -43,7 +45,8 @@ html {
 }
 
 body {
-  background: var(--bg);
+  /* Body MUST stay transparent — a solid bg here would cover the scroll-video. */
+  background: transparent;
   color: var(--ink);
   font-family: var(--font-body);
   font-weight: 400;
