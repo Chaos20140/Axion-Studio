@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" aria-hidden="true">
+  <!-- Helmet silhouette (side profile, facing right) -->
+  <path fill="currentColor" d="
+    M 36 16
+    C 52 10, 74 16, 82 30
+    C 87 40, 87 54, 82 62
+    L 82 72
+    C 82 78, 77 80, 72 79
+    L 58 76
+    L 55 86
+    L 50 90
+    L 38 88
+    L 30 82
+    C 22 75, 20 60, 22 44
+    C 23 32, 28 21, 36 16 Z" />
+  <!-- top shell separator -->
+  <path fill="none" stroke="var(--logo-accent, #ff1f3d)" stroke-width="2.6" stroke-linecap="round"
+        d="M 30 30 C 42 22, 58 20, 74 28" />
+  <!-- visor opening (arrow-curve sweep) -->
+  <path fill="none" stroke="var(--logo-accent, #ff1f3d)" stroke-width="2.6" stroke-linecap="round"
+        d="M 48 32 C 54 44, 62 52, 80 51" />
+  <!-- chin line -->
+  <path fill="none" stroke="var(--logo-accent, #ff1f3d)" stroke-width="2.2" stroke-linecap="round"
+        d="M 30 64 C 50 68, 70 66, 80 62" />
+</svg>

@@ -264,14 +264,20 @@ input, textarea, select { font: inherit; color: inherit; }
   text-transform: uppercase;
 }
 .nav__logo-mark {
+  --logo-accent: var(--red);
   display: inline-flex; align-items: center; justify-content: center;
-  width: 36px; height: 36px;
-  border: 1px solid var(--red);
-  color: var(--red);
-  font-family: var(--font-mono); font-size: 11px;
-  letter-spacing: 0; font-weight: 700;
-  background: rgba(var(--red-glow), 0.08);
-  box-shadow: inset 0 0 16px rgba(var(--red-glow), 0.3);
+  width: 38px; height: 38px;
+  color: var(--ink);
+  transition: color 0.3s, transform 0.4s var(--ease-out), filter 0.3s;
+  filter: drop-shadow(0 0 14px rgba(var(--red-glow), 0.45));
+}
+.nav__logo-mark svg {
+  width: 100%; height: 100%;
+  display: block;
+}
+.nav__logo:hover .nav__logo-mark {
+  transform: translateX(2px) rotate(-3deg);
+  filter: drop-shadow(0 0 22px rgba(var(--red-glow), 0.7));
 }
 .nav__logo-text span { color: var(--red); }
 .nav__links {
@@ -383,6 +389,24 @@ input, textarea, select { font: inherit; color: inherit; }
     radial-gradient(circle at 20% 90%, rgba(var(--red-glow), 0.12), transparent 50%);
   inset: 0;
 }
+
+.mobile-nav__brand {
+  --logo-accent: var(--red);
+  position: relative;
+  z-index: 2;
+  color: var(--ink);
+  width: 64px; height: 64px;
+  margin-bottom: 28px;
+  filter: drop-shadow(0 0 22px rgba(var(--red-glow), 0.55));
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.5s var(--ease-out) 0.1s,
+              transform 0.6s var(--ease-out) 0.1s;
+}
+.mobile-nav.is-open .mobile-nav__brand {
+  opacity: 1; transform: scale(1);
+}
+.mobile-nav__brand svg { width: 100%; height: 100%; display: block; }
 
 .mobile-nav__links {
   display: flex; flex-direction: column;
@@ -1702,104 +1726,150 @@ body.nav-open { overflow: hidden; }
 
 /* =========================================================
    MOBILE — global responsive tuning
+   Philosophy: cut secondary HUD/decoration, keep typography +
+   the bg video. Less is more on a 6-inch screen.
    ========================================================= */
-@media (max-width: 768px) {
-  /* HERO — tighter typography, simpler corners */
-  .hero__corner--tl, .hero__corner--bl { font-size: 10px; padding: 16px; }
-  .hero__corner--tr, .hero__corner--br { font-size: 10px; padding: 16px; }
-  .hero__corner--tl, .hero__corner--tr { top: 56px; }
-  .hero__corner--bl, .hero__corner--br { bottom: 60px; }
+@media (max-width: 900px) {
+  /* HIDE non-essential decoration on phones */
+  .scanlines { opacity: 0.12; }            /* keep but quieter */
+  .hero__grid { display: none; }           /* gridlines feel busy here */
+  .hero__corner--tl,
+  .hero__corner--tr,
+  .hero__corner--bl { display: none; }     /* keep only BR (scroll + rec) */
+  .hero__corner--br { bottom: 84px; right: 16px; }
+  .hero__corner--br .mono { font-size: 9.5px; letter-spacing: 0.16em; }
+
+  /* Engineering: hide HUD corners on mobile — text is the star */
+  .engineering__corner { display: none; }
+
+  /* HERO — tighter typography */
+  .hero { min-height: 92vh; }
+  .hero__content {
+    padding: clamp(48px, 6vh, 72px) 20px clamp(28px, 4vh, 48px);
+    gap: 20px;
+  }
   .hero__title { font-size: clamp(56px, 17vw, 110px); }
-  .hero__sub { font-size: 14px; }
+  .hero__sub { font-size: 14px; max-width: none; }
+  .hero__sub strong { display: inline; }
   .hero__cta { gap: 10px; }
   .btn { padding: 14px 18px; font-size: 11px; }
+  .kicker { font-size: 10px; letter-spacing: 0.16em; }
 
-  /* MARQUEES — smaller */
+  /* MARQUEES — smaller, fewer items via .hide-mobile */
   .marquee__track { font-size: 20px; gap: 24px; }
   .marquee__track--xl { font-size: clamp(48px, 16vw, 90px); }
-  .big-marquee { padding: 24px 0; }
-  .big-marquee::before, .big-marquee::after { height: 1px; }
+  .big-marquee { padding: 22px 0; }
 
-  /* SECTION HEADS */
-  .section-head { padding: 14px 0; flex-wrap: wrap; }
-  .section-line { min-width: 60px; }
+  /* SECTION HEADS — wrap properly */
+  .section-head { padding: 12px 0; flex-wrap: wrap; gap: 12px; }
+  .section-line { display: none; }         /* drop the divider line on mobile */
 
-  /* MANIFESTO */
-  .manifesto__text h2 { font-size: clamp(36px, 10vw, 64px); }
-  .manifesto__lead { font-size: 14px; margin-top: 22px; }
-  .manifesto__stats { gap: 14px; }
-  .stat { padding: 18px 16px; }
-  .stat__num { font-size: clamp(36px, 11vw, 64px); }
-  .stat__suffix { font-size: clamp(20px, 6vw, 32px); }
-  .stat__label { font-size: 10px; }
+  /* SECTION CHROME */
+  .manifesto, .services, .process, .work, .contact {
+    padding: clamp(56px, 9vh, 96px) 20px;
+  }
 
-  /* SERVICES */
-  .services__title { font-size: clamp(32px, 9vw, 56px); margin: 18px 0 30px; }
-  .service { padding: 26px 22px; }
+  /* MANIFESTO — single column, simpler stats */
+  .manifesto__grid { gap: 32px; }
+  .manifesto__text h2 { font-size: clamp(34px, 10vw, 60px); }
+  .manifesto__lead { font-size: 14px; margin-top: 18px; }
+  .manifesto__stats { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat { padding: 16px 14px; }
+  .stat::before, .stat::after { width: 6px; height: 6px; }
+  .stat__num { font-size: clamp(34px, 11vw, 58px); }
+  .stat__suffix { font-size: clamp(18px, 5.5vw, 28px); }
+  .stat__label { font-size: 9.5px; letter-spacing: 0.12em; }
+
+  /* SERVICES — compact cards, items pills hidden */
+  .services__title { font-size: clamp(32px, 9vw, 56px); margin: 14px 0 24px; }
+  .service { padding: 22px 20px; }
   .service__title { font-size: clamp(30px, 9vw, 52px); }
-  .service__desc { font-size: 14px; }
-  .service::after { top: 22px; right: 22px; font-size: 22px; }
+  .service__desc { font-size: 13.5px; margin-bottom: 0; }
+  .service__items { display: none; }       /* hide tag pills — too dense */
+  .service::after { top: 18px; right: 18px; font-size: 22px; }
 
   /* ENGINEERING — phases */
-  .engineering { min-height: 240vh; }
-  .engineering__inner { padding: 80px 20px 56px; }
-  .engineering__corner { font-size: 10px; padding: 16px; }
+  .engineering { min-height: 220vh; }
+  .engineering__inner { padding: 72px 20px 48px; }
   .engineering__head { font-size: 10px; gap: 10px; }
-  .phase { gap: 14px; }
+  .phase { gap: 12px; }
+  .phase__num { font-size: 10px; }
   .phase__title { font-size: clamp(40px, 13vw, 88px); line-height: 0.9; }
   .phase__lead { font-size: 14px; max-width: none; }
-  .engineering__legend { font-size: 10px; gap: 16px; padding-top: 12px; }
+  .engineering__legend { font-size: 10px; gap: 14px; padding-top: 10px; }
 
-  /* PROCESS */
-  .process__title { font-size: clamp(32px, 9vw, 56px); margin: 18px 0 50px; }
-  .process__track { padding-left: 56px; gap: 36px; }
-  .process__line { left: 22px; }
-  .step { grid-template-columns: 0 1fr; gap: 0; }
+  /* PROCESS — tighter, fewer details */
+  .process__title { font-size: clamp(32px, 9vw, 56px); margin: 14px 0 40px; }
+  .process__track { padding-left: 50px; gap: 28px; }
+  .process__line { left: 20px; }
   .step__index {
-    width: 44px; height: 44px;
-    font-size: 16px;
-    transform: translateX(-22px);
+    width: 40px; height: 40px;
+    font-size: 14px;
+    transform: translateX(-20px);
   }
-  .step__content { padding: 20px 18px; }
-  .step h3 { font-size: clamp(24px, 7vw, 36px); }
-  .step p { font-size: 14px; }
+  .step__content { padding: 16px; }
+  .step__content::before { left: -6px; width: 6px; height: 6px; top: 22px; }
+  .step__label { font-size: 9.5px; }
+  .step h3 { font-size: clamp(22px, 7vw, 32px); margin-bottom: 8px; }
+  .step p { font-size: 13.5px; }
+  .step__time { font-size: 10px; margin-top: 10px; }
 
   /* WORK */
-  .work__title { font-size: clamp(32px, 9vw, 56px); margin: 18px 0 32px; }
-  .work__grid { gap: 16px; }
-  .case__media { aspect-ratio: 16/10 !important; }
+  .work__title { font-size: clamp(32px, 9vw, 56px); margin: 14px 0 24px; }
+  .work__grid { gap: 14px; }
+  .case__media { aspect-ratio: 16/10 !important; margin-bottom: 12px; }
+  .case__corners span { width: 14px; height: 14px; }
   .case__name { font-size: clamp(24px, 8vw, 38px); }
   .case__cat { font-size: 13px; }
 
-  /* CONTACT */
-  .contact__title { font-size: clamp(44px, 14vw, 90px); }
-  .contact__lead { font-size: 14px; margin-top: 18px; }
-  .contact__details { margin-top: 30px; }
-  .contact__line { padding: 16px 0; gap: 14px; }
-  .contact__line .mono { font-size: 10px; min-width: 60px; }
-  .contact__form { padding: 22px 18px; }
+  /* CONTACT — drop secondary contact lines on small phones,
+     keep just MAIL */
+  .contact__title { font-size: clamp(40px, 13vw, 80px); }
+  .contact__lead { font-size: 14px; margin-top: 16px; }
+  .contact__details { margin-top: 24px; }
+  .contact__line { padding: 14px 0; gap: 12px; }
+  .contact__line .mono { font-size: 10px; min-width: 50px; }
+  .contact__form { padding: 22px 16px; gap: 18px; }
   .field input, .field textarea { font-size: 14px; padding: 12px 0; }
-  .chip span { font-size: 10px; padding: 7px 11px; }
-  .consent { font-size: 12px; }
+  .chip span { font-size: 10px; padding: 7px 10px; letter-spacing: 0.1em; }
+  .consent { font-size: 12px; gap: 10px; }
+  .form-status { font-size: 11px; }
 
   /* FOOTER */
+  .footer { padding: 56px 20px 24px; }
+  .footer__top { padding-bottom: 28px; margin-bottom: 28px; }
   .footer__giant { font-size: clamp(40px, 16vw, 120px); }
   .footer__grid { grid-template-columns: 1fr 1fr; gap: 22px; }
-  .footer__bottom { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .footer__col { font-size: 13px; }
+  .footer__bottom {
+    flex-direction: column; align-items: flex-start;
+    gap: 10px; margin-top: 32px;
+  }
+  .footer__bottom .mono { font-size: 10px; }
 
   /* IMPRESSUM */
+  .legal { padding-top: 110px; }
   .legal__hero h1 { font-size: clamp(40px, 12vw, 84px); }
-  .legal h2 { font-size: clamp(22px, 5vw, 32px); flex-wrap: wrap; gap: 10px; }
+  .legal h2 { font-size: clamp(22px, 5.5vw, 32px); flex-wrap: wrap; gap: 10px; }
   .legal p, .legal li { font-size: 14px; }
+  .legal article { margin-bottom: 44px; }
 }
 
-/* very small phones */
-@media (max-width: 420px) {
-  .hero__corner { font-size: 9px !important; }
+/* small phones — drop one more layer */
+@media (max-width: 480px) {
+  .manifesto__stats { grid-template-columns: 1fr; }   /* 1 col stat */
+  .contact__line:nth-child(3),                        /* hide CALL line */
+  .contact__line:nth-child(4) { display: none; }      /* hide STUDIO line */
+  .nav__logo-text span { display: none; }             /* drop /STUDIO suffix */
   .hero__title { font-size: clamp(48px, 18vw, 84px); }
-  .nav { padding: 14px 20px; }
-  .nav__logo { font-size: 18px; gap: 8px; }
-  .nav__logo-mark { width: 30px; height: 30px; font-size: 10px; }
+  .hero__sub { font-size: 13px; }
+  .nav { padding: 12px 18px; }
+  .nav__logo { font-size: 17px; gap: 10px; }
+  .nav__logo-mark { width: 32px; height: 32px; }
+  .footer__grid { grid-template-columns: 1fr; }       /* 1 col footer */
+  .marquee__track { font-size: 17px; gap: 18px; }
+  .marquee__track--xl { font-size: clamp(40px, 17vw, 78px); }
+  .phase__lead em { font-size: 1em; }                 /* italic doesn't blow up */
 }
 
 /* =========================================================

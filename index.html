@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Tolgay Ulukaya — Web Design Studio. Aggressive, performance-driven Websites für Marken, die nicht übersehen werden wollen." />
   <title>REDLINE/STUDIO — Web Design at Terminal Velocity</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260523f" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260523g" />
 </head>
 <body>
 
@@ -43,8 +44,15 @@
 
   <!-- NAV -->
   <header class="nav" id="nav">
-    <a href="#top" class="nav__logo">
-      <span class="nav__logo-mark">R/S</span>
+    <a href="#top" class="nav__logo" aria-label="REDLINE/STUDIO — Startseite">
+      <span class="nav__logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M 36 16 C 52 10, 74 16, 82 30 C 87 40, 87 54, 82 62 L 82 72 C 82 78, 77 80, 72 79 L 58 76 L 55 86 L 50 90 L 38 88 L 30 82 C 22 75, 20 60, 22 44 C 23 32, 28 21, 36 16 Z"/>
+          <path fill="none" stroke="var(--logo-accent)" stroke-width="2.6" stroke-linecap="round" d="M 30 30 C 42 22, 58 20, 74 28"/>
+          <path fill="none" stroke="var(--logo-accent)" stroke-width="2.6" stroke-linecap="round" d="M 48 32 C 54 44, 62 52, 80 51"/>
+          <path fill="none" stroke="var(--logo-accent)" stroke-width="2.2" stroke-linecap="round" d="M 30 64 C 50 68, 70 66, 80 62"/>
+        </svg>
+      </span>
       <span class="nav__logo-text">REDLINE<span>/STUDIO</span></span>
     </a>
     <nav class="nav__links">
@@ -65,16 +73,23 @@
 
   <!-- MOBILE NAV OVERLAY -->
   <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <div class="mobile-nav__brand" aria-hidden="true">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path fill="currentColor" d="M 36 16 C 52 10, 74 16, 82 30 C 87 40, 87 54, 82 62 L 82 72 C 82 78, 77 80, 72 79 L 58 76 L 55 86 L 50 90 L 38 88 L 30 82 C 22 75, 20 60, 22 44 C 23 32, 28 21, 36 16 Z"/>
+        <path fill="none" stroke="var(--logo-accent)" stroke-width="2.6" stroke-linecap="round" d="M 30 30 C 42 22, 58 20, 74 28"/>
+        <path fill="none" stroke="var(--logo-accent)" stroke-width="2.6" stroke-linecap="round" d="M 48 32 C 54 44, 62 52, 80 51"/>
+        <path fill="none" stroke="var(--logo-accent)" stroke-width="2.2" stroke-linecap="round" d="M 30 64 C 50 68, 70 66, 80 62"/>
+      </svg>
+    </div>
     <nav class="mobile-nav__links">
       <a href="#manifesto" data-mobile-link><span class="mono">/ 00</span><em>Manifest</em></a>
       <a href="#services"  data-mobile-link><span class="mono">/ 01</span><em>Services</em></a>
       <a href="#engineering" data-mobile-link><span class="mono">/ 02</span><em>Engineering</em></a>
-      <a href="#process"   data-mobile-link><span class="mono">/ 03</span><em>Process</em></a>
-      <a href="#work"      data-mobile-link><span class="mono">/ 04</span><em>Work</em></a>
-      <a href="#contact"   data-mobile-link><span class="mono">/ 05</span><em>Contact</em></a>
+      <a href="#work"      data-mobile-link><span class="mono">/ 03</span><em>Work</em></a>
+      <a href="#contact"   data-mobile-link><span class="mono">/ 04</span><em>Contact</em></a>
     </nav>
     <div class="mobile-nav__foot">
-      <span class="mono">REDLINE/STUDIO — DRESDEN</span>
+      <span class="mono">DRESDEN · DE</span>
       <a href="mailto:tolgay.u0@gmail.com" class="mono">tolgay.u0@gmail.com</a>
     </div>
   </div>
@@ -654,6 +669,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="assets/js/main.js?v=20260523f"></script>
+  <script src="assets/js/main.js?v=20260523g"></script>
 </body>
 </html>

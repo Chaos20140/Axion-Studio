@@ -9,7 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260523f" />
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.svg" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260523g" />
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -22,8 +23,15 @@
   </div>
 
   <header class="nav is-scrolled" id="nav">
-    <a href="index.html" class="nav__logo">
-      <span class="nav__logo-mark">R/S</span>
+    <a href="index.html" class="nav__logo" aria-label="REDLINE/STUDIO — Startseite">
+      <span class="nav__logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path fill="currentColor" d="M 36 16 C 52 10, 74 16, 82 30 C 87 40, 87 54, 82 62 L 82 72 C 82 78, 77 80, 72 79 L 58 76 L 55 86 L 50 90 L 38 88 L 30 82 C 22 75, 20 60, 22 44 C 23 32, 28 21, 36 16 Z"/>
+          <path fill="none" stroke="var(--logo-accent)" stroke-width="2.6" stroke-linecap="round" d="M 30 30 C 42 22, 58 20, 74 28"/>
+          <path fill="none" stroke="var(--logo-accent)" stroke-width="2.6" stroke-linecap="round" d="M 48 32 C 54 44, 62 52, 80 51"/>
+          <path fill="none" stroke="var(--logo-accent)" stroke-width="2.2" stroke-linecap="round" d="M 30 64 C 50 68, 70 66, 80 62"/>
+        </svg>
+      </span>
       <span class="nav__logo-text">REDLINE<span>/STUDIO</span></span>
     </a>
     <nav class="nav__links">
@@ -215,6 +223,6 @@
     </div>
   </footer>
 
-  <script src="assets/js/main.js?v=20260523f"></script>
+  <script src="assets/js/main.js?v=20260523g"></script>
 </body>
 </html>

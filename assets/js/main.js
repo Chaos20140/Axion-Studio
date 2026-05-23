@@ -283,7 +283,7 @@
     if (wrap && video && startEl && endEl) {
       canvas?.remove();   // canvas only needed on desktop
       const src = document.createElement("source");
-      src.src = "assets/video/scroll-mobile.mp4?v=20260523f";
+      src.src = "assets/video/scroll-mobile.mp4?v=20260523g";
       src.type = "video/mp4";
       video.appendChild(src);
       video.loop = true;
@@ -422,7 +422,7 @@
             slowing first paint ---- */
     const attachSource = () => {
       const src = document.createElement("source");
-      src.src = "assets/video/scroll.mp4?v=20260523d";
+      src.src = "assets/video/scroll.mp4?v=20260523g";
       src.type = "video/mp4";
       video.appendChild(src);
       video.load();
