@@ -1,4 +1,4 @@
-# CLAUDE.md — APEX/STUDIO Buildbook
+# CLAUDE.md — APEX/THRUST MEDIA Buildbook
 
 > Diese Datei ist meine eigene Bauanleitung. Vor jeder größeren Änderung **erst diese Datei lesen**, danach den eigenen Code hinterfragen.
 
@@ -16,10 +16,13 @@
 
 ## 1. Projekt-Identität
 
-- **Studio**: APEX/STUDIO (Inhaber: `Tolgay Ulukaya`, Dresden).
+- **Studio**: Apex Thrust Media (Inhaber: `Tolgay Ulukaya`, Dresden). Logo-Lockup: `APEX/THRUST MEDIA`.
 - **Positionierung**: aggressives Web-Design-Studio, F1-/Karbon-/Cyberpunk-Sprache.
-- **Name-Doppelbedeutung**: „Apex" = (1) Scheitelpunkt einer Kurve, optimaler Linienpunkt im Rennen; (2) höchster Punkt, Spitzenleistung; (3) typografischer Begriff (Spitze eines Buchstabens).
-- **Slogan-Vokabular**: „Apex", „Redline", „Velocity", „Pit Lane", „Pole Position", „Carbon", „Throttle", „Signal".
+- **Name-Bedeutung**:
+  - „Apex" = Scheitelpunkt einer Rennlinie / höchster Punkt / typografisch Spitze eines Buchstabens — Präzision.
+  - „Thrust" = Vorwärtsschub, Antrieb — Power.
+  - „Media" = das Medium, in dem wir liefern — klare Disziplin.
+- **Slogan-Vokabular**: „Apex", „Thrust", „Redline", „Velocity", „Pit Lane", „Pole Position", „Carbon", „Throttle", „Signal".
 - **Referenz**: collabcapitolium.fr — daraus übernommen: Hero mit Bewegtbild-Hintergrund, große brutalistische Display-Typografie, Stat-Block, kuratierte Cases, monospaced Labels.
 
 ---

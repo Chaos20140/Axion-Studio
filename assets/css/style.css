@@ -1614,7 +1614,9 @@ body.nav-open { overflow: hidden; }
 }
 .footer__giant {
   font-family: var(--font-display);
-  font-size: clamp(48px, 16vw, 280px);
+  /* Brand is longer than 'APEX/STUDIO' — cap font lower so the
+     wordmark fits as a single nowrap line, but stays huge. */
+  font-size: clamp(40px, 10.5vw, 200px);
   line-height: 0.85;
   letter-spacing: -0.03em;
   text-transform: uppercase;
@@ -1875,7 +1877,7 @@ body.nav-open { overflow: hidden; }
   /* FOOTER */
   .footer { padding: 56px 20px 24px; }
   .footer__top { padding-bottom: 28px; margin-bottom: 28px; }
-  .footer__giant { font-size: clamp(40px, 16vw, 120px); }
+  .footer__giant { font-size: clamp(28px, 10vw, 90px); }
   .footer__grid { grid-template-columns: 1fr 1fr; gap: 22px; }
   .footer__col { font-size: 13px; }
   .footer__bottom {
