@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260526d" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260531a" />
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
@@ -73,6 +73,38 @@
         Brutalistisch, performance-getrieben, kompromisslos.
       </p>
     </header>
+
+    <!-- 3D SHOWCASE — Meshy-generated model, interactive -->
+    <section class="model-stage" id="modelStage">
+      <div class="model-stage__inner">
+        <canvas class="model-stage__canvas" id="modelCanvas" aria-hidden="true"></canvas>
+
+        <div class="model-stage__hud model-stage__hud--tl">
+          <span class="mono">/ MODEL · ATM-01</span>
+          <span class="mono">FMT <em>GLB · 1.16 MB</em></span>
+        </div>
+        <div class="model-stage__hud model-stage__hud--tr">
+          <span class="mono">ROT <em id="modelRot">000°</em></span>
+          <span class="mono">SCRL <em id="modelScr">0%</em></span>
+        </div>
+
+        <div class="model-stage__head">
+          <span class="num mono">/ 3D · INTERACTIVE</span>
+          <span class="mono">— TRAGER · UNSER ZEICHEN</span>
+        </div>
+
+        <div class="model-stage__loader" id="modelLoader">
+          <span class="mono">LOADING MODEL...</span>
+          <div class="model-stage__loader-bar"><span></span></div>
+        </div>
+
+        <div class="model-stage__legend">
+          <span class="mono">↓ SCROLL TO ROTATE</span>
+          <span class="mono">↻ DRAG TO ORBIT</span>
+          <span class="mono">— MOVE MOUSE FOR PARALLAX</span>
+        </div>
+      </div>
+    </section>
 
     <section class="page-section">
       <div class="page-section__head">
@@ -195,8 +227,33 @@
     </div>
   </footer>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-  <script src="assets/js/main.js?v=20260526d"></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+    integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt"
+    crossorigin="anonymous"></script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"
+    integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed"
+    crossorigin="anonymous"></script>
+  <script src="assets/js/main.js?v=20260531a"></script>
+
+  <!-- Three.js + GLTFLoader via ESM modules (Meshy GLB renderer).
+       Importmap doesn't support `integrity` per-entry — we lock the
+       main three.module.js with modulepreload below; the addons
+       chain off the same versioned URL prefix. -->
+  <link
+    rel="modulepreload"
+    href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+    integrity="sha384-61S/Nu32S3E5+n+KpCOTb2eRYps6fVKm+9Gz1QBvSePFthb46f063Aa/qe/lykFZ"
+    crossorigin="anonymous" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="assets/js/model.js?v=20260531a"></script>
 </body>
 </html>

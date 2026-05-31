@@ -2083,6 +2083,106 @@ body.nav-open { overflow: hidden; }
 }
 
 /* =========================================================
+   3D MODEL STAGE — Three.js canvas on the About page
+   ========================================================= */
+.model-stage {
+  position: relative;
+  margin: clamp(40px, 6vh, 80px) 0 clamp(60px, 9vh, 120px);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(var(--red-glow), 0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(var(--red-glow), 0.12) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(6, 3, 5, 0.85) 0%, rgba(12, 6, 8, 0.95) 100%);
+  overflow: hidden;
+  isolation: isolate;
+  cursor: grab;
+}
+.model-stage:active { cursor: grabbing; }
+.model-stage__inner {
+  position: relative;
+  height: clamp(420px, 70vh, 700px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(20px, 3vw, 36px);
+}
+.model-stage__canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  display: block;
+}
+.model-stage__hud {
+  position: absolute;
+  display: flex; flex-direction: column; gap: 4px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.14em; color: var(--ink-dim);
+  padding: clamp(16px, 2.5vw, 28px);
+  z-index: 2;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+.model-stage__hud em { color: var(--red); font-style: normal; }
+.model-stage__hud--tl { top: 0; left: 0; }
+.model-stage__hud--tr { top: 0; right: 0; text-align: right; align-items: flex-end; }
+
+.model-stage__head {
+  display: flex; align-items: center; gap: 14px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.18em; color: var(--ink-dim);
+  text-transform: uppercase;
+  z-index: 2; position: relative;
+}
+.model-stage__head .num { color: var(--red); }
+
+.model-stage__loader {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  background: rgba(6, 3, 5, 0.85);
+  backdrop-filter: blur(6px);
+  z-index: 3;
+  opacity: 1;
+  transition: opacity 0.7s var(--ease-out);
+  pointer-events: none;
+}
+.model-stage.is-loaded .model-stage__loader { opacity: 0; }
+.model-stage__loader > * { display: block; text-align: center; }
+.model-stage__loader .mono {
+  color: var(--red);
+  letter-spacing: 0.22em;
+  font-size: 11px;
+  margin-bottom: 14px;
+}
+.model-stage__loader-bar {
+  width: 220px; height: 2px;
+  background: rgba(255,255,255,0.07);
+  overflow: hidden;
+  margin: 0 auto;
+}
+.model-stage__loader-bar span {
+  display: block;
+  width: 0%; height: 100%;
+  background: var(--red);
+  box-shadow: 0 0 18px rgba(var(--red-glow), 0.8);
+  transition: width 0.2s linear;
+}
+
+.model-stage__legend {
+  display: flex; gap: clamp(16px, 3vw, 32px);
+  flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.18em; color: var(--ink-dim);
+  text-transform: uppercase;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  z-index: 2; position: relative;
+}
+
+@media (max-width: 900px) {
+  .model-stage__hud--tl, .model-stage__hud--tr { font-size: 10px; }
+  .model-stage__legend { font-size: 10px; gap: 12px; }
+}
+
+/* =========================================================
    SUBPAGES — shared layout for about / team / partner / kontakt
    ========================================================= */
 .page {
