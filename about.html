@@ -74,7 +74,10 @@
       </p>
     </header>
 
-    <!-- 3D SHOWCASE — Meshy-generated model, interactive -->
+    <!-- 3D SHOWCASE — Meshy-generated model, interactive
+         TEMPORARILY DISABLED (user request). To re-enable: remove this
+         comment wrapper AND the one around the Three.js scripts at the
+         bottom of this file.
     <section class="model-stage" id="modelStage">
       <div class="model-stage__inner">
         <canvas class="model-stage__canvas" id="modelCanvas" aria-hidden="true"></canvas>
@@ -106,6 +109,9 @@
         </div>
       </div>
     </section>
+    -->
+
+
 
     <section class="page-section">
       <div class="page-section__head">
@@ -239,9 +245,10 @@
   <script src="assets/js/main.js?v=20260601a"></script>
 
   <!-- Three.js + GLTFLoader via ESM modules (Meshy GLB renderer).
+       TEMPORARILY DISABLED together with the model-stage section above.
        Importmap doesn't support `integrity` per-entry — we lock the
        main three.module.js with modulepreload below; the addons
-       chain off the same versioned URL prefix. -->
+       chain off the same versioned URL prefix.
   <link
     rel="modulepreload"
     href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
@@ -256,5 +263,6 @@
   }
   </script>
   <script type="module" src="assets/js/model.js?v=20260601a"></script>
+  -->
 </body>
 </html>
