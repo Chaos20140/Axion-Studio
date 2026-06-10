@@ -143,6 +143,49 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 ---
 
+## 5A. REZEPT — Scroll-gesteuertes Hintergrund-Video (wiederverwendbar)
+
+> Dieses Muster IMMER nehmen, wenn ein Video beim Scrollen vor-/zurücklaufen soll. Es löst die zwei Dauerprobleme: Ruckeln **und** Qualitätsverlust. Vorlage: `main.js` Desktop-Branch „hybrid proxy scrub".
+
+**Das Grundproblem (warum naive Ansätze scheitern):**
+1. `video.currentTime = x` bei jedem Scroll-Tick → der Decoder staut Seeks → **Ruckeln**. Browser drosseln Seeks zusätzlich.
+2. Alle Frames vorab als ImageBitmaps cachen (alte Lösung) → 200+ Frames × Full-HD = **> 1 GB GPU-Speicher → WebGL/Canvas-Context-Loss** auf schwächeren Geräten → „Video geht gar nicht".
+3. Frames runterskalieren, damit's in den Speicher passt → **Qualitätsverlust** im Standbild.
+
+**Die Lösung — Hybrid aus drei Schichten:**
+1. **Natives `<video>` ist die immer sichtbare Ebene.** Im Ruhezustand (Scroll steht) zeigt es den vollen Codec-Frame → **null Qualitätsverlust**. Genau das ist der Punkt, der bei reinen Canvas-Lösungen fehlt.
+2. **Seek-Manager**: immer nur EIN `currentTime`-Seek „in flight". Nächster Seek erst nach `seeked`-Event (mit ~300 ms Stall-Timeout als Sicherheitsnetz, „latest target wins"). Das killt den Decoder-Stau = killt das Ruckeln.
+3. **Bewegungs-Proxy (nur während Bewegung)**: einmalig ~96 Frames bei niedriger Auflösung (~960px, ~170 MB statt > 1 GB) extrahieren — bevorzugt per `requestVideoFrameCallback`-Playthrough bei 4× Speed, Fallback ist Seek-Stepping. Während gescrollt wird, blendet ein `<canvas>` diese Proxy-Frames **frame-geblendet** (Frame N + N+1 mit Alpha) über das Video. Wenn die Bewegung aufhört (`|currentTime − target| ≤ 0.05s` UND Scroll steht), fadet das Canvas in ~220 ms aus → das scharfe native Bild kommt durch.
+
+**Pflicht-Details, sonst bricht's:**
+- Extraktion läuft genau EINMAL; Aktivierung des Overlays währenddessen unterdrücken (sonst sieht man den 4×-Playthrough).
+- Seek-Warteschleifen mit `settled`-Flag + Listener-Removal absichern (kein doppelt-auflösendes Promise, kein Listener-Leak).
+- `prefers-reduced-motion`: Proxy-Frames stark reduzieren, Auto-Animation aus.
+- Mobile: **gar kein Scrub** — schlichter `autoplay loop muted playsinline` mit einem 9:16-Clip (siehe §5.6). Frame-Extraktion ist auf Phones unzuverlässig.
+- Lokaler Test NUR mit Range-fähigem Server (`npx http-server`), nie `python -m http.server`.
+
+## 5B. REZEPT — Interaktive 3D-Hintergrund-Szene / Solarsystem (wiederverwendbar)
+
+> Vorlage: `solar.js`. Muster für jede „anklickbare 3D-Welt als Seiten-Hintergrund mit Info-Panel".
+
+**Aufbau:**
+- **Canvas** `position: fixed; z-index: -2; pointer-events: none` + eine `.solar-tint`-Gradient-Ebene (`z-index: -1`) darüber für Textlesbarkeit. Body/Sections transparent.
+- **Inhalt ist Daten, nicht Code**: ein `CONFIG`-Array (Titel/Text/Link/Farbe/Bahn pro Objekt). Neue Kapitel = Array-Eintrag, sonst nichts. So bleibt's wartbar.
+- **Picking-Trick** (wichtig): Da das Canvas `pointer-events: none` hat, Klicks auf `window` abfangen → `if (e.target instanceof Element && e.target.closest(INTERACTIVE_SEL)) return;` (UI ausschließen: a/button/input/.chip/.field/.map-wrap/iframe/[data-magnetic]/nav/…), Rest wird geraycastet. So sind Objekte „durch" leere Seitenbereiche klickbar, ohne je Formular/Nav-Klicks zu stehlen.
+- **Detaillierte Objekte = ShaderMaterial pro Planet** (Simplex-fBm-Oberfläche, Tag/Nacht-Terminator von der Lichtquelle, Fresnel-Atmosphäre, `uType` für Varianten). Reine `MeshStandardMaterial`-Kugeln wirken billig.
+- **HUD-Panel (JARVIS-Stil)** oben rechts: Eck-Brackets, Scanlines, Meta-Grid, plus optional eine SVG-Leitlinie, die das gewählte Objekt anvisiert (World→Screen-Projektion pro Frame).
+
+**Pflicht-Performance-Regeln (sonst Ruckler / Memory):**
+- `getBoundingClientRect` NIE pro Frame — Panel-Rect cachen (open / resize / transitionend).
+- Shader-`uTime` modulo ~1000s wrappen (float32-Präzision bei Langzeit-Sessions).
+- DPR clampen (`min(devicePixelRatio, isMobile ? 1.5 : 2)`), Sternen-/Objektzahl auf Mobile reduzieren.
+- Pro Seite nur EINE WebGL-Szene aktiv (Solar ODER Modell, nicht beide — Context-Limit).
+- `prefers-reduced-motion`: Orbits/Twinkle einfrieren (`speedMul = 0`), Interaktion bleibt.
+
+**Tonalität:** Akzent (Marke) sparsam als Lichtquelle/Kern; Objekte/Sterne eher kühl/natürlich, sonst wirkt's „unheimlich" und überladen (gelernt: ein komplett roter Raum war zu viel).
+
+---
+
 ## 6. Performance-Budget
 
 | Asset | Limit | Status |

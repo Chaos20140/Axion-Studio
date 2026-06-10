@@ -1427,38 +1427,75 @@ body.nav-open { overflow: hidden; }
 }
 
 @media (max-width: 900px) {
-  .grid { gap: 40px; border-left: 0; border-right: 0; }
-  /* keep the centre line — it sells the grid even stacked */
-  .grid::before { opacity: 0.5; }
+  /* On phones the staggered-grid metaphor doesn't read — switch to a
+     clean, CONSISTENT list: each slot is one row with the car on the
+     left and its copy directly to the right, so the pairing is obvious.
+     DOM order differs per slot (--right = content,box / --left = box,
+     content) so we pin placement with explicit grid-column + grid-row
+     and ignore source order. */
+  .grid { gap: 26px; border-left: 0; border-right: 0; padding: 28px 0 40px; }
+  .grid::before { display: none; }            /* drop the centre line on mobile */
   .grid__startline, .grid__finishline { grid-template-columns: 1fr; }
   .grid__startline-flag, .grid__checker,
   .grid__startline-lights { display: none; }
 
   .grid__slot {
-    grid-template-columns: 1fr;
-    row-gap: 18px;
+    grid-template-columns: 84px 1fr;
+    column-gap: 16px;
+    align-items: center;
+    row-gap: 0;
   }
-  /* boxes still left/right of the centre line, just tighter */
-  .grid__box { width: 124px; padding: 24px 10px 8px; }
-  .grid__slot--right .grid__box { grid-column: 1; justify-self: center; margin: 0 0 0 90px; }
-  .grid__slot--left  .grid__box { grid-column: 1; justify-self: center; margin: 0 90px 0 0; }
-  .f1-car { width: 92px; height: 200px; }
-  .grid__slot--right .f1-car { --fromX: -40px; }
-  .grid__slot--left  .f1-car { --fromX: 40px; }
-  .grid__pos { font-size: 20px; }
-  .grid__slot--right .grid__pos { right: -28px; }
-  .grid__slot--left  .grid__pos { left: -28px; }
 
-  .grid__slot .step__content {
-    grid-column: 1;
+  /* CAR — fixed left column, same for EVERY slot.
+     Compound selectors (.grid__slot--right/--left .X) match the
+     desktop rules' specificity (0,2,0) and, coming later in source,
+     win — so both slot variants land car=col1, copy=col2. */
+  .grid__slot--right .grid__box,
+  .grid__slot--left  .grid__box {
+    grid-column: 1; grid-row: 1;
+    width: 84px;
+    justify-self: center;
+    margin: 0;
+    padding: 20px 0 4px;
+  }
+  .f1-car { width: 72px; height: 156px; }
+  /* mobile drive-in: straight up, no centre-lane lean */
+  .grid__slot.is-parked .f1-car { animation-name: carDriveInM; }
+  .grid__pos {
+    font-size: 17px;
+    left: 50% !important; right: auto !important;
+    top: -2px;
+    transform: translateX(-50%);
+  }
+  .grid__slot.is-set .grid__pos { transform: translateX(-50%); }
+  /* grid-box marking simplified: just the lead bar */
+  .grid__mark { inset: 16px 8px 2px; }
+  .grid__mark::after { display: none; }
+
+  /* COPY — right column, same for every slot, always left-aligned */
+  .grid__slot--right .step__content,
+  .grid__slot--left  .step__content {
+    grid-column: 2; grid-row: 1;
     max-width: 100%;
-    text-align: left !important;
-    justify-self: stretch !important;
-    transform: translateY(26px);
-    padding: 20px 18px;
+    text-align: left;
+    justify-self: stretch;
+    transform: translateY(18px);
+    padding: 0;
+    border: 0;
+    background: none;
+    backdrop-filter: none;
   }
   .grid__slot.is-parked .step__content { transform: translateY(0); }
   .grid__slot .step__content::before { display: none; }
+  .grid__slot h3 { font-size: clamp(22px, 6.5vw, 30px); margin-bottom: 8px; }
+  .grid__slot p { font-size: 13px; }
+  .grid__slot .step__label { font-size: 9.5px; }
+  .grid__slot .step__time { margin-top: 10px; }
+}
+@keyframes carDriveInM {
+  0%   { opacity: 0; transform: translateY(16vh); }
+  14%  { opacity: 1; }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
 /* =========================================================
