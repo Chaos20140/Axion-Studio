@@ -2083,6 +2083,144 @@ body.nav-open { overflow: hidden; }
 }
 
 /* =========================================================
+   SOLAR SYSTEM BACKGROUND — subpages (team/partner/kontakt)
+   Fixed canvas behind everything; a tint layer keeps the
+   text column readable while planets shine on the right.
+   ========================================================= */
+.solar-bg {
+  position: fixed; inset: 0;
+  z-index: -2;
+  display: block;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.solar-tint {
+  position: fixed; inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(6, 3, 5, 0.88) 0%,
+    rgba(6, 3, 5, 0.55) 45%,
+    rgba(6, 3, 5, 0.16) 100%);
+}
+@media (max-width: 900px) {
+  .solar-tint {
+    background: linear-gradient(180deg,
+      rgba(6, 3, 5, 0.82) 0%,
+      rgba(6, 3, 5, 0.5) 60%,
+      rgba(6, 3, 5, 0.7) 100%);
+  }
+}
+
+/* Info panel — opens when a planet is selected */
+.solar-panel {
+  position: fixed;
+  right: clamp(16px, 3vw, 48px);
+  bottom: clamp(16px, 4vh, 48px);
+  z-index: 60;
+  width: min(380px, calc(100vw - 32px));
+  border: 1px solid var(--line);
+  background: rgba(6, 3, 5, 0.93);
+  backdrop-filter: blur(14px);
+  padding: 24px 26px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(18px);
+  transition: opacity 0.45s var(--ease-out),
+              transform 0.5s var(--ease-out),
+              visibility 0s 0.45s linear;
+}
+.solar-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.45s var(--ease-out),
+              transform 0.5s var(--ease-out),
+              visibility 0s linear;
+}
+.solar-panel::before, .solar-panel::after {
+  content: ""; position: absolute;
+  width: 12px; height: 12px;
+  border-color: var(--red);
+}
+.solar-panel::before {
+  top: -1px; left: -1px;
+  border-top: 1px solid; border-left: 1px solid;
+}
+.solar-panel::after {
+  bottom: -1px; right: -1px;
+  border-bottom: 1px solid; border-right: 1px solid;
+}
+.solar-panel__close {
+  position: absolute; top: 8px; right: 10px;
+  width: 32px; height: 32px;
+  font-size: 20px; line-height: 1;
+  color: var(--ink-dim);
+  cursor: none;
+  transition: color 0.25s, transform 0.3s;
+}
+.solar-panel__close:hover { color: var(--red); transform: rotate(90deg); }
+.solar-panel__kicker {
+  display: block;
+  color: var(--red);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  margin-bottom: 8px;
+}
+.solar-panel__title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.6vw, 34px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
+.solar-panel__text {
+  color: var(--ink-dim);
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.solar-panel__cta {
+  display: inline-block;
+  color: var(--red);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--red);
+  padding-bottom: 3px;
+  transition: color 0.25s, border-color 0.25s, padding-left 0.3s;
+}
+.solar-panel__cta:hover { color: var(--ink); border-color: var(--ink); padding-left: 6px; }
+
+/* Bottom-left hint chip */
+.solar-hint {
+  position: fixed;
+  left: clamp(16px, 3vw, 48px);
+  bottom: clamp(16px, 3vh, 32px);
+  z-index: 55;
+  color: var(--ink-dim);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+.solar-hint b { color: var(--red); animation: rec 1.6s steps(2) infinite; }
+.solar-hint.is-dim { opacity: 0.35; }
+
+@media (max-width: 900px) {
+  .solar-panel {
+    left: 16px; right: 16px;
+    width: auto;
+    bottom: 16px;
+    padding: 20px;
+  }
+  .solar-hint { font-size: 10px; bottom: auto; top: 76px; }
+}
+
+/* =========================================================
    3D MODEL STAGE — Three.js canvas on the About page
    ========================================================= */
 .model-stage {

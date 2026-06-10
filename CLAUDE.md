@@ -48,16 +48,23 @@
 ```
 .
 ├── index.html             # Hauptseite – alle Sections
+├── about.html             # Über Uns + 3D-F1-Modell (model.js)
+├── team.html              # Team + Solar-System-BG (solar.js)
+├── partner.html           # Partner + Solar-System-BG
+├── kontakt.html           # Kontakt + Google Maps + Solar-System-BG
 ├── impressum.html         # Impressum, Datenschutz, AGB (DDG + DSGVO konform)
 ├── CLAUDE.md              # ← diese Datei
 └── assets/
     ├── css/style.css      # Komplettes Stylesheet (Single-File-Strategie)
     ├── js/main.js         # IIFE, alle Module in einer Datei
+    ├── js/model.js        # ESM: GLB-Viewer + Rennstrecken-Env (about)
+    ├── js/solar.js        # ESM: interaktives Solarsystem-BG (Subpages)
+    ├── models/model.glb   # Meshy-F1-Modell, gltf-transform-komprimiert (1.16 MB)
     ├── video/
     │   ├── hero.mp4           # Hero-Loop (autoplay)
     │   ├── scroll.mp4         # Desktop Scroll-Scrub Background (16:9)
     │   └── scroll-mobile.mp4  # Mobile Background-Loop (9:16)
-    └── images/            # frei für echte Case-Visuals
+    └── images/            # Logo + frei für echte Case-Visuals
 ```
 
 **Prinzip**: alles in wenigen großen Dateien lassen, nicht in 30 Module zerlegen. Single Page, kein Build-Step.
@@ -125,6 +132,12 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 - **Lenis auf Touch**: `smoothTouch: false` — native Touch-Scrolling bleibt erhalten, Lenis greift nur ins Wheel ein.
 
 **Pflicht-Check** für jede neue Komponente: in DevTools auf 375 px resizen, sicherstellen dass nichts overflowt und alle Schriften lesbar bleiben.
+
+### 5.7 3D-Module (ESM, three@0.160.0 via importmap)
+- **model.js (about.html)**: GLB-Viewer mit Rennstrecken-Environment. `Reflector` = nasser Asphalt (Mobile: halbe Textur), transparenter Shader-Plane mit Kerbs/Markierungen darüber, 22 additive Light-Streaks. **Speed-Kopplung**: `speedFactor = 0.6 + scrollProg*1.4 + dragBoost` — Drag am Modell beschleunigt Strecke, Streaks und Karosserie-Vibration. Render nur wenn Section sichtbar.
+- **solar.js (team/partner/kontakt)**: Solarsystem als fixed Background (`z-index: -2`), `.solar-tint` Gradient darüber für Textlesbarkeit. Sonne = Studio-Kern, 6 Planeten = Firmen-Kapitel (Manifest/Services/Engineering/Team/Partner/Kontakt). **Picking-Trick**: Canvas hat `pointer-events: none`; Klicks werden auf `window` abgefangen, interaktive Elemente per `closest(INTERACTIVE_SEL)` ausgeschlossen, Rest wird geraycastet → Planeten sind "durch" leere Seitenbereiche klickbar. Klick öffnet `.solar-panel` (Info + Link). Inhalte sind statische Config in solar.js — bei neuen Seiten/Kapiteln dort erweitern.
+- **Kein Solar auf about.html** — bewusst: dort trägt das F1-Modell die 3D-Last; zwei WebGL-Contexts + Reflector wären auf Mobile zu viel.
+- **Importmap-Regel**: pro Seite genau EINE importmap, definiert VOR dem ersten `type="module"`-Script. three.module.js per `modulepreload` mit SRI gelockt.
 
 ---
 
