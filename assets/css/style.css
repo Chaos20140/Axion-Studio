@@ -2098,88 +2098,161 @@ body.nav-open { overflow: hidden; }
   position: fixed; inset: 0;
   z-index: -1;
   pointer-events: none;
+  /* Lighter than before so the system reads more in the foreground;
+     left stays dim enough for the text column, right is near-clear. */
   background: linear-gradient(90deg,
-    rgba(6, 3, 5, 0.88) 0%,
-    rgba(6, 3, 5, 0.55) 45%,
-    rgba(6, 3, 5, 0.16) 100%);
+    rgba(6, 3, 5, 0.80) 0%,
+    rgba(6, 3, 5, 0.40) 44%,
+    rgba(6, 3, 5, 0.06) 100%);
 }
 @media (max-width: 900px) {
   .solar-tint {
     background: linear-gradient(180deg,
-      rgba(6, 3, 5, 0.82) 0%,
-      rgba(6, 3, 5, 0.5) 60%,
-      rgba(6, 3, 5, 0.7) 100%);
+      rgba(6, 3, 5, 0.80) 0%,
+      rgba(6, 3, 5, 0.46) 58%,
+      rgba(6, 3, 5, 0.66) 100%);
   }
 }
 
-/* Info panel — opens when a planet is selected */
+/* JARVIS leader line: SVG overlay from selected planet → panel */
+.solar-link {
+  position: fixed; inset: 0;
+  z-index: 58;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+}
+.solar-link.is-on { opacity: 1; }
+.solar-link line {
+  stroke: var(--red);
+  stroke-width: 1;
+  stroke-dasharray: 5 5;
+  filter: drop-shadow(0 0 4px rgba(var(--red-glow), 0.8));
+  animation: solarDash 0.6s linear infinite;
+}
+@keyframes solarDash { to { stroke-dashoffset: -10; } }
+.solar-link circle { fill: none; stroke: var(--red); }
+#solarLinkDot  { stroke-width: 1.5; filter: drop-shadow(0 0 5px rgba(var(--red-glow), 0.9)); }
+#solarLinkDot2 { stroke-width: 1; opacity: 0.6; transform-box: fill-box; transform-origin: center;
+                 animation: solarReticle 2s ease-out infinite; }
+@keyframes solarReticle {
+  0%   { r: 6;  opacity: 0.7; }
+  100% { r: 26; opacity: 0; }
+}
+
+/* ---------- JARVIS / Star-Trek HUD panel (top-right) ---------- */
 .solar-panel {
   position: fixed;
-  right: clamp(16px, 3vw, 48px);
-  bottom: clamp(16px, 4vh, 48px);
+  top: clamp(76px, 9vh, 104px);
+  right: clamp(14px, 2.6vw, 40px);
   z-index: 60;
-  width: min(380px, calc(100vw - 32px));
-  border: 1px solid var(--line);
-  background: rgba(6, 3, 5, 0.93);
-  backdrop-filter: blur(14px);
-  padding: 24px 26px;
+  width: min(384px, calc(100vw - 28px));
+  padding: 22px 24px 24px;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgba(10, 4, 7, 0.92), rgba(8, 3, 6, 0.96));
+  border: 1px solid rgba(var(--red-glow), 0.45);
+  border-left: 2px solid var(--red);
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 18px 60px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(var(--red-glow), 0.18) inset;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(18px);
-  transition: opacity 0.45s var(--ease-out),
-              transform 0.5s var(--ease-out),
-              visibility 0s 0.45s linear;
+  transform: translateX(26px) skewX(-0.5deg);
+  transition: opacity 0.4s var(--ease-out),
+              transform 0.5s var(--ease-power),
+              visibility 0s 0.4s linear;
+  overflow: hidden;
 }
 .solar-panel.is-open {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-  transition: opacity 0.45s var(--ease-out),
-              transform 0.5s var(--ease-out),
+  opacity: 1; visibility: visible;
+  transform: translateX(0) skewX(0);
+  transition: opacity 0.4s var(--ease-out),
+              transform 0.55s var(--ease-power),
               visibility 0s linear;
 }
-.solar-panel::before, .solar-panel::after {
-  content: ""; position: absolute;
-  width: 12px; height: 12px;
-  border-color: var(--red);
-}
+/* scanline texture sweeping the panel */
 .solar-panel::before {
-  top: -1px; left: -1px;
-  border-top: 1px solid; border-left: 1px solid;
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg, transparent 0 3px, rgba(255, 31, 61, 0.04) 3px 4px);
+  mix-blend-mode: screen;
 }
+/* corner ticks (top-right + bottom-left) */
 .solar-panel::after {
-  bottom: -1px; right: -1px;
-  border-bottom: 1px solid; border-right: 1px solid;
+  content: "";
+  position: absolute; top: 6px; right: 6px;
+  width: 14px; height: 14px;
+  border-top: 1px solid var(--red);
+  border-right: 1px solid var(--red);
+  pointer-events: none;
 }
 .solar-panel__close {
-  position: absolute; top: 8px; right: 10px;
-  width: 32px; height: 32px;
-  font-size: 20px; line-height: 1;
+  position: absolute; top: 6px; right: 24px;
+  width: 30px; height: 30px;
+  font-size: 19px; line-height: 1;
   color: var(--ink-dim);
-  cursor: none;
+  cursor: none; z-index: 2;
   transition: color 0.25s, transform 0.3s;
 }
 .solar-panel__close:hover { color: var(--red); transform: rotate(90deg); }
+.solar-panel__lockbar {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 9.5px;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 14px;
+}
+.solar-panel__lockbar b {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--red); display: inline-block;
+  box-shadow: 0 0 8px var(--red);
+  animation: rec 1.4s steps(2) infinite;
+}
+.solar-panel__lockbar i { flex: 1; height: 1px; background: rgba(var(--red-glow), 0.4); }
 .solar-panel__kicker {
   display: block;
   color: var(--red);
-  font-size: 10.5px;
-  letter-spacing: 0.18em;
-  margin-bottom: 8px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  margin-bottom: 6px;
 }
 .solar-panel__title {
   font-family: var(--font-display);
-  font-size: clamp(24px, 2.6vw, 34px);
-  line-height: 1;
+  font-size: clamp(26px, 2.8vw, 38px);
+  line-height: 0.95;
   letter-spacing: -0.01em;
   text-transform: uppercase;
   font-weight: 400;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
+}
+.solar-panel__meta {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px 14px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+  margin-bottom: 14px;
+}
+.solar-panel__meta div { display: flex; flex-direction: column; gap: 3px; }
+.solar-panel__meta dt {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.solar-panel__meta dd {
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: 0.08em; color: var(--ink);
 }
 .solar-panel__text {
   color: var(--ink-dim);
   font-size: 13.5px;
-  line-height: 1.6;
+  line-height: 1.62;
   margin-bottom: 16px;
 }
 .solar-panel__cta {
@@ -2193,6 +2266,13 @@ body.nav-open { overflow: hidden; }
   transition: color 0.25s, border-color 0.25s, padding-left 0.3s;
 }
 .solar-panel__cta:hover { color: var(--ink); border-color: var(--ink); padding-left: 6px; }
+
+/* Keyboard focus rings on the panel controls (design-system red) */
+.solar-panel__cta:focus-visible,
+.solar-panel__close:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
+}
 
 /* Bottom-left hint chip */
 .solar-hint {
@@ -2211,13 +2291,17 @@ body.nav-open { overflow: hidden; }
 .solar-hint.is-dim { opacity: 0.35; }
 
 @media (max-width: 900px) {
+  /* On phones the HUD drops to a full-width sheet under the nav */
   .solar-panel {
-    left: 16px; right: 16px;
+    left: 12px; right: 12px;
+    top: 70px;
     width: auto;
-    bottom: 16px;
-    padding: 20px;
+    padding: 18px 18px 20px;
   }
-  .solar-hint { font-size: 10px; bottom: auto; top: 76px; }
+  .solar-panel__title { font-size: clamp(24px, 7vw, 32px); }
+  .solar-hint { font-size: 10px; bottom: 14px; }
+  /* leader line is noisy on small screens — hide it */
+  .solar-link { display: none; }
 }
 
 /* =========================================================
@@ -2368,6 +2452,16 @@ body.nav-open { overflow: hidden; }
   line-height: 1.6;
   color: var(--ink-dim);
   max-width: 720px;
+}
+/* Defensive legibility: the solar background is now brighter/foreground,
+   so bare text over the canvas gets a soft dark halo to guarantee contrast
+   even when a glowing planet drifts directly behind it. */
+.page-hero__lead,
+.page-section > p,
+.page-section > h2,
+.page-section__head,
+.page-grid__meta dd {
+  text-shadow: 0 1px 12px rgba(6, 3, 5, 0.7);
 }
 .page-hero__lead em { color: var(--red); font-style: italic; }
 
