@@ -308,18 +308,21 @@
     }
   } else {
   /* =========================================================
-     SCROLL-SCRUB BACKGROUND VIDEO — canvas-based frame renderer
-     Strategy:
-       1. After metadata loads, extract N frames by playing the
-          video once at 4x speed and capturing each decoded frame
-          via requestVideoFrameCallback (when available) or by
-          time-stepped seeking.
-       2. Each frame is stored as an ImageBitmap (GPU-resident).
-       3. On scroll we lerp a smoothed progress and draw the
-          closest frame to a 2D canvas. No more `video.currentTime`
-          seeking on every scroll tick — that was the source of
-          stutter (driven by sparse video keyframes + browser
-          seek throttling).
+     SCROLL-SCRUB BACKGROUND VIDEO — hybrid "proxy scrub"
+     Goals: buttery motion AND zero quality loss at rest.
+
+     - The NATIVE <video> is the always-visible layer → whenever
+       the scroll settles you see the codec's full-resolution
+       frame. No downscaled stills, no quality loss.
+     - Seeks go through a manager that keeps exactly ONE seek in
+       flight (waits for 'seeked' before issuing the next). Blind
+       per-frame seeking queues up inside the decoder and THAT
+       was the visible stutter.
+     - During motion, a low-res PROXY strip (≤96 frames @ ~960px,
+       ~170 MB instead of the old >1 GB that crashed weaker GPUs)
+       is drawn frame-blended on the canvas overlay. Fast motion
+       hides the lower resolution; when motion stops the canvas
+       fades out and reveals the crisp native frame underneath.
      ========================================================= */
   (() => {
     const wrap   = $("#bgScroll");
@@ -331,33 +334,41 @@
     const endEl   = $(".contact") || $("#contact");
     if (!startEl || !endEl) return;
 
-    const FRAME_TARGET = reduce ? 12 : 220;      // denser sampling → less stutter
-    // We render the background video DIM + blurred; full 2× DPR is wasted
-    // pixels. Cap at 1.5× viewport (or 1440×900 absolute) — saves enough
-    // GPU memory to afford 220 frames instead of 140.
-    const MAX_W = Math.min(window.innerWidth * 1.5, 1440);
-    const MAX_H = Math.min(window.innerHeight * 1.5, 900);
+    const FRAME_TARGET = reduce ? 10 : 96;
+    const PROXY_W = 960;                       // proxy strip width (motion-only)
 
     const ctx = canvas.getContext("2d", { alpha: false, desynchronized: true });
-    const off = (typeof OffscreenCanvas !== "undefined")
-      ? new OffscreenCanvas(MAX_W, MAX_H)
-      : Object.assign(document.createElement("canvas"), { width: MAX_W, height: MAX_H });
-    const offCtx = off.getContext("2d", { alpha: false });
 
-    let duration   = 0;
-    let frames     = [];     // { t: number, bmp: ImageBitmap }
-    let framesReady = false;
-    let extracting  = false;  // suspend any other video manipulation while true
+    let off = null, offCtx = null;             // sized once metadata is known
+    let duration     = 0;
+    let frames       = [];                     // { t, bmp } proxy frames
+    let framesReady  = false;
+    let extracting   = false;
+    let sourceLoaded = false;
     let smoothedProg = 0;
     let targetProg   = 0;
-    let active = false;
-    let sourceLoaded = false;
+    let active       = false;
+    let motionHold   = 0;                      // frames to keep proxy visible
+    let proxyShown   = false;
 
-    // Sizing — match canvas resolution to viewport, keep aspect
+    /* ---- seek manager: one in-flight seek, latest target wins ---- */
+    let pendingSeek = false;
+    let seekStamp   = 0;
+    video.addEventListener("seeked", () => { pendingSeek = false; });
+    const requestSeek = (t) => {
+      if (extracting || !sourceLoaded || !duration) return;
+      // safety: a seek that never fires 'seeked' unblocks after 300ms
+      if (pendingSeek && performance.now() - seekStamp < 300) return;
+      if (Math.abs(video.currentTime - t) < 0.033) return;
+      pendingSeek = true;
+      seekStamp = performance.now();
+      try { video.currentTime = t; } catch (_) { pendingSeek = false; }
+    };
+
+    // Canvas sized to viewport at DPR 1 — it only ever shows motion,
+    // where extra resolution is invisible; saves fill rate.
     const sizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = Math.round(wrap.clientWidth  * dpr);
-      const h = Math.round(wrap.clientHeight * dpr);
+      const w = wrap.clientWidth, h = wrap.clientHeight;
       if (canvas.width !== w || canvas.height !== h) {
         canvas.width = w; canvas.height = h;
       }
@@ -365,7 +376,7 @@
     sizeCanvas();
     window.addEventListener("resize", sizeCanvas);
 
-    /* ---- compute scroll progress ---- */
+    /* ---- scroll progress across manifesto → contact ---- */
     const computeProg = () => {
       const sTop = startEl.getBoundingClientRect().top + window.scrollY;
       const eBox = endEl.getBoundingClientRect();
@@ -374,28 +385,21 @@
       return clamp((scrollMid - sTop) / (eBottom - sTop), 0, 1);
     };
 
-    /* ---- draw a given progress to the visible canvas, with frame
-            blending: render frame N, then composite frame N+1 with
-            alpha = sub-frame fraction. Gives sub-frame smoothness
-            without needing more source frames. ---- */
+    /* ---- frame-blended proxy draw (cover-fit) ---- */
     const drawAt = (prog) => {
       if (!framesReady || frames.length === 0) return;
       const cw = canvas.width, ch = canvas.height;
-
       const exact = prog * (frames.length - 1);
       const i0 = Math.floor(exact);
       const i1 = Math.min(i0 + 1, frames.length - 1);
-      const t  = exact - i0;     // 0..1 between the two frames
+      const t  = exact - i0;
 
       const drawBitmap = (bmp, alpha) => {
-        const bw = bmp.width, bh = bmp.height;
-        const scale = Math.max(cw / bw, ch / bh);
-        const dw = bw * scale, dh = bh * scale;
-        const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
+        const scale = Math.max(cw / bmp.width, ch / bmp.height);
+        const dw = bmp.width * scale, dh = bmp.height * scale;
         ctx.globalAlpha = alpha;
-        ctx.drawImage(bmp, dx, dy, dw, dh);
+        ctx.drawImage(bmp, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
       };
-
       const a = frames[i0]?.bmp;
       const b = frames[i1]?.bmp;
       if (a) drawBitmap(a, 1.0);
@@ -403,41 +407,42 @@
       ctx.globalAlpha = 1.0;
     };
 
-    /* ---- main render loop (smoothed) ---- */
+    /* ---- main loop ---- */
     const tick = () => {
-      targetProg = computeProg();
-      // gentler lerp → glides between frames instead of jumping
-      smoothedProg = lerp(smoothedProg, targetProg, 0.09);
-
-      const wantActive = targetProg > 0 && targetProg < 1;
-      if (wantActive && !active) { wrap.classList.add("is-active"); active = true; }
-      else if (!wantActive && active) { wrap.classList.remove("is-active"); active = false; }
-
-      if (framesReady && active) drawAt(smoothedProg);
       requestAnimationFrame(tick);
+      targetProg = computeProg();
+      smoothedProg = lerp(smoothedProg, targetProg, 0.11);
+
+      // Activation: never while the extraction playback is running
+      // (the racing video must not be seen).
+      const wantActive = targetProg > 0 && targetProg < 1 && !extracting;
+      if (wantActive !== active) {
+        active = wantActive;
+        wrap.classList.toggle("is-active", active);
+      }
+      if (!active) return;
+
+      const targetT = smoothedProg * duration;
+      requestSeek(targetT);
+
+      // Motion detection: scroll still travelling OR video still
+      // catching up → show the proxy strip; otherwise fade it out
+      // and let the native full-res frame shine.
+      const travelling = Math.abs(targetProg - smoothedProg) > 0.0015;
+      const settling   = duration > 0 && Math.abs(video.currentTime - targetT) > 0.05;
+      if (travelling || settling) motionHold = 14;           // ~230ms hold
+      else if (motionHold > 0) motionHold--;
+
+      const showProxy = framesReady && motionHold > 0;
+      if (showProxy) drawAt(smoothedProg);
+      if (showProxy !== proxyShown) {
+        proxyShown = showProxy;
+        canvas.style.opacity = showProxy ? "1" : "0";
+      }
     };
     requestAnimationFrame(tick);
 
-    /* ---- pre-extraction fallback: while frames load,
-            use the raw video element (visible by default).
-            CRITICAL: suspends itself while extracting so it
-            doesn't fight the extraction loop for currentTime. ---- */
-    let videoFallbackRAF = null;
-    const videoFallbackLoop = () => {
-      if (framesReady || !sourceLoaded || extracting) {
-        videoFallbackRAF = null;
-        return;
-      }
-      const prog = computeProg();
-      const t = prog * duration;
-      if (Math.abs(video.currentTime - t) > 0.08) {
-        try { video.currentTime = t; } catch (_) {}
-      }
-      videoFallbackRAF = requestAnimationFrame(videoFallbackLoop);
-    };
-
-    /* ---- attach video source LATE — avoid eager full download
-            slowing first paint ---- */
+    /* ---- attach source late (after first paint) ---- */
     const attachSource = () => {
       const src = document.createElement("source");
       src.src = "assets/video/scroll.mp4?v=20260523g";
@@ -446,34 +451,40 @@
       video.load();
     };
 
-    /* ---- frame extractor: prefers playback + rVFC for speed ---- */
+    /* ---- proxy extraction: one fast playthrough via rVFC,
+            seek-stepping as fallback ---- */
     const extract = async () => {
       duration = video.duration;
       if (!duration || !isFinite(duration)) return;
 
-      extracting = true;
-      const targetCount = FRAME_TARGET;
-      const step = duration / targetCount;
+      const vw = video.videoWidth || 1920, vh = video.videoHeight || 1080;
+      const pw = Math.min(PROXY_W, vw);
+      const ph = Math.round(pw * (vh / vw));
+      off = (typeof OffscreenCanvas !== "undefined")
+        ? new OffscreenCanvas(pw, ph)
+        : Object.assign(document.createElement("canvas"), { width: pw, height: ph });
+      offCtx = off.getContext("2d", { alpha: false });
 
+      extracting = true;
       try {
-        // Strategy A — rVFC (Chromium, modern WebKit).
         if ("requestVideoFrameCallback" in HTMLVideoElement.prototype) {
           try {
-            await extractViaPlayback(targetCount);
+            await extractViaPlayback(FRAME_TARGET);
             if (frames.length > 0) return;
-          } catch (_) { /* fall through */ }
+          } catch (_) { /* fall through to seek extraction */ }
         }
-        // Strategy B — seek-based fallback
-        await extractViaSeek(targetCount, step);
+        await extractViaSeek(FRAME_TARGET, duration / FRAME_TARGET);
       } finally {
         extracting = false;
         framesReady = frames.length > 0;
-        if (framesReady) wrap.classList.add("canvas-ready");
+        video.pause();
+        video.playbackRate = 1.0;
+        pendingSeek = false;
       }
     };
 
     const extractViaPlayback = (targetCount) => new Promise((resolve, reject) => {
-      const raw = [];   // all decoded frames {t, bmp}
+      const raw = [];
       video.muted = true;
       video.playbackRate = 4.0;
       video.currentTime = 0;
@@ -481,22 +492,18 @@
       const onFrame = async (_now, meta) => {
         try {
           offCtx.drawImage(video, 0, 0, off.width, off.height);
-          const bmp = await createImageBitmap(off);
-          raw.push({ t: meta.mediaTime, bmp });
+          raw.push({ t: meta.mediaTime, bmp: await createImageBitmap(off) });
         } catch (_) {}
         if (!video.ended && !video.paused) video.requestVideoFrameCallback(onFrame);
       };
-
       video.requestVideoFrameCallback(onFrame);
 
       video.addEventListener("ended", () => {
-        video.playbackRate = 1.0;
         if (raw.length < 2) { reject(new Error("no frames")); return; }
-        // resample raw frames to evenly spaced target buckets
+        // resample to evenly spaced buckets
         frames = new Array(targetCount);
         for (let i = 0; i < targetCount; i++) {
           const want = (i / (targetCount - 1)) * raw[raw.length - 1].t;
-          // pick nearest
           let best = raw[0], bestD = Math.abs(raw[0].t - want);
           for (let j = 1; j < raw.length; j++) {
             const d = Math.abs(raw[j].t - want);
@@ -504,7 +511,6 @@
           }
           frames[i] = best;
         }
-        // free the extras we didn't pick
         for (const r of raw) if (!frames.includes(r)) r.bmp.close?.();
         resolve();
       }, { once: true });
@@ -517,33 +523,35 @@
       for (let i = 0; i < targetCount; i++) {
         const t = i * step;
         await new Promise((res) => {
-          const cb = () => { video.removeEventListener("seeked", cb); res(); };
-          video.addEventListener("seeked", cb);
-          try { video.currentTime = t; } catch (_) { res(); }
+          // single-resolution guard: whichever fires first ('seeked' or
+          // the 400ms safety timeout) wins AND removes the listener, so
+          // no stale listener can resolve a later iteration early.
+          let settled = false;
+          const finish = () => {
+            if (settled) return;
+            settled = true;
+            video.removeEventListener("seeked", finish);
+            res();
+          };
+          video.addEventListener("seeked", finish);
+          setTimeout(finish, 400);
+          try { video.currentTime = t; } catch (_) { finish(); }
         });
         try {
           offCtx.drawImage(video, 0, 0, off.width, off.height);
-          const bmp = await createImageBitmap(off);
-          frames.push({ t, bmp });
+          frames.push({ t, bmp: await createImageBitmap(off) });
         } catch (_) {}
       }
     };
 
     /* ---- bootstrap ---- */
-    const onMeta = () => {
+    video.addEventListener("loadedmetadata", () => {
       sourceLoaded = true;
-      // Don't run the fallback during extraction (it would fight us
-      // for `currentTime`). After extract finishes (or fails) we
-      // either render from the canvas frames or kick the fallback.
-      extract().finally(() => {
-        if (!framesReady && !videoFallbackRAF) {
-          videoFallbackRAF = requestAnimationFrame(videoFallbackLoop);
-        }
-      });
-    };
-    video.addEventListener("loadedmetadata", onMeta, { once: true });
+      // Even if extraction fails entirely, the seek-managed native
+      // video still scrubs (slightly chunkier, but functional).
+      extract().catch(() => {});
+    }, { once: true });
 
-    // Attach source after first paint to keep TTI clean
     if (document.readyState === "complete") attachSource();
     else window.addEventListener("load", attachSource, { once: true });
   })();
@@ -688,21 +696,31 @@
       scrollTrigger: { trigger: ".contact", start: "top 70%" },
     });
 
-    /* PROCESS — F1 STARTING GRID
-       Cars drive in from below, then their content slides in
-       beside them. CSS transitions on .is-parked do the visual
-       work; ScrollTrigger just adds the class with a stagger. */
+    /* PROCESS — F1 STARTING GRID (staggered formation)
+       Per slot, in order: .is-set draws the grid-box marking +
+       number, then .is-parked sends the car driving in from the
+       centre lane. Each slot arms when IT scrolls into view, but a
+       promise chain guarantees strict P1→P2→P3→P4 sequencing even
+       if several slots are visible at once. */
     const slots = gsap.utils.toArray(".grid__slot[data-step]");
     if (slots.length) {
-      ScrollTrigger.create({
-        trigger: ".grid",
-        start: "top 70%",
-        once: true,
-        onEnter: () => {
-          slots.forEach((s, i) => {
-            setTimeout(() => s.classList.add("is-parked"), i * 380);
-          });
-        },
+      let chain = Promise.resolve();
+      const launch = (slot) => {
+        chain = chain.then(() => new Promise((done) => {
+          slot.classList.add("is-set");                 // marking draws in
+          setTimeout(() => {
+            slot.classList.add("is-parked");            // car drives in
+            setTimeout(done, 480);                      // spacing to next car
+          }, 420);
+        }));
+      };
+      slots.forEach((slot) => {
+        ScrollTrigger.create({
+          trigger: slot,
+          start: "top 84%",
+          once: true,
+          onEnter: () => launch(slot),
+        });
       });
     } else {
       // Fallback for any legacy [data-step] markup

@@ -92,6 +92,9 @@ input, textarea, select { font: inherit; color: inherit; }
   transform: scale(1.05);
   will-change: transform;
 }
+/* Motion proxy: the canvas overlays the native video ONLY while
+   scrolling (JS drives style.opacity). At rest it fades out and the
+   full-resolution native video frame shows — zero quality loss. */
 .bg-scroll__canvas {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -99,11 +102,9 @@ input, textarea, select { font: inherit; color: inherit; }
   filter: contrast(1.15) saturate(1.4) brightness(1.0);
   transform: scale(1.05);
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.22s linear;
   will-change: opacity;
 }
-.bg-scroll.canvas-ready .bg-scroll__canvas { opacity: 1; }
-.bg-scroll.canvas-ready .bg-scroll__video { opacity: 0; }
 .bg-scroll__tint {
   position: absolute; inset: 0;
   background:
@@ -1150,40 +1151,41 @@ body.nav-open { overflow: hidden; }
 }
 
 /* ----------------------------------------------------------
-   PROCESS — F1 STARTING GRID
-   3-column layout: content-left · car-center · content-right
-   The car column holds a top-down F1 silhouette; content
-   alternates left/right per row (zigzag). Lane edges + start
-   line + checkered finish render via pseudo-elements.
+   PROCESS — F1 STARTING GRID (staggered, like the real thing)
+   A continuous dashed CENTRE line splits the track. Pole box
+   sits RIGHT of the line, P2 LEFT and one row behind, then
+   alternating. Each slot: grid-box marking + position number
+   reveal first (on scroll), then the car drives in from below;
+   the step copy fades in beside it on the opposite side.
 ---------------------------------------------------------- */
 .grid {
   position: relative;
-  display: grid;
-  grid-template-columns: 1fr 160px 1fr;
-  column-gap: clamp(24px, 4vw, 56px);
-  row-gap: clamp(60px, 9vh, 110px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(44px, 6.5vh, 76px);
   margin-top: 60px;
   padding: 40px 0 60px;
-  align-items: center;
+  /* outer track edges */
+  border-left: 1px solid rgba(255, 255, 255, 0.10);
+  border-right: 1px solid rgba(255, 255, 255, 0.10);
 }
-/* Asphalt lane edges (white dashed) — pseudo-elements on .grid */
-.grid::before, .grid::after {
+/* continuous centre line */
+.grid::before {
   content: "";
   position: absolute;
   top: 0; bottom: 0;
-  width: 1px;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(255,255,255,0.32) 0 14px,
-    transparent 14px 28px
+    rgba(255, 255, 255, 0.5) 0 18px,
+    transparent 18px 38px
   );
 }
-.grid::before { left: calc(50% - 96px); }
-.grid::after  { left: calc(50% + 96px); }
 
 /* START LINE — full-width row at top */
 .grid__startline {
-  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
@@ -1227,83 +1229,131 @@ body.nav-open { overflow: hidden; }
   40%, 100% { opacity: 0.18; }
 }
 
-/* SLOT — one row per process step */
+/* SLOT — one row, split at the centre line */
 .grid__slot {
-  display: contents;
-}
-/* Car position (column 2 always) */
-.grid__car {
-  grid-column: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: clamp(36px, 5vw, 88px);
+  align-items: center;
   position: relative;
-  width: 130px;
-  margin: 0 auto;
-  justify-self: center;
-  /* drive-in animation initial state */
-  transform: translateY(420px);
-  opacity: 0;
-  will-change: transform, opacity;
 }
-.grid__slot.is-parked .grid__car {
-  transform: translateY(0);
-  opacity: 1;
-  transition: transform 1.2s var(--ease-power),
-              opacity 0.6s var(--ease-out);
+
+/* GRID BOX — the car's slot beside the centre line */
+.grid__box {
+  position: relative;
+  width: 156px;
+  padding: 30px 14px 12px;
 }
-.f1-car {
-  display: block;
-  width: 130px;
-  height: 260px;
-  color: var(--ink);
-  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.6))
-          drop-shadow(0 0 22px rgba(var(--red-glow), 0.35));
+.grid__slot--right .grid__box {
+  grid-column: 2;
+  justify-self: start;
+  margin-left: clamp(6px, 1.6vw, 22px);
 }
+.grid__slot--left .grid__box {
+  grid-column: 1;
+  justify-self: end;
+  margin-right: clamp(6px, 1.6vw, 22px);
+}
+
+/* Grid-box marking: bar ahead of the car + outer side line,
+   drawn in (scaleX/scaleY) when the slot arms (.is-set) */
+.grid__mark {
+  position: absolute;
+  inset: 22px 4px 4px;
+  pointer-events: none;
+}
+.grid__mark::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  transform: scaleX(0);
+  transition: transform 0.55s var(--ease-power);
+}
+.grid__slot--right .grid__mark::before { transform-origin: left center; }
+.grid__slot--left  .grid__mark::before { transform-origin: right center; }
+.grid__mark::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform 0.5s var(--ease-power) 0.3s;
+}
+.grid__slot--right .grid__mark::after { right: 0; }
+.grid__slot--left  .grid__mark::after { left: 0; }
+.grid__slot.is-set .grid__mark::before { transform: scaleX(1); }
+.grid__slot.is-set .grid__mark::after  { transform: scaleY(1); }
+
+/* Position number outside the box's top outer corner */
 .grid__pos {
   position: absolute;
-  top: -28px; left: 50%;
-  transform: translateX(-50%);
+  top: -8px;
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 26px;
   color: var(--red);
   letter-spacing: 0.04em;
   text-shadow: 0 0 16px rgba(var(--red-glow), 0.7);
-}
-/* Starting-line marker under the car (a white box on the asphalt) */
-.grid__marker {
-  position: absolute;
-  bottom: -18px; left: 50%;
-  transform: translateX(-50%);
-  width: 100px; height: 4px;
-  background: rgba(255,255,255,0.6);
-  box-shadow: 0 0 12px rgba(255,255,255,0.3);
   opacity: 0;
-  transition: opacity 0.4s 0.7s ease;
+  transition: opacity 0.45s ease 0.4s;
 }
-.grid__slot.is-parked .grid__marker { opacity: 1; }
+.grid__slot--right .grid__pos { right: -38px; }
+.grid__slot--left  .grid__pos { left: -38px; }
+.grid__slot.is-set .grid__pos { opacity: 1; }
 
-/* Content placement — alternating left / right */
+/* The car — drives in from below once parked */
+.f1-car {
+  display: block;
+  width: 116px;
+  height: 252px;
+  margin: 0 auto;
+  color: var(--ink);
+  filter: drop-shadow(0 10px 26px rgba(0,0,0,0.65))
+          drop-shadow(0 0 18px rgba(var(--red-glow), 0.28));
+  opacity: 0;
+  will-change: transform, opacity;
+}
+/* cars pull out of the centre lane into their box */
+.grid__slot--right .f1-car { --fromX: -70px; }
+.grid__slot--left  .f1-car { --fromX: 70px; }
+.grid__slot.is-parked .f1-car {
+  animation: carDriveIn 1.1s var(--ease-power) forwards;
+}
+@keyframes carDriveIn {
+  0%   { opacity: 0; transform: translate(var(--fromX, 0), 46vh); }
+  10%  { opacity: 1; }
+  70%  { transform: translate(calc(var(--fromX, 0) * 0.22), 5vh); }
+  100% { opacity: 1; transform: translate(0, 0); }
+}
+
+/* Content on the opposite side of the centre line */
 .grid__slot .step__content {
   position: relative;
   border: 1px solid var(--line);
   padding: 24px 28px;
   background: rgba(0,0,0,0.45);
   backdrop-filter: blur(8px);
-  max-width: 460px;
+  max-width: 440px;
   opacity: 0;
-  transform: translateX(30px);
-  transition: opacity 0.6s 0.7s var(--ease-out),
-              transform 0.7s 0.7s var(--ease-out),
+  transition: opacity 0.6s 1.0s var(--ease-out),
+              transform 0.7s 1.0s var(--ease-out),
               border-color 0.3s, background 0.3s;
 }
 .grid__slot--right .step__content {
-  grid-column: 3;
-  justify-self: start;
-  transform: translateX(40px);
-}
-.grid__slot--left .step__content {
   grid-column: 1;
   justify-self: end;
   text-align: right;
-  transform: translateX(-40px);
+  transform: translateX(-32px);
+}
+.grid__slot--left .step__content {
+  grid-column: 2;
+  justify-self: start;
+  transform: translateX(32px);
 }
 .grid__slot.is-parked .step__content {
   opacity: 1;
@@ -1321,8 +1371,9 @@ body.nav-open { overflow: hidden; }
   background: var(--red);
   box-shadow: 0 0 6px var(--red);
 }
-.grid__slot--right .step__content::before { left: -14px; }
-.grid__slot--left  .step__content::before { right: -14px; }
+/* tick points toward the centre line (content sits opposite the car) */
+.grid__slot--right .step__content::before { right: -14px; }
+.grid__slot--left  .step__content::before { left: -14px; }
 .grid__slot .step__label {
   color: var(--red);
   display: block; margin-bottom: 6px;
@@ -1376,27 +1427,36 @@ body.nav-open { overflow: hidden; }
 }
 
 @media (max-width: 900px) {
-  .grid {
-    grid-template-columns: 1fr;
-    row-gap: 36px;
-  }
-  .grid::before, .grid::after { display: none; }
+  .grid { gap: 40px; border-left: 0; border-right: 0; }
+  /* keep the centre line — it sells the grid even stacked */
+  .grid::before { opacity: 0.5; }
   .grid__startline, .grid__finishline { grid-template-columns: 1fr; }
   .grid__startline-flag, .grid__checker,
   .grid__startline-lights { display: none; }
-  .grid__slot { display: block; }
-  .grid__car { grid-column: 1; transform: translateY(220px); }
-  .f1-car { width: 110px; height: 220px; }
+
+  .grid__slot {
+    grid-template-columns: 1fr;
+    row-gap: 18px;
+  }
+  /* boxes still left/right of the centre line, just tighter */
+  .grid__box { width: 124px; padding: 24px 10px 8px; }
+  .grid__slot--right .grid__box { grid-column: 1; justify-self: center; margin: 0 0 0 90px; }
+  .grid__slot--left  .grid__box { grid-column: 1; justify-self: center; margin: 0 90px 0 0; }
+  .f1-car { width: 92px; height: 200px; }
+  .grid__slot--right .f1-car { --fromX: -40px; }
+  .grid__slot--left  .f1-car { --fromX: 40px; }
+  .grid__pos { font-size: 20px; }
+  .grid__slot--right .grid__pos { right: -28px; }
+  .grid__slot--left  .grid__pos { left: -28px; }
+
   .grid__slot .step__content {
     grid-column: 1;
-    margin-top: 24px;
     max-width: 100%;
     text-align: left !important;
     justify-self: stretch !important;
-    transform: translateY(30px);
+    transform: translateY(26px);
+    padding: 20px 18px;
   }
-  .grid__slot--right .step__content,
-  .grid__slot--left .step__content { transform: translateY(30px); }
   .grid__slot.is-parked .step__content { transform: translateY(0); }
   .grid__slot .step__content::before { display: none; }
 }

@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260601a" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260610c" />
 </head>
 <body>
 
@@ -350,31 +350,92 @@
       <em>Eine</em> Pole Position.
     </h2>
 
-    <!-- Inline reusable F1 SVG symbol -->
+    <!-- Inline reusable F1 SVG symbol — detailed top-down car:
+         multi-element wings, suspension arms, halo + helmet, shark fin,
+         rim details, tire bands, floor shadow, rain light. -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
       <defs>
-        <symbol id="f1car" viewBox="0 0 120 240">
-          <ellipse cx="60" cy="125" rx="48" ry="100" fill="rgba(255,31,61,0.12)"/>
-          <rect x="15" y="8" width="90" height="11" rx="2" fill="currentColor"/>
-          <rect x="46" y="10" width="28" height="7" fill="#ff1f3d"/>
-          <rect x="2" y="22" width="16" height="34" rx="3" fill="#0a0203"/>
-          <rect x="102" y="22" width="16" height="34" rx="3" fill="#0a0203"/>
-          <path d="M 50 19 L 70 19 L 74 60 L 46 60 Z" fill="currentColor"/>
-          <rect x="55" y="22" width="10" height="38" fill="#ff1f3d"/>
-          <path d="M 32 60 L 88 60 L 92 165 L 28 165 Z" fill="currentColor"/>
-          <circle cx="60" cy="100" r="11" fill="#0a0203" stroke="currentColor" stroke-width="2"/>
-          <circle cx="60" cy="100" r="5" fill="#ff1f3d"/>
-          <path d="M 48 130 L 72 130 L 70 165 L 50 165 Z" fill="#0a0203"/>
-          <rect x="0" y="168" width="22" height="42" rx="3" fill="#0a0203"/>
-          <rect x="98" y="168" width="22" height="42" rx="3" fill="#0a0203"/>
-          <rect x="14" y="216" width="92" height="16" rx="2" fill="currentColor"/>
-          <rect x="46" y="218" width="28" height="12" fill="#ff1f3d"/>
-          <rect x="14" y="210" width="3" height="26" fill="currentColor"/>
-          <rect x="103" y="210" width="3" height="26" fill="currentColor"/>
+        <symbol id="f1car" viewBox="0 0 120 260">
+          <!-- ground shadow -->
+          <ellipse cx="60" cy="132" rx="38" ry="106" fill="rgba(0,0,0,0.45)"/>
+
+          <!-- FRONT WING: two elements + endplates -->
+          <rect x="8"   y="10" width="104" height="6" rx="2" fill="currentColor"/>
+          <rect x="14"  y="17" width="92"  height="4" rx="2" fill="currentColor" opacity="0.85"/>
+          <rect x="6"   y="6"  width="5"   height="18" rx="1.5" fill="currentColor"/>
+          <rect x="109" y="6"  width="5"   height="18" rx="1.5" fill="currentColor"/>
+          <rect x="52"  y="10" width="16"  height="6" fill="#ff1f3d"/>
+
+          <!-- NOSE (tapered) -->
+          <path d="M 54 12 L 66 12 C 67 30 69 44 70 56 L 50 56 C 51 44 53 30 54 12 Z" fill="currentColor"/>
+          <rect x="57" y="16" width="6" height="34" rx="3" fill="#ff1f3d"/>
+
+          <!-- FRONT SUSPENSION ARMS -->
+          <path d="M 50 40 L 26 36 M 50 48 L 26 50 M 70 40 L 94 36 M 70 48 L 94 50"
+                stroke="currentColor" stroke-width="2.4" opacity="0.8" fill="none"/>
+
+          <!-- FRONT TIRES + rims + red bands -->
+          <rect x="6"   y="28" width="21" height="30" rx="7" fill="#0c0a0c"/>
+          <rect x="93"  y="28" width="21" height="30" rx="7" fill="#0c0a0c"/>
+          <rect x="13"  y="33" width="7"  height="20" rx="3" fill="#241d20"/>
+          <rect x="100" y="33" width="7"  height="20" rx="3" fill="#241d20"/>
+          <rect x="6"   y="28" width="21" height="4" rx="2" fill="#ff1f3d" opacity="0.85"/>
+          <rect x="93"  y="28" width="21" height="4" rx="2" fill="#ff1f3d" opacity="0.85"/>
+
+          <!-- FLOOR (darker, slightly wider than body) -->
+          <path d="M 34 70 C 26 90 24 130 30 168 L 42 200 L 78 200 L 90 168 C 96 130 94 90 86 70 Z"
+                fill="#161114" opacity="0.9"/>
+
+          <!-- BODY: monocoque + sidepods, coke-bottle taper -->
+          <path d="M 50 56 L 70 56 C 82 64 88 74 89 88 C 90 106 88 124 80 140 C 75 152 72 164 71 178 L 49 178 C 48 164 45 152 40 140 C 32 124 30 106 31 88 C 32 74 38 64 50 56 Z"
+                fill="currentColor"/>
+
+          <!-- sidepod intakes -->
+          <path d="M 31 92 L 44 92 L 42 104 L 31 102 Z" fill="#0c0a0c" opacity="0.85"/>
+          <path d="M 89 92 L 76 92 L 78 104 L 89 102 Z" fill="#0c0a0c" opacity="0.85"/>
+
+          <!-- HALO + cockpit + helmet -->
+          <circle cx="60" cy="96" r="13" fill="none" stroke="#0c0a0c" stroke-width="3.4"/>
+          <line x1="60" y1="83" x2="60" y2="96" stroke="#0c0a0c" stroke-width="3"/>
+          <ellipse cx="60" cy="100" rx="8" ry="10" fill="#0c0a0c"/>
+          <circle cx="60" cy="98" r="4.6" fill="#ff1f3d"/>
+          <circle cx="58.5" cy="96.5" r="1.6" fill="#ffd2d8" opacity="0.9"/>
+
+          <!-- ENGINE SPINE + shark fin -->
+          <rect x="56.5" y="112" width="7"   height="62" rx="3.5" fill="#0c0a0c" opacity="0.9"/>
+          <rect x="58.6" y="140" width="2.8" height="50" fill="currentColor" opacity="0.9"/>
+
+          <!-- REAR SUSPENSION ARMS -->
+          <path d="M 49 188 L 26 184 M 49 196 L 26 198 M 71 188 L 94 184 M 71 196 L 94 198"
+                stroke="currentColor" stroke-width="2.4" opacity="0.8" fill="none"/>
+
+          <!-- REAR TIRES (wider) + rims + bands -->
+          <rect x="2"   y="174" width="25" height="38" rx="8" fill="#0c0a0c"/>
+          <rect x="93"  y="174" width="25" height="38" rx="8" fill="#0c0a0c"/>
+          <rect x="10"  y="181" width="9"  height="24" rx="4" fill="#241d20"/>
+          <rect x="101" y="181" width="9"  height="24" rx="4" fill="#241d20"/>
+          <rect x="2"   y="174" width="25" height="4.5" rx="2" fill="#ff1f3d" opacity="0.85"/>
+          <rect x="93"  y="174" width="25" height="4.5" rx="2" fill="#ff1f3d" opacity="0.85"/>
+
+          <!-- gearbox taper -->
+          <path d="M 49 178 L 71 178 L 68 214 L 52 214 Z" fill="currentColor" opacity="0.95"/>
+
+          <!-- REAR WING: two elements + endplates + DRS stripe -->
+          <rect x="14"  y="218" width="92" height="9" rx="3" fill="currentColor"/>
+          <rect x="18"  y="230" width="84" height="5" rx="2" fill="currentColor" opacity="0.85"/>
+          <rect x="11"  y="212" width="6" height="28" rx="2" fill="currentColor"/>
+          <rect x="103" y="212" width="6" height="28" rx="2" fill="currentColor"/>
+          <rect x="48"  y="218" width="24" height="9" fill="#ff1f3d"/>
+
+          <!-- rain light -->
+          <rect x="56" y="242" width="8" height="9" rx="2" fill="#ff1f3d"/>
         </symbol>
       </defs>
     </svg>
 
+    <!-- STARTING GRID — real staggered F1 formation: continuous centre
+         line, pole box RIGHT of the line, P2 LEFT and behind, alternating.
+         Grid marks + numbers reveal on scroll, then each car drives in. -->
     <div class="grid">
       <div class="grid__startline" aria-hidden="true">
         <span class="grid__startline-flag"></span>
@@ -385,24 +446,24 @@
       </div>
 
       <article class="grid__slot grid__slot--right" data-step data-pos="1">
-        <div class="grid__car">
-          <span class="grid__pos mono">01</span>
-          <svg class="f1-car" aria-hidden="true"><use href="#f1car"/></svg>
-          <span class="grid__marker" aria-hidden="true"></span>
-        </div>
         <div class="step__content">
           <span class="step__label mono">— FORMATION LAP · POLE POSITION</span>
           <h3>Discovery</h3>
           <p>Wir zerlegen dein Geschäftsmodell, deine Zielgruppe und deine Konkurrenz. Ohne Briefing kein Sieg.</p>
           <span class="step__time mono">Ø 1 Woche</span>
         </div>
+        <div class="grid__box" aria-hidden="true">
+          <span class="grid__pos mono">01</span>
+          <span class="grid__mark"></span>
+          <svg class="f1-car"><use href="#f1car"/></svg>
+        </div>
       </article>
 
       <article class="grid__slot grid__slot--left" data-step data-pos="2">
-        <div class="grid__car">
+        <div class="grid__box" aria-hidden="true">
           <span class="grid__pos mono">02</span>
-          <svg class="f1-car" aria-hidden="true"><use href="#f1car"/></svg>
-          <span class="grid__marker" aria-hidden="true"></span>
+          <span class="grid__mark"></span>
+          <svg class="f1-car"><use href="#f1car"/></svg>
         </div>
         <div class="step__content">
           <span class="step__label mono">— PIT BOX · KONZEPTION</span>
@@ -413,24 +474,24 @@
       </article>
 
       <article class="grid__slot grid__slot--right" data-step data-pos="3">
-        <div class="grid__car">
-          <span class="grid__pos mono">03</span>
-          <svg class="f1-car" aria-hidden="true"><use href="#f1car"/></svg>
-          <span class="grid__marker" aria-hidden="true"></span>
-        </div>
         <div class="step__content">
           <span class="step__label mono">— FULL THROTTLE · BUILD</span>
           <h3>Development</h3>
           <p>Code, Motion, Integration. Saubere Architektur, lückenlose Performance, jede Animation auf 60fps.</p>
           <span class="step__time mono">Ø 2–4 Wochen</span>
         </div>
+        <div class="grid__box" aria-hidden="true">
+          <span class="grid__pos mono">03</span>
+          <span class="grid__mark"></span>
+          <svg class="f1-car"><use href="#f1car"/></svg>
+        </div>
       </article>
 
       <article class="grid__slot grid__slot--left" data-step data-pos="4">
-        <div class="grid__car">
+        <div class="grid__box" aria-hidden="true">
           <span class="grid__pos mono">04</span>
-          <svg class="f1-car" aria-hidden="true"><use href="#f1car"/></svg>
-          <span class="grid__marker" aria-hidden="true"></span>
+          <span class="grid__mark"></span>
+          <svg class="f1-car"><use href="#f1car"/></svg>
         </div>
         <div class="step__content">
           <span class="step__label mono">— CHECKERED FLAG · GO-LIVE</span>
@@ -610,6 +671,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260601a"></script>
+  <script src="assets/js/main.js?v=20260610c"></script>
 </body>
 </html>
