@@ -51,8 +51,8 @@
 ├── angebot.html           # „Was wir anbieten" – interaktiver Solar-Explorer (solar.js)
 ├── about.html             # Über Uns – Ping-Pong-Video-Hintergrund (.bg-loop, Boomerang), kein Scrub/Solar
 ├── team.html              # Team – Video als FULL-PAGE Scroll-Scrub-Hintergrund (#teamBg)
-├── partner.html           # Partner (kein Solar)
-├── kontakt.html           # Kontakt + Google Maps (kein Solar)
+├── partner.html           # Partner – Ping-Pong-Video-Hintergrund (.bg-loop), kein Solar
+├── kontakt.html           # Kontakt + Google Maps – Ping-Pong-Video-Hintergrund (.bg-loop)
 ├── impressum.html         # Impressum, Datenschutz, AGB (DDG + DSGVO konform)
 ├── CLAUDE.md              # ← diese Datei
 └── assets/
@@ -67,7 +67,9 @@
     │   ├── scroll-mobile.mp4     # Mobile Background-Loop Homepage (9:16)
     │   ├── team-reel.mp4         # Team Full-Page Desktop-Scrub (16:9, keyint=1)
     │   ├── team-reel-mobile.mp4  # Team Full-Page Mobile-Loop (16:9)
-    │   └── about-boomerang.mp4   # Über-Uns Ping-Pong-Hintergrund (vorwärts+rückwärts, native loop)
+    │   ├── about-boomerang.mp4   # Über-Uns Ping-Pong-Hintergrund (vorwärts+rückwärts, native loop)
+    │   ├── partner-boomerang.mp4 # Partner Ping-Pong-Hintergrund (Quelle wie about: 3.1)
+    │   └── kontakt-boomerang.mp4 # Kontakt Ping-Pong-Hintergrund (Quelle: 10.1)
     └── images/            # Logo + frei für echte Case-Visuals
 ```
 
@@ -98,6 +100,7 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 ### 5.1 Scroll-Scrub-Video — wiederverwendbare `proxyScrub()`-Engine (`main.js`)
 - **Eine Engine, zwei Einsätze**: die Hybrid-Proxy-Scrub-Pipeline (§5A/§13) ist als `function proxyScrub({ wrap, video, canvas, src, computeProg })` faktorisiert (Function-Declaration → gehoisted). Genutzt von **(a)** dem Homepage-Hintergrund (`#bgScroll`, `computeProg` = `#manifesto`→`.contact`, blendet an den Rändern aus) und **(b)** dem **Team-Full-Page-Hintergrund** (`#teamBg` auf team.html, `computeProg` = GANZE-Seite-Fortschritt `scrollY / (scrollHeight − innerHeight)`, immer sichtbar via `.bg-scroll--page { opacity:1 }` + `.bg-scroll-tint` für Textlesbarkeit). Mobile (≤900px) ruft `proxyScrub` NICHT auf — schlichter Autoplay-Loop (§5.6).
 - **Endpunkt-Snap**: beim Deaktivieren (prog 0/1) snappt `currentTime` auf den ersten/letzten Frame; nach der Proxy-Extraktion wird auf 0 zurückgesetzt. Wichtig für **immer sichtbare** Hintergründe wie den Team-BG (der Homepage-BG ist im Ruhezustand ausgeblendet, daher dort unsichtbar).
+- **Nicht-Scrub-Hintergründe** (`.bg-loop` auf about/partner/kontakt): einfache, fixe Endlos-Videos OHNE Scroll-Kopplung. `<video autoplay loop muted playsinline>` + `.bg-scroll-tint` für Lesbarkeit; main.js stupst `play()` an. **Ping-Pong (vor→zurück→vor…)**: KEIN negativer `playbackRate` (browserweit nicht unterstützt) und KEIN manuelles Rückwärts-Seeken (ruckelt) — stattdessen eine **vorgerenderte Boomerang-Datei** (ffmpeg `split` → `reverse` → `concat=n=2`) nativ loopen. Smooth, iOS-sicher, kein JS. Befehl: `ffmpeg -i src -filter_complex "[0:v]scale=1920:-2,fps=24,split[a][b];[b]reverse[r];[a][r]concat=n=2:v=1[v]" -map "[v]" -an -c:v libx264 -crf 23 -movflags +faststart out.mp4`.
 - **Funktioniert so**: Video ist fixed, `position: fixed; inset: 0; z-index: -3;`. `video.currentTime` wird in einer `requestAnimationFrame`-Loop **gelerpt** Richtung Scroll-Target.
 - **Warum lerpen**: Browser drosseln direktes `currentTime`-Setzen. Lerp glättet die Bewegung und vermeidet Stutter.
 - **Aktiv-Bereich**: ab `#manifesto`, endet bei 60% von `.contact` (siehe `computeTarget()`).

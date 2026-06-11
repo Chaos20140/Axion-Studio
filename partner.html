@@ -13,6 +13,14 @@
   <link rel="stylesheet" href="assets/css/style.css?v=20260611c" />
 </head>
 <body>
+  <!-- FULL-PAGE ping-pong background (forward → reverse → …), pre-rendered boomerang + native loop -->
+  <div class="bg-loop" aria-hidden="true">
+    <video class="bg-loop__video" autoplay loop muted playsinline preload="auto">
+      <source src="assets/video/partner-boomerang.mp4?v=20260611c" type="video/mp4" />
+    </video>
+  </div>
+  <div class="bg-scroll-tint" aria-hidden="true"></div>
+
   <div class="noise" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
