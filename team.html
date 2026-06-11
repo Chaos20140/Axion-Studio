@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260611c" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260611d" />
 </head>
-<body>
+<body class="reel-live">
   <div class="noise" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
@@ -29,6 +29,12 @@
     <canvas id="teamBgCanvas" class="bg-scroll__canvas" aria-hidden="true"></canvas>
   </div>
   <div class="bg-scroll-tint" aria-hidden="true"></div>
+
+  <!-- REEL-REACTIVE LIGHT: a thin strip wanders down the page in sync with the bg
+       video's black→white moment, clothing the page above it in a lighter tone
+       (screen blend → the video stays visible), then recedes again. -->
+  <div class="reel-wash" aria-hidden="true"></div>
+  <div class="reel-strip" aria-hidden="true"></div>
 
   <header class="nav is-scrolled" id="nav">
     <a href="index.html" class="nav__logo" aria-label="APEX/THRUST MEDIA — Startseite">
@@ -139,6 +145,38 @@
 
     <section class="page-section">
       <div class="page-section__head">
+        <span class="num">/ METHODE</span>
+        <span>Wie wir fahren</span>
+        <span class="line"></span>
+      </div>
+      <div class="page-grid">
+        <dl class="page-grid__meta">
+          <dt>Takt</dt>
+          <dd>Sprint statt Marathon</dd>
+          <dt>Kontakt</dt>
+          <dd>Direkt zum Macher</dd>
+          <dt>Tempo</dt>
+          <dd>Erste Ergebnisse in Tagen</dd>
+          <dt>Limit</dt>
+          <dd>Max. vier Projekte gleichzeitig</dd>
+        </dl>
+        <div>
+          <h2>Ein Team. <em>Volle Kontrolle.</em></h2>
+          <p>
+            Keine Übergaben, keine Stille Post. Wer dein Projekt plant, baut es auch —
+            vom ersten Wireframe bis zur letzten Animation. Das hält die Linie sauber
+            und das Tempo hoch.
+          </p>
+          <p>
+            Wir arbeiten in kurzen, sichtbaren Etappen. Du siehst, woran wir schrauben,
+            bevor es lackiert ist — und kannst jederzeit nachsteuern.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="page-section">
+      <div class="page-section__head">
         <span class="num">/ CULTURE</span>
         <span>How we run</span>
         <span class="line"></span>
@@ -168,6 +206,26 @@
           </p>
         </div>
       </div>
+    </section>
+
+    <section class="page-section">
+      <div class="page-section__head">
+        <span class="num">/ SIGNAL</span>
+        <span>Vom Schatten ins Licht</span>
+        <span class="line"></span>
+      </div>
+      <h2>Wir machen aus <em>Unscheinbar</em> Unübersehbar.</h2>
+      <p>
+        Dieselbe Maschine, zwei Gesichter: was eben noch im Dunkeln stand, fährt im
+        nächsten Moment ins Rampenlicht. Genau diesen Wechsel bauen wir für deine Marke —
+        sichtbar, schnell, kompromisslos.
+      </p>
+      <p style="margin-top: 28px;">
+        <a href="kontakt.html" class="nav__cta" data-magnetic style="display: inline-flex;">
+          <span>Briefing senden</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
+        </a>
+      </p>
     </section>
   </main>
 
@@ -213,6 +271,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260611c"></script>
+  <script src="assets/js/main.js?v=20260611d"></script>
 </body>
 </html>

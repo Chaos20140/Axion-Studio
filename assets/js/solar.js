@@ -503,8 +503,23 @@ import * as THREE from "three";
     return inside;
   };
 
+  /* ---------- ORBIT DRAG — move around the system (mouse + touch) ---------- */
+  let dragging = false, lastX = 0, lastY = 0;
+  let userRotY = 0, userRotX = 0;          // accumulated drag target
+  let curRotY = 0, curRotX = 0, autoSpin = 0;  // smoothed / applied in render
+  const insideCanvas = (x, y) => {
+    const r = canvasRect;
+    return !!r && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  };
+
   window.addEventListener("pointermove", (e) => {
     if (!toLocalNdc(e.clientX, e.clientY)) pointerNdc.set(10, 10);
+    if (dragging) {
+      userRotY += (e.clientX - lastX) * 0.006;
+      userRotX += (e.clientY - lastY) * 0.004;
+      userRotX = Math.max(-0.55, Math.min(0.75, userRotX));  // limit vertical tilt
+      lastX = e.clientX; lastY = e.clientY;
+    }
   }, { passive: true });
 
   const openPanel = (cfg) => {
@@ -528,11 +543,23 @@ import * as THREE from "three";
     linkSvg?.classList.remove("is-on");
   }
 
-  window.addEventListener("click", (e) => {
-    // Guard: only Element targets have closest(); ignore exotic targets.
+  // Tap/click picking via POINTER events (mouse + touch + pen, uniform). A plain
+  // `click` is unreliable on touch (mobile planets weren't selectable). A tap =
+  // pointerdown + pointerup at ~the same spot within a short time; drags/scrolls
+  // (moved too far) are ignored so flicking the page never opens a planet.
+  let downX = 0, downY = 0, downT = 0;
+  window.addEventListener("pointerdown", (e) => {
+    downX = lastX = e.clientX; downY = lastY = e.clientY; downT = e.timeStamp;
+    const tt = e.target;
+    const onUI = tt && typeof tt.closest === "function" && tt.closest(INTERACTIVE_SEL);
+    dragging = !onUI && insideCanvas(e.clientX, e.clientY);  // drag the system, not UI
+  }, { passive: true });
+  window.addEventListener("pointerup", (e) => {
+    dragging = false;
+    if (Math.hypot(e.clientX - downX, e.clientY - downY) > 14) return;  // was an orbit drag
+    if (e.timeStamp - downT > 700) return;                              // a long-press
     const t = e.target;
     if (t && typeof t.closest === "function" && t.closest(INTERACTIVE_SEL)) return;
-    // Require the click to land inside the section, then raycast.
     if (!toLocalNdc(e.clientX, e.clientY)) return;
     raycaster.setFromCamera(pointerNdc, camera);
     const hit = raycaster.intersectObjects(pickables, false)[0];
@@ -542,7 +569,8 @@ import * as THREE from "three";
     } else if (selected) {
       closePanel();
     }
-  });
+  }, { passive: true });
+  window.addEventListener("pointercancel", () => { dragging = false; }, { passive: true });
   pClose?.addEventListener("click", closePanel);
   // Re-measure once the slide-in transition settles (transform changes the box)
   panel?.addEventListener("transitionend", refreshPanelRect);
@@ -614,7 +642,12 @@ import * as THREE from "three";
       p.mesh.rotation.y += dt * 0.3 * speedMul;
       p.uniforms.uTime.value = (p.uniforms.uTime.value + dt) % 1000;
     }
-    system.rotation.y += dt * 0.015 * speedMul;
+    // auto-spin + user orbit drag (smoothed)
+    autoSpin += dt * 0.015 * speedMul;
+    curRotY = lerp(curRotY, userRotY, 0.12);
+    curRotX = lerp(curRotX, userRotX, 0.12);
+    system.rotation.y = autoSpin + curRotY;
+    system.rotation.x = 0.34 + curRotX;
 
     sunPulse += dt * 1.6 * speedMul;
     sunGlow.scale.setScalar(6.8 + Math.sin(sunPulse) * 0.5);

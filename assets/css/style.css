@@ -111,6 +111,55 @@ input, textarea, select { font: inherit; color: inherit; }
   filter: contrast(1.1) saturate(1.25);
   transform: scale(1.04);
 }
+/* Kontakt mobile: the car front sits on the left of the frame — shift the
+   cover crop left so the front reads centred in the portrait slice. */
+@media (max-width: 900px) {
+  /* feature the front tire: pull the cover-crop left + drop the slight zoom-in. */
+  .bg-loop__video--front { object-position: 12% 50%; transform: scale(1.0); }
+}
+
+/* =========================================================
+   REEL-REACTIVE LIGHT (team.html). main.js sets --reel-flash
+   (0..1) from the bg video's currentTime, peaking when the black
+   car turns white (~11–12s). The page then shifts into a LIGHT
+   tone from the INSIDE OUT: a light wash opens centre→edges (two
+   bright edges sweep apart) and the white text inverts to dark —
+   like the video's reveal projected onto the page. color-mix has
+   plain fallbacks so old browsers degrade to the base colours.
+   ========================================================= */
+@property --reel-flash {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+:root { --reel-flash: 0; }
+/* A thin light strip wanders DOWN the page in sync with the bg video's
+   black→white moment, clothing the page above it in a lighter SCREEN tone
+   (screen only ADDS light → the video always stays visible), then recedes
+   (reverses) as the car turns back. Driven continuously by --reel-flash. */
+.reel-wash {
+  position: fixed; left: 0; right: 0; top: 0;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background: linear-gradient(180deg, rgba(223, 233, 247, 0.52), rgba(212, 225, 243, 0.40));
+  /* clothe [top → strip] in light: reveal from the top down to the strip line */
+  clip-path: inset(0 0 calc((1 - var(--reel-flash)) * 100%) 0);
+  will-change: clip-path;
+}
+.reel-strip {
+  position: fixed; left: 0; right: 0;
+  top: calc(var(--reel-flash) * 100%);
+  height: 2px;
+  z-index: 26;
+  pointer-events: none;
+  transform: translateY(-50%);
+  mix-blend-mode: screen;
+  background: linear-gradient(90deg, transparent, #ffffff 16%, #ffffff 84%, transparent);
+  box-shadow: 0 0 30px 7px rgba(255, 255, 255, 0.92);
+  opacity: clamp(0, calc(var(--reel-flash) * 8), 1);
+}
 .bg-scroll__video {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -880,7 +929,10 @@ body.nav-open { overflow: hidden; }
   position: absolute; inset: 0;
   z-index: 0;
   width: 100%; height: 100%;
-  pointer-events: none;
+  /* draggable surface: orbit the system. touch-action pan-y keeps vertical
+     page-scroll working while horizontal drags rotate the system on mobile. */
+  pointer-events: auto;
+  touch-action: pan-y;
 }
 .services--solar .services__intro {
   position: relative;
