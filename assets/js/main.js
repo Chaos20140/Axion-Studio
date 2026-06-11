@@ -357,6 +357,17 @@
     });
   })();
 
+  /* ---- Plain infinite background loop (about.html #bg-loop) — no scrub,
+          just an autoplay loop. Nudge play() in case the attribute is gated. ---- */
+  (() => {
+    const v = $(".bg-loop__video");
+    if (!v) return;
+    const play = () => v.play().catch(() => {});
+    v.addEventListener("loadeddata", play, { once: true });
+    document.addEventListener("touchstart", play, { once: true });
+    play();
+  })();
+
   /* =========================================================
      REUSABLE hybrid "proxy scrub" — buttery motion AND zero
      quality loss at rest (CLAUDE.md §5A / §13).

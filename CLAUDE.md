@@ -49,7 +49,7 @@
 .
 ├── index.html             # Hauptseite – Services = 4 Karten, verlinken auf angebot.html
 ├── angebot.html           # „Was wir anbieten" – interaktiver Solar-Explorer (solar.js)
-├── about.html             # Über Uns (3D-F1-Modell auskommentiert, kein Solar)
+├── about.html             # Über Uns – Ping-Pong-Video-Hintergrund (.bg-loop, Boomerang), kein Scrub/Solar
 ├── team.html              # Team – Video als FULL-PAGE Scroll-Scrub-Hintergrund (#teamBg)
 ├── partner.html           # Partner (kein Solar)
 ├── kontakt.html           # Kontakt + Google Maps (kein Solar)
@@ -66,7 +66,8 @@
     │   ├── scroll.mp4            # Desktop Scroll-Scrub Background Homepage (16:9)
     │   ├── scroll-mobile.mp4     # Mobile Background-Loop Homepage (9:16)
     │   ├── team-reel.mp4         # Team Full-Page Desktop-Scrub (16:9, keyint=1)
-    │   └── team-reel-mobile.mp4  # Team Full-Page Mobile-Loop (16:9)
+    │   ├── team-reel-mobile.mp4  # Team Full-Page Mobile-Loop (16:9)
+    │   └── about-boomerang.mp4   # Über-Uns Ping-Pong-Hintergrund (vorwärts+rückwärts, native loop)
     └── images/            # Logo + frei für echte Case-Visuals
 ```
 

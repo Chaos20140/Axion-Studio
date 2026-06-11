@@ -98,6 +98,19 @@ input, textarea, select { font: inherit; color: inherit; }
     rgba(6, 3, 5, 0.64) 62%,
     rgba(6, 3, 5, 0.88) 100%);
 }
+/* Infinite background loop (about.html): a plain autoplay loop, no scrub. */
+.bg-loop {
+  position: fixed; inset: 0;
+  z-index: -3;
+  pointer-events: none;
+}
+.bg-loop__video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(1.1) saturate(1.25);
+  transform: scale(1.04);
+}
 .bg-scroll__video {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
