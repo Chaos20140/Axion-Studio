@@ -76,7 +76,7 @@
 1. **Hero** — Hero-Video als Background, riesiges Anton-Display, Ecken-Telemetrie, Marquee am Ende.
 2. **Manifesto** (`#manifesto`) — Statement + Stat-Counter.
 3. **Services** (`#services`) — 2×2 Grid, Hover-Glow folgt der Maus.
-4. **Engineering** (`#engineering`) — Three.js Icosahedron mit Displacement-Shader, sticky 220vh.
+4. **Engineering** (`#engineering`) — sticky Kinetik-Typografie-Phasen (`.phases` → `.phase` CRAFT / VELOCITY / EDGE), Char-Rise-Animation, sticky ~320vh (Desktop) bis 220vh (Mobile). *(Bis v2 ein Three.js-Icosahedron mit Displacement-Shader — in v3 entfernt, siehe §5.2.)*
 5. **Process** (`#process`) — vertikale Neon-Linie + pulsierende Steps.
 6. **Work** (`#work`) — 12-col Grid, Case-Visuals aus CSS-Gradienten oder echten Bildern.
 7. **Big Marquee** (Vollrot).
@@ -97,14 +97,11 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 - **Performance**: Video MUSS `preload="auto"` haben, sonst springt's beim ersten Sichtbarwerden.
 - **Bekanntes Limit**: für butterweichen Scrub sollte das Video mit **alle-Frames-Keyframes** encoded sein (`ffmpeg -i src.mp4 -c:v libx264 -x264opts keyint=1 -g 1 -an out.mp4`). Wenn der Nutzer mehr Smoothness will → das ist die Lösung.
 
-### 5.2 Three.js — Engineering-Szene
-- **Mesh**: `IcosahedronGeometry(1.35, 32)` mit ShaderMaterial.
-- **Shader**: 3D-Simplex-Noise verschiebt Vertices entlang der Normalen. `uDeform` wird mit Scroll-Progress gelerpt.
-- **Wireframe-Overlay**: separate `LineSegments` mit `WireframeGeometry(IcosahedronGeometry(1.36, 4))`.
-- **Partikel**: 1400 Points additiv geblendet als Ring.
-- **Rendert nur, wenn sichtbar** — `IntersectionObserver` togglet `visible`. Render-Loop pausiert effektiv off-screen.
-- **DPR-Cap**: `Math.min(devicePixelRatio, 2)` — kein 3x auf Retina, sonst stottert's auf MacBook Pros.
-- **Geometrie ändern**: Vertex-Count steht in `vtxCount` Telemetrie — bei Änderung anpassen.
+### 5.2 Engineering-Szene — Kinetik-Typografie (Three.js in v3 entfernt)
+- **Aktueller Stand**: `.engineering` ist eine sticky Section (`.phases` enthält drei `.phase`-Artikel: CRAFT / VELOCITY / EDGE). Beim Durchscrollen wird je `.phase` `.is-active` getoggelt; die Headline-Chars steigen per `charRise`-Keyframe (`.phase__title .char`, gestaffelt über `--i`). **Kein WebGL auf der Homepage** — die Engineering-Bühne ist reine CSS-Typo + Video-Color-Treatments.
+- **Sticky-Höhe**: `min-height: 320vh` (Desktop) → `280vh` (≤ Tablet) → `220vh` (Mobile). Pin-Effekt rein über `position: sticky` des inneren Containers, kein GSAP-Pin nötig.
+- **Warum entfernt** (v2 → v3): der frühere Three.js-Icosahedron (`IcosahedronGeometry` + Displacement-Shader, Wireframe-Overlay, 1400-Punkt-Partikelring) wurde gestrichen — die Three.js-CDN-Tag ist aus `index.html` raus, der JS-Block ist auskommentiert ([main.js](assets/js/main.js), „THREE.JS block removed in v3"). Damit hat die Homepage **null aktive WebGL-Contexts** (der Scroll-Proxy ist ein **2D**-Canvas). Wichtig für §5B/§5.7: nur die Subpages (`solar.js`) halten je einen WebGL-Context.
+- **Re-Enable-Regel**: Wer den Icosahedron zurückholt, baut einen neuen WebGL-Context auf der Homepage auf → dann §6/§5.7-Budget prüfen (DPR clampen, IntersectionObserver-Gate, Off-Screen-Pause) und sicherstellen, dass keine zweite Szene gleichzeitig läuft.
 
 ### 5.3 GSAP / ScrollTrigger
 - Wird nur aktiviert, wenn `window.gsap && window.ScrollTrigger && !reduce`.
@@ -240,7 +237,7 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 [ ] Hero lädt mit Video-Background, keine grauen Frames.
 [ ] Scrollt man zum Manifesto, fadet das Scroll-Video sanft ein.
 [ ] Scrollen vorwärts spielt das Scroll-Video vorwärts, rückwärts rückwärts.
-[ ] Engineering-Section: Icosahedron rotiert, deformt mit Scroll, reagiert auf Maus.
+[ ] Engineering-Section: sticky Phasen (CRAFT/VELOCITY/EDGE), Headline-Chars steigen beim Scrollen sauber ein.
 [ ] FPS in DevTools-Performance ≥ 55 auf normalem Laptop.
 [ ] Kein Console-Error (außer `favicon.ico` 404 — egal).
 [ ] Mobile (DevTools-Resize <600px): Sections stapeln, kein Overflow.
