@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260610e" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260611b" />
 </head>
 <body>
 
@@ -53,6 +53,7 @@
     </a>
     <nav class="nav__links">
       <a href="about.html"     data-link>Über Uns</a>
+      <a href="angebot.html"   data-link>Angebot</a>
       <a href="team.html"      data-link>Team</a>
       <a href="partner.html"   data-link>Partner</a>
       <a href="kontakt.html"   data-link>Kontakt</a>
@@ -75,6 +76,7 @@
     </div>
     <nav class="mobile-nav__links">
       <a href="about.html"     data-mobile-link><em>Über Uns</em></a>
+      <a href="angebot.html"   data-mobile-link><em>Angebot</em></a>
       <a href="team.html"      data-mobile-link><em>Team</em></a>
       <a href="partner.html"   data-mobile-link><em>Partner</em></a>
       <a href="kontakt.html"   data-mobile-link><em>Kontakt</em></a>
@@ -181,7 +183,8 @@
     </div>
   </section>
 
-  <!-- SERVICES -->
+  <!-- SERVICES — the four disciplines; each card links to the dedicated
+       "Was wir anbieten" page (angebot.html) with the solar explorer. -->
   <section class="services" id="services">
     <div class="section-head">
       <span class="section-num">01 / SERVICES</span>
@@ -195,7 +198,7 @@
     </h2>
 
     <div class="services__list">
-      <article class="service" data-service>
+      <a class="service" data-service href="angebot.html">
         <div class="service__head">
           <span class="service__num">/ 01</span>
           <span class="service__tag">CORE</span>
@@ -210,10 +213,11 @@
           <li>Design Systems</li>
           <li>Prototyping</li>
         </ul>
+        <span class="service__more mono">Was wir anbieten →</span>
         <div class="service__glow"></div>
-      </article>
+      </a>
 
-      <article class="service" data-service>
+      <a class="service" data-service href="angebot.html">
         <div class="service__head">
           <span class="service__num">/ 02</span>
           <span class="service__tag">BUILD</span>
@@ -228,10 +232,11 @@
           <li>E-Commerce</li>
           <li>API Integrations</li>
         </ul>
+        <span class="service__more mono">Was wir anbieten →</span>
         <div class="service__glow"></div>
-      </article>
+      </a>
 
-      <article class="service" data-service>
+      <a class="service" data-service href="angebot.html">
         <div class="service__head">
           <span class="service__num">/ 03</span>
           <span class="service__tag">MOTION</span>
@@ -246,10 +251,11 @@
           <li>Microinteractions</li>
           <li>Reels & Showcases</li>
         </ul>
+        <span class="service__more mono">Was wir anbieten →</span>
         <div class="service__glow"></div>
-      </article>
+      </a>
 
-      <article class="service" data-service>
+      <a class="service" data-service href="angebot.html">
         <div class="service__head">
           <span class="service__num">/ 04</span>
           <span class="service__tag">BRAND</span>
@@ -264,8 +270,9 @@
           <li>Guidelines</li>
           <li>Launch Kampagnen</li>
         </ul>
+        <span class="service__more mono">Was wir anbieten →</span>
         <div class="service__glow"></div>
-      </article>
+      </a>
     </div>
   </section>
 
@@ -641,6 +648,7 @@
       <div class="footer__col">
         <span class="mono">/ NAV</span>
         <a href="about.html">Über Uns</a>
+        <a href="angebot.html">Angebot</a>
         <a href="team.html">Team</a>
         <a href="partner.html">Partner</a>
         <a href="#services">Services</a>
@@ -671,6 +679,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260610c"></script>
+  <script src="assets/js/main.js?v=20260611b"></script>
 </body>
 </html>

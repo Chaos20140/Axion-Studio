@@ -84,6 +84,20 @@ input, textarea, select { font: inherit; color: inherit; }
   will-change: opacity;
 }
 .bg-scroll.is-active { opacity: 1; }
+/* Full-page variant (team.html): the video is the page background across the
+   WHOLE scroll, so it stays visible at all times (no edge fade). */
+.bg-scroll--page { opacity: 1; }
+/* Dark tint over the full-page background video so page text stays legible. */
+.bg-scroll-tint {
+  position: fixed; inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(6, 3, 5, 0.80) 0%,
+    rgba(6, 3, 5, 0.60) 36%,
+    rgba(6, 3, 5, 0.64) 62%,
+    rgba(6, 3, 5, 0.88) 100%);
+}
 .bg-scroll__video {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -833,6 +847,53 @@ body.nav-open { overflow: hidden; }
   font-family: var(--font-display-2);
   font-style: italic; color: var(--red);
 }
+
+/* =========================================================
+   WAS WIR ANBIETEN — Services section AS an interactive solar
+   offer explorer. The 4 planets are the 4 disciplines; the HUD
+   panel, hint and leader line stay viewport-fixed (see solar.js),
+   only the canvas is scoped to this section.
+   ========================================================= */
+.services--solar {
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--bg);                 /* opaque: covers the scroll video here */
+  display: flex;
+  align-items: flex-start;
+  padding: clamp(96px, 15vh, 168px) clamp(20px, 4vw, 48px) clamp(40px, 8vh, 90px);
+}
+.solar-section-canvas {                  /* fills the section, behind the content */
+  position: absolute; inset: 0;
+  z-index: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.services--solar .services__intro {
+  position: relative;
+  z-index: 4;
+  pointer-events: none;                  /* clicks fall through to the planets */
+  max-width: min(560px, 82vw);
+}
+.services--solar .services__intro a,
+.services--solar .services__cue { pointer-events: auto; }
+.services--solar .services__title { margin: 18px 0 16px; }
+.services__cue {
+  font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.services__cue b { color: var(--red); }
+
+/* Service cards are now links → angebot.html ("Was wir anbieten") */
+.services__list a.service { color: inherit; text-decoration: none; }
+.service__more {
+  display: inline-block;
+  margin-top: 20px;
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--red);
+  transition: padding-left 0.3s var(--ease-out);
+}
+.service:hover .service__more { padding-left: 8px; }
 
 .services__list {
   display: grid; grid-template-columns: repeat(2, 1fr);
@@ -2600,6 +2661,114 @@ body.nav-open { overflow: hidden; }
 }
 .page-section p em { color: var(--red); font-style: italic; }
 .page-section p strong { color: var(--ink); font-weight: 700; }
+
+/* =========================================================
+   TEAM SHOWREEL — full-bleed sticky scroll-scrub video.
+   Driven by the SAME proxyScrub() engine as the homepage bg
+   (main.js). Native <video> is always visible (full quality
+   at rest); the <canvas> proxy shows only during scroll.
+   ========================================================= */
+.team-reel {
+  position: relative;
+  height: 300vh;                 /* scroll distance that drives the scrub */
+  margin: clamp(48px, 9vh, 120px) 0;
+}
+.team-reel__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;                /* iOS: account for browser chrome */
+  overflow: hidden;
+  background: #000;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.team-reel__media { position: absolute; inset: 0; }
+/* CRITICAL: filter + transform MUST be byte-identical on video and
+   canvas, or the proxy↔native handoff visibly pops (CLAUDE.md §13.3). */
+.team-reel__video,
+.team-reel__canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(1.12) saturate(1.32) brightness(1.0);
+  transform: scale(1.05);
+}
+.team-reel__video { will-change: transform; }
+.team-reel__canvas {
+  opacity: 0;
+  transition: opacity 0.22s linear;
+  will-change: opacity;
+}
+.team-reel__scrim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6,3,5,0.5) 0%, transparent 24%, transparent 54%, rgba(6,3,5,0.85) 100%),
+    radial-gradient(120% 80% at 50% 120%, rgba(255,31,61,0.15), transparent 60%);
+  pointer-events: none;
+  z-index: 2;
+}
+.team-reel__corner {
+  position: absolute;
+  display: flex; flex-direction: column; gap: 5px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-dim);
+  padding: clamp(18px, 3vw, 44px);
+  z-index: 3; pointer-events: none;
+}
+.team-reel__corner em { color: var(--red); font-style: normal; }
+.team-reel__corner--tl { top: 0; left: 0; }
+.team-reel__corner--br { bottom: 0; right: 0; text-align: right; align-items: flex-end; }
+.team-reel__content {
+  position: absolute;
+  left: clamp(20px, 5vw, 80px);
+  bottom: clamp(40px, 8vh, 96px);
+  z-index: 3;
+  max-width: min(760px, 86vw);
+  pointer-events: none;
+}
+.team-reel__kicker {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--red);
+  display: inline-block; margin-bottom: 14px;
+}
+.team-reel__title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 8vw, 120px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--ink);
+  text-shadow: 0 4px 44px rgba(6, 3, 5, 0.55);
+}
+.team-reel__title em {
+  font-family: var(--font-display-2);
+  font-style: italic;
+  color: var(--red);
+  text-shadow: 0 0 42px rgba(var(--red-glow), 0.55);
+}
+.team-reel__cap {
+  font-family: var(--font-mono);
+  font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-top: 18px;
+}
+/* Mobile (CLAUDE.md §5.6): no scrub — a plain looping banner, no tall
+   sticky scroll region (the JS plays team-reel-mobile.mp4 on loop). */
+@media (max-width: 900px) {
+  .team-reel { height: auto; margin: 48px 0; }
+  .team-reel__sticky { position: relative; height: 78vh; min-height: 420px; }
+  .team-reel__title { font-size: clamp(34px, 11vw, 62px); }
+  .team-reel__content { left: 20px; right: 20px; bottom: 30px; }
+  .team-reel__corner { font-size: 9.5px; padding: 16px; }
+}
+/* Reduced motion: collapse the tall scrub region into a static frame */
+@media (prefers-reduced-motion: reduce) {
+  .team-reel { height: auto; }
+  .team-reel__sticky { position: relative; height: 80vh; }
+}
 
 /* Two-column layout */
 .page-grid {

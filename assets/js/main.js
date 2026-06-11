@@ -268,34 +268,35 @@
   });
 
   /* =========================================================
-     BACKGROUND VIDEO — two strategies branched on isMobile.
-     - Mobile: autoplay loop with the 9:16 clip (no scroll-scrub).
-       Phones can't reliably hold ~90 ImageBitmaps in GPU mem and
-       the seek-based scrub is jankier than a clean loop anyway.
-     - Desktop: frame-renderer below (canvas + ImageBitmap cache).
+     BACKGROUND SCROLL VIDEOS — the homepage background AND the
+     team.html showreel both run the SAME reusable hybrid proxy-
+     scrub (proxyScrub factory below; see CLAUDE.md §5A / §13).
+     Mobile: no scrub anywhere — a plain autoplay loop (§5.6).
      ========================================================= */
-  if (isMobile) {
-    const wrap  = $("#bgScroll");
-    const video = $("#bgScrollVideo");
+
+  /* ---- Homepage background video (#bgScroll) ---- */
+  (() => {
+    const wrap   = $("#bgScroll");
+    const video  = $("#bgScrollVideo");
     const canvas = $("#bgScrollCanvas");
+    if (!wrap || !video) return;
     const startEl = $("#manifesto");
     const endEl   = $(".contact") || $("#contact");
-    if (wrap && video && startEl && endEl) {
+    if (!startEl || !endEl) return;
+
+    if (isMobile) {
       canvas?.remove();   // canvas only needed on desktop
       const src = document.createElement("source");
       src.src = "assets/video/scroll-mobile.mp4?v=20260523g";
       src.type = "video/mp4";
       video.appendChild(src);
-      video.loop = true;
-      video.autoplay = true;
-      video.muted = true;
+      video.loop = true; video.autoplay = true; video.muted = true;
       video.setAttribute("muted", "");
       video.setAttribute("playsinline", "");
       video.load();
       const tryPlay = () => video.play().catch(() => {});
       video.addEventListener("loadeddata", tryPlay, { once: true });
       document.addEventListener("touchstart", tryPlay, { once: true });
-
       const onScroll = () => {
         const sTop = startEl.getBoundingClientRect().top + window.scrollY;
         const eBox = endEl.getBoundingClientRect();
@@ -305,35 +306,70 @@
       };
       window.addEventListener("scroll", onScroll, { passive: true });
       onScroll();
+      return;
     }
-  } else {
-  /* =========================================================
-     SCROLL-SCRUB BACKGROUND VIDEO — hybrid "proxy scrub"
-     Goals: buttery motion AND zero quality loss at rest.
+    if (!canvas) return;
+    proxyScrub({
+      wrap, video, canvas,
+      src: "assets/video/scroll.mp4?v=20260523g",
+      computeProg: () => {
+        const sTop = startEl.getBoundingClientRect().top + window.scrollY;
+        const eBox = endEl.getBoundingClientRect();
+        const eBottom = eBox.top + window.scrollY + eBox.height * 0.7;
+        const scrollMid = window.scrollY + window.innerHeight * 0.5;
+        return clamp((scrollMid - sTop) / (eBottom - sTop), 0, 1);
+      },
+    });
+  })();
 
-     - The NATIVE <video> is the always-visible layer → whenever
-       the scroll settles you see the codec's full-resolution
-       frame. No downscaled stills, no quality loss.
-     - Seeks go through a manager that keeps exactly ONE seek in
-       flight (waits for 'seeked' before issuing the next). Blind
-       per-frame seeking queues up inside the decoder and THAT
-       was the visible stutter.
-     - During motion, a low-res PROXY strip (≤96 frames @ ~960px,
-       ~170 MB instead of the old >1 GB that crashed weaker GPUs)
-       is drawn frame-blended on the canvas overlay. Fast motion
-       hides the lower resolution; when motion stops the canvas
-       fades out and reveals the crisp native frame underneath.
-     ========================================================= */
+  /* ---- Team page: FULL-PAGE scroll-scrub background video (team.html).
+          The clip scrubs across the ENTIRE page scroll; content sits on top
+          with a tint for legibility (.bg-scroll--page stays always-visible). ---- */
   (() => {
-    const wrap   = $("#bgScroll");
-    const video  = $("#bgScrollVideo");
-    const canvas = $("#bgScrollCanvas");
-    if (!wrap || !video || !canvas) return;
+    const wrap   = $("#teamBg");
+    const video  = $("#teamBgVideo");
+    const canvas = $("#teamBgCanvas");
+    if (!wrap || !video) return;
 
-    const startEl = $("#manifesto");
-    const endEl   = $(".contact") || $("#contact");
-    if (!startEl || !endEl) return;
+    if (isMobile) {
+      canvas?.remove();
+      const src = document.createElement("source");
+      src.src = "assets/video/team-reel-mobile.mp4?v=20260611a";
+      src.type = "video/mp4";
+      video.appendChild(src);
+      video.loop = true; video.autoplay = true; video.muted = true;
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.load();
+      const tryPlay = () => video.play().catch(() => {});
+      video.addEventListener("loadeddata", tryPlay, { once: true });
+      document.addEventListener("touchstart", tryPlay, { once: true });
+      return;
+    }
+    if (!canvas) return;
+    proxyScrub({
+      wrap, video, canvas,
+      src: "assets/video/team-reel.mp4?v=20260611a",
+      computeProg: () => {
+        const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+        return clamp(window.scrollY / max, 0, 1);
+      },
+    });
+  })();
 
+  /* =========================================================
+     REUSABLE hybrid "proxy scrub" — buttery motion AND zero
+     quality loss at rest (CLAUDE.md §5A / §13).
+     - The NATIVE <video> is the always-visible layer → at rest
+       you see the codec's full-resolution frame. No quality loss.
+     - Seeks go through a manager that keeps exactly ONE seek in
+       flight (waits for 'seeked' before the next) — that one rule
+       kills the decoder seek pile-up that IS the visible stutter.
+     - During motion a low-res PROXY strip (≤96 frames @ ~960px)
+       is frame-blended on the canvas, then fades out at rest to
+       reveal the crisp native frame underneath.
+     ========================================================= */
+  function proxyScrub({ wrap, video, canvas, src: srcUrl, computeProg }) {
     const FRAME_TARGET = reduce ? 10 : 96;
     const PROXY_W = 960;                       // proxy strip width (motion-only)
 
@@ -376,15 +412,6 @@
     sizeCanvas();
     window.addEventListener("resize", sizeCanvas);
 
-    /* ---- scroll progress across manifesto → contact ---- */
-    const computeProg = () => {
-      const sTop = startEl.getBoundingClientRect().top + window.scrollY;
-      const eBox = endEl.getBoundingClientRect();
-      const eBottom = eBox.top + window.scrollY + eBox.height * 0.7;
-      const scrollMid = window.scrollY + window.innerHeight * 0.5;
-      return clamp((scrollMid - sTop) / (eBottom - sTop), 0, 1);
-    };
-
     /* ---- frame-blended proxy draw (cover-fit) ---- */
     const drawAt = (prog) => {
       if (!framesReady || frames.length === 0) return;
@@ -419,6 +446,18 @@
       if (wantActive !== active) {
         active = wantActive;
         wrap.classList.toggle("is-active", active);
+        if (!active) {
+          if (proxyShown) {                    // clear any stale proxy frame
+            proxyShown = false;
+            canvas.style.opacity = "0";
+          }
+          // snap the resting frame to the exact endpoint (first / last),
+          // so an always-visible scrub (e.g. the team reel) shows the right
+          // still at progress 0 and 1. Harmless on the hidden homepage bg.
+          if (duration && sourceLoaded) {
+            try { video.currentTime = targetProg >= 1 ? duration - 0.05 : 0; } catch (_) {}
+          }
+        }
       }
       if (!active) return;
 
@@ -444,10 +483,10 @@
 
     /* ---- attach source late (after first paint) ---- */
     const attachSource = () => {
-      const src = document.createElement("source");
-      src.src = "assets/video/scroll.mp4?v=20260523g";
-      src.type = "video/mp4";
-      video.appendChild(src);
+      const srcEl = document.createElement("source");
+      srcEl.src = srcUrl;
+      srcEl.type = "video/mp4";
+      video.appendChild(srcEl);
       video.load();
     };
 
@@ -480,6 +519,9 @@
         video.pause();
         video.playbackRate = 1.0;
         pendingSeek = false;
+        // The 4x playthrough leaves currentTime at the end; reset so the
+        // resting frame at progress 0 is the FIRST frame, not the last.
+        try { video.currentTime = 0; } catch (_) {}
       }
     };
 
@@ -554,8 +596,7 @@
 
     if (document.readyState === "complete") attachSource();
     else window.addEventListener("load", attachSource, { once: true });
-  })();
-  }  // end of else (desktop scrub branch)
+  }
 
   /* =========================================================
      ENGINEERING — KINETIC TYPOGRAPHY + COLOR-PLAY

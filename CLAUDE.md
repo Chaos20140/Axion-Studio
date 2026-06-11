@@ -47,25 +47,30 @@
 
 ```
 .
-├── index.html             # Hauptseite – alle Sections
-├── about.html             # Über Uns + 3D-F1-Modell (model.js)
-├── team.html              # Team + Solar-System-BG (solar.js)
-├── partner.html           # Partner + Solar-System-BG
-├── kontakt.html           # Kontakt + Google Maps + Solar-System-BG
+├── index.html             # Hauptseite – Services = 4 Karten, verlinken auf angebot.html
+├── angebot.html           # „Was wir anbieten" – interaktiver Solar-Explorer (solar.js)
+├── about.html             # Über Uns (3D-F1-Modell auskommentiert, kein Solar)
+├── team.html              # Team – Video als FULL-PAGE Scroll-Scrub-Hintergrund (#teamBg)
+├── partner.html           # Partner (kein Solar)
+├── kontakt.html           # Kontakt + Google Maps (kein Solar)
 ├── impressum.html         # Impressum, Datenschutz, AGB (DDG + DSGVO konform)
 ├── CLAUDE.md              # ← diese Datei
 └── assets/
     ├── css/style.css      # Komplettes Stylesheet (Single-File-Strategie)
-    ├── js/main.js         # IIFE, alle Module in einer Datei
-    ├── js/model.js        # ESM: GLB-Viewer + Rennstrecken-Env (about)
-    ├── js/solar.js        # ESM: interaktives Solarsystem-BG (Subpages)
+    ├── js/main.js         # IIFE; enthält proxyScrub() — wiederverwendbare Scrub-Engine
+    ├── js/model.js        # ESM: GLB-Viewer + Rennstrecken-Env (about, derzeit aus)
+    ├── js/solar.js        # ESM: interaktiver Solar-Angebots-Explorer (NUR angebot.html)
     ├── models/model.glb   # Meshy-F1-Modell, gltf-transform-komprimiert (1.16 MB)
     ├── video/
-    │   ├── hero.mp4           # Hero-Loop (autoplay)
-    │   ├── scroll.mp4         # Desktop Scroll-Scrub Background (16:9)
-    │   └── scroll-mobile.mp4  # Mobile Background-Loop (9:16)
+    │   ├── hero.mp4              # Hero-Loop (autoplay)
+    │   ├── scroll.mp4            # Desktop Scroll-Scrub Background Homepage (16:9)
+    │   ├── scroll-mobile.mp4     # Mobile Background-Loop Homepage (9:16)
+    │   ├── team-reel.mp4         # Team Full-Page Desktop-Scrub (16:9, keyint=1)
+    │   └── team-reel-mobile.mp4  # Team Full-Page Mobile-Loop (16:9)
     └── images/            # Logo + frei für echte Case-Visuals
 ```
+
+**Nav-Rubriken**: Über Uns · **Angebot** (angebot.html) · Team · Partner · Kontakt · / · Impressum. Neue Seite ⇒ Nav-Item auf ALLEN Seiten (Desktop `.nav__links` + Mobile `.mobile-nav__links` + Footer `/ NAV`) ergänzen.
 
 **Prinzip**: alles in wenigen großen Dateien lassen, nicht in 30 Module zerlegen. Single Page, kein Build-Step.
 
@@ -75,7 +80,7 @@
 
 1. **Hero** — Hero-Video als Background, riesiges Anton-Display, Ecken-Telemetrie, Marquee am Ende.
 2. **Manifesto** (`#manifesto`) — Statement + Stat-Counter.
-3. **Services** (`#services`) — 2×2 Grid, Hover-Glow folgt der Maus.
+3. **Services** (`#services`) — 2×2 Grid mit 4 Disziplinen (Web Design / Development / Motion & 3D / Brand Identity). Jede Karte ist ein `<a href="angebot.html">` (Hover-Glow folgt der Maus, `.service__more` „Was wir anbieten →"). Der eigentliche **Solar-Angebots-Explorer** lebt auf der eigenen Seite **angebot.html** (siehe §5.7). *(Zwischenstand v3: kurzzeitig war der Solar-Explorer direkt in `#services` — auf User-Wunsch zurück zu verlinkten Karten + eigener Rubrik.)*
 4. **Engineering** (`#engineering`) — sticky Kinetik-Typografie-Phasen (`.phases` → `.phase` CRAFT / VELOCITY / EDGE), Char-Rise-Animation, sticky ~320vh (Desktop) bis 220vh (Mobile). *(Bis v2 ein Three.js-Icosahedron mit Displacement-Shader — in v3 entfernt, siehe §5.2.)*
 5. **Process** (`#process`) — vertikale Neon-Linie + pulsierende Steps.
 6. **Work** (`#work`) — 12-col Grid, Case-Visuals aus CSS-Gradienten oder echten Bildern.
@@ -89,7 +94,9 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 ## 5. Animations-System
 
-### 5.1 Scroll-Scrub-Background-Video (`#bgScroll`)
+### 5.1 Scroll-Scrub-Video — wiederverwendbare `proxyScrub()`-Engine (`main.js`)
+- **Eine Engine, zwei Einsätze**: die Hybrid-Proxy-Scrub-Pipeline (§5A/§13) ist als `function proxyScrub({ wrap, video, canvas, src, computeProg })` faktorisiert (Function-Declaration → gehoisted). Genutzt von **(a)** dem Homepage-Hintergrund (`#bgScroll`, `computeProg` = `#manifesto`→`.contact`, blendet an den Rändern aus) und **(b)** dem **Team-Full-Page-Hintergrund** (`#teamBg` auf team.html, `computeProg` = GANZE-Seite-Fortschritt `scrollY / (scrollHeight − innerHeight)`, immer sichtbar via `.bg-scroll--page { opacity:1 }` + `.bg-scroll-tint` für Textlesbarkeit). Mobile (≤900px) ruft `proxyScrub` NICHT auf — schlichter Autoplay-Loop (§5.6).
+- **Endpunkt-Snap**: beim Deaktivieren (prog 0/1) snappt `currentTime` auf den ersten/letzten Frame; nach der Proxy-Extraktion wird auf 0 zurückgesetzt. Wichtig für **immer sichtbare** Hintergründe wie den Team-BG (der Homepage-BG ist im Ruhezustand ausgeblendet, daher dort unsichtbar).
 - **Funktioniert so**: Video ist fixed, `position: fixed; inset: 0; z-index: -3;`. `video.currentTime` wird in einer `requestAnimationFrame`-Loop **gelerpt** Richtung Scroll-Target.
 - **Warum lerpen**: Browser drosseln direktes `currentTime`-Setzen. Lerp glättet die Bewegung und vermeidet Stutter.
 - **Aktiv-Bereich**: ab `#manifesto`, endet bei 60% von `.contact` (siehe `computeTarget()`).
@@ -132,10 +139,11 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 ### 5.7 3D-Module (ESM, three@0.160.0 via importmap)
 - **model.js (about.html)**: GLB-Viewer mit Rennstrecken-Environment. `Reflector` = nasser Asphalt (Mobile: halbe Textur), transparenter Shader-Plane mit Kerbs/Markierungen darüber, 22 additive Light-Streaks. **Speed-Kopplung**: `speedFactor = 0.6 + scrollProg*1.4 + dragBoost` — Drag am Modell beschleunigt Strecke, Streaks und Karosserie-Vibration. Render nur wenn Section sichtbar.
-- **solar.js (about/team/partner/kontakt)**: Solarsystem als fixed Background (`z-index: -2`), `.solar-tint` Gradient darüber für Textlesbarkeit (jetzt leichter/„foreground"). Sonne = Studio-Kern, 6 Planeten = Firmen-Kapitel. **Planeten sind Shader** (ShaderMaterial pro Planet: 5-Oktaven-Simplex-fBm-Oberfläche, Tag/Nacht-Terminator von der Sonne, Fresnel-Atmosphäre; `uType` 0 rocky / 1 gas-bands / 2 swirl). Sonne = Shader-Sphere + Fresnel-Korona-Shell + Glow-Sprite. **Picking-Trick**: Canvas `pointer-events: none`; Klicks auf `window` abgefangen, `closest(INTERACTIVE_SEL)` schließt UI aus (a/button/input/.chip/.field/.map-wrap/iframe/[data-magnetic]/…), Rest wird geraycastet. `e.target.closest` ist guarded (nur Element-Targets). Inhalte = statische Config in solar.js.
-- **JARVIS-HUD**: Klick öffnet `.solar-panel` oben rechts (TARGET-LOCK-Leiste, Kicker, Titel, Meta-Grid Orbit/Klasse, Text, CTA) + eine SVG-Leitlinie (`#solarLink`) die den gewählten Planeten anvisiert (Projektion World→Screen pro Frame, gestrichelte Linie + pulsierendes Reticle). Panel-Rect wird gecacht (open/resize/transitionend) — KEIN `getBoundingClientRect` pro Frame.
+- **solar.js (NUR `angebot.html` — die Rubrik „Was wir anbieten")**: Das Solarsystem ist **section-enthalten** (nicht mehr full-page fixed BG auf Subpages — von about/team/partner/kontakt entfernt; auf der Homepage NICHT aktiv). Canvas `.solar-section-canvas` = `position: absolute; inset: 0` IN der `#services`-Section auf angebot.html (Section `min-height: 100vh`, opak). Sonne = Studio-Standard, **4 Planeten = die 4 Disziplinen** (Web Design / Development / Motion & 3D / Brand Identity), jeweils mit Angebotstext im HUD. Die Homepage-Service-Karten verlinken hierher. **Planeten sind Shader** (ShaderMaterial pro Planet: 5-Oktaven-Simplex-fBm, Tag/Nacht-Terminator, Fresnel-Atmosphäre; `uType` 0 rocky / 1 gas-bands / 2 swirl). Sonne = Shader-Sphere + Korona-Shell + Glow-Sprite.
+- **Section-Containment (Pflicht-Details)**: Sizing auf `canvas.clientWidth/Height` (nicht `window`). **Render-Gating** per `IntersectionObserver` — WebGL pausiert, wenn Section off-screen (`if (!sectionVisible) return;` in der rAF-Loop). **Picking section-relativ**: Klick auf `window`, `closest(INTERACTIVE_SEL)` schließt UI aus, Klick muss INNERHALB `canvasRect` liegen, NDC aus `canvasRect`-Offset. `canvasRect` per Frame (sichtbar) + on scroll/resize aufgefrischt (Section scrollt mit).
+- **JARVIS-HUD (viewport-fixed)**: Panel + Leitlinie bleiben `position: fixed` (oben rechts / full-viewport SVG). Leader-Line projiziert in **Client-Koordinaten** (`canvasRect.left + ndc…`), Panel-Anker via gecachtem `panelRect` (open/resize/transitionend — KEIN `getBoundingClientRect` pro Frame). Beim Off-Screen-Scrollen schließt der IntersectionObserver das Panel (kein lingernder fixer HUD).
 - **Shader-uTime wird modulo 1000s gewrappt** (float32-Präzision bei Langzeit-Sessions).
-- **about.html**: F1-Modell (`model.js`) ist aktuell **auskommentiert** (User-Wunsch); stattdessen trägt das Solarsystem die 3D-Bühne. Beim Re-Enable des Modells: nur EINE der beiden 3D-Szenen aktiv lassen (zwei WebGL-Contexts + Reflector sind auf Mobile zu viel).
+- **WebGL-Contexts pro Seite**: Homepage = NULL (Scroll-Proxy ist 2D-Canvas), angebot.html = EINER (Solar-Explorer), about.html = NULL (Modell auskommentiert, Solar entfernt → schlichte Content-Seite). Beim Re-Enable des F1-Modells auf about: nur EINE WebGL-Szene pro Seite halten.
 - **Importmap-Regel**: pro Seite genau EINE aktive importmap (auskommentierte zählen nicht), VOR dem ersten `type="module"`-Script. three.module.js per `modulepreload` mit SRI gelockt.
 
 ---
@@ -165,8 +173,9 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 > Vorlage: `solar.js`. Muster für jede „anklickbare 3D-Welt als Seiten-Hintergrund mit Info-Panel".
 
-**Aufbau:**
-- **Canvas** `position: fixed; z-index: -2; pointer-events: none` + eine `.solar-tint`-Gradient-Ebene (`z-index: -1`) darüber für Textlesbarkeit. Body/Sections transparent.
+**Aufbau (zwei Varianten):**
+- **(A) Full-page-Background**: **Canvas** `position: fixed; z-index: -2; pointer-events: none` + eine `.solar-tint`-Gradient-Ebene (`z-index: -1`) darüber. Body/Sections transparent.
+- **(B) Section-enthalten** (aktuell live in `#services`, siehe §5.7): Canvas `position: absolute; inset: 0` in einer opaken Section (`min-height: 100vh`), Sizing auf `canvas.clientWidth/Height` statt `window`, **`IntersectionObserver`-Render-Gate** (WebGL pausiert off-screen), Picking-NDC aus `canvasRect`-Offset + Klick muss in `canvasRect` liegen. HUD/Leitlinie bleiben viewport-fixed (Client-Koordinaten via `canvasRect.left + ndc…`); Panel beim Off-Screen-Scroll schließen.
 - **Inhalt ist Daten, nicht Code**: ein `CONFIG`-Array (Titel/Text/Link/Farbe/Bahn pro Objekt). Neue Kapitel = Array-Eintrag, sonst nichts. So bleibt's wartbar.
 - **Picking-Trick** (wichtig): Da das Canvas `pointer-events: none` hat, Klicks auf `window` abfangen → `if (e.target instanceof Element && e.target.closest(INTERACTIVE_SEL)) return;` (UI ausschließen: a/button/input/.chip/.field/.map-wrap/iframe/[data-magnetic]/nav/…), Rest wird geraycastet. So sind Objekte „durch" leere Seitenbereiche klickbar, ohne je Formular/Nav-Klicks zu stehlen.
 - **Detaillierte Objekte = ShaderMaterial pro Planet** (Simplex-fBm-Oberfläche, Tag/Nacht-Terminator von der Lichtquelle, Fresnel-Atmosphäre, `uType` für Varianten). Reine `MeshStandardMaterial`-Kugeln wirken billig.

@@ -1,20 +1,24 @@
 /* =========================================================
-   APEX/THRUST MEDIA — SOLAR SYSTEM BACKGROUND
-   Interactive 3D scene behind the subpages
-   (about / team / partner / kontakt). A dark, red-accented
-   solar system: the sun is the studio core, each planet is
-   one chapter of the company. Click a planet → camera tracks
-   it, a JARVIS-style HUD opens top-right and a leader line
+   APEX/THRUST MEDIA — SOLAR OFFER EXPLORER
+   The "Was wir anbieten" (Services) section IS an interactive
+   solar system: the sun is the studio standard, each planet is
+   one of the four disciplines we offer. Click a planet → the
+   camera tracks it, a JARVIS-style HUD opens and a leader line
    snaps from the planet to the panel.
 
-   Planets are custom-shaded (fBm surface, day/night
-   terminator, atmosphere fresnel) for a detailed look.
+   Section-scoped (not a full-page background): the canvas, HUD
+   panel, hint and leader line all live inside #services, sized
+   to that section. Rendering is gated by an IntersectionObserver
+   so the WebGL scene pauses when the section is off-screen.
+
+   Planets are custom-shaded (fBm surface, day/night terminator,
+   atmosphere fresnel) for a detailed look.
 
    Interaction model:
-   - Canvas at z-index -2, pointer-events: none. We listen on
-     `window`, ignore clicks on real UI via closest(), and
-     raycast everything else — so planets are clickable
-     "through" empty page regions without stealing UI input.
+   - Canvas has pointer-events: none. We listen on `window`,
+     ignore clicks on real UI via closest(), require the click to
+     fall inside the section, then raycast — so planets are
+     clickable "through" the heading text without stealing UI input.
    ========================================================= */
 import * as THREE from "three";
 
@@ -23,6 +27,8 @@ import * as THREE from "three";
   const isMobile = window.matchMedia("(max-width: 900px)").matches;
   const canvas = document.getElementById("solarCanvas");
   if (!canvas) return;
+
+  const host = canvas.closest("section") || canvas.parentElement || document.body;
 
   const panel  = document.getElementById("solarPanel");
   const pKick  = document.getElementById("solarKicker");
@@ -44,48 +50,44 @@ import * as THREE from "three";
 
   const lerp  = (a, b, n) => a + (b - a) * n;
 
-  // Cached panel rect — only changes on open + resize, never per frame.
-  // (The orbiting planet moves the line's source end, not the panel anchor.)
-  // Declared up here so resize() — invoked during setup — can call it.
+  // Panel rect cached (open + resize + transitionend) — never per frame (§5B).
   let panelRect = null;
   const refreshPanelRect = () => { if (panel) panelRect = panel.getBoundingClientRect(); };
 
-  /* ---------- CONTENT: the system IS the company ----------
+  /* ---------- CONTENT: the system IS our offering ----------
+     Four planets = the four disciplines. The sun = the studio
+     standard that ties them together.
      type: 0 rocky · 1 gas-bands · 2 swirl  (shader surface)  */
   const SUN_CFG = {
-    id: "core", label: "APEX CORE", kicker: "/ 00 — CORE",
-    title: "Apex Thrust Media", cls: "KERN · STUDIO", dist: "0.0 AU",
-    text: "Der Kern des Systems: ein unabhängiges Web-Design-Studio aus Meschede. Apex — Präzision. Thrust — Schub. Media — das Medium. Gegründet 2024 von Tolunay Usul.",
-    href: "about.html", cta: "Das Studio →",
+    id: "core", label: "APEX STANDARD", kicker: "/ 00 — STANDARD",
+    title: "Ein Standard", cls: "KERN", dist: "0.0",
+    text: "Vier Disziplinen, ein kompromissloser Standard. Jede Welt hier draußen ist ein Weg dorthin — Web Design, Development, Motion & 3D, Brand Identity. Wähl einen Planeten.",
+    href: "kontakt.html", cta: "Projekt starten →",
   };
   // Calm cosmic palette: cool/neutral planets so the scene isn't an
-  // all-red void. The SUN stays warm-red as the brand "core"; planets
-  // carry their own (mostly cool) accent used for rim + hover.
+  // all-red void. The SUN stays warm-red as the brand "core"; each
+  // planet carries its own (mostly cool) accent for rim + hover.
   const PLANET_CFG = [
-    { id: "manifest", label: "MANIFEST", kicker: "/ 01 — STUDIO", title: "Das Manifest",
-      cls: "TERRESTRISCH", text: "Websites, die einschlagen — brutalistisch, performance-getrieben, kompromisslos. Templates sind Komfortzone. Wir bauen Originale.",
-      href: "about.html", cta: "Über Uns →",
-      radius: 0.32, orbit: 2.6, speed: 0.16, angle0: 0.6,  tone: 0x2c3a4a, accent: 0x8fb3d6, type: 0 },
-    { id: "services", label: "SERVICES", kicker: "/ 02 — BUILD", title: "Vier Disziplinen",
-      cls: "GASRIESE", text: "Web Design, Development, Motion & 3D, Brand Identity. Ein kompromissloser Standard, vier Wege dorthin.",
-      href: "index.html#services", cta: "Services →",
-      radius: 0.46, orbit: 3.8, speed: 0.115, angle0: 2.4, tone: 0x3a3025, accent: 0xe0b97f, type: 1 },
-    { id: "engineering", label: "ENGINEERING", kicker: "/ 03 — CRAFT", title: "Code als Craft",
-      cls: "EIS-KÖRPER", text: "GSAP, Three.js, WebGL-Shader. Bewegung, die transportiert — 60 fps, unverhandelbar, auf jedem Gerät.",
-      href: "index.html#engineering", cta: "Engineering →",
-      radius: 0.28, orbit: 4.8, speed: 0.09, angle0: 4.4,  tone: 0x213339, accent: 0x6fc4cf, type: 2 },
-    { id: "team", label: "TEAM", kicker: "/ 04 — CREW", title: "Das Team",
-      cls: "GASRIESE", text: "Klein, scharf, schnell. Ein Boxenstopp-Team mit klarer Verantwortung — maximal vier aktive Projekte gleichzeitig.",
-      href: "team.html", cta: "Crew kennenlernen →",
-      radius: 0.36, orbit: 5.9, speed: 0.07, angle0: 1.5,  tone: 0x322f44, accent: 0xb3a6d8, type: 1 },
-    { id: "partner", label: "PARTNER", kicker: "/ 05 — ALLIANCES", title: "Allianzen",
-      cls: "RING-SYSTEM", text: "Tech-Stack von Vercel bis Stripe — plus offene Slots für Studios und Freelancer, die Champions League spielen.",
-      href: "partner.html", cta: "Partner werden →",
-      radius: 0.40, orbit: 7.1, speed: 0.055, angle0: 5.3, tone: 0x35302c, accent: 0xd9c9a0, type: 0, ring: true },
-    { id: "kontakt", label: "KONTAKT", kicker: "/ 06 — SIGNAL", title: "Open a Channel",
-      cls: "OZEAN-WELT", text: "Drei Sätze reichen: was du baust, bis wann, welches Budget. Antwort in unter 24 Stunden — vom Gründer, nicht vom Bot.",
-      href: "kontakt.html", cta: "Kontakt aufnehmen →",
-      radius: 0.32, orbit: 8.3, speed: 0.045, angle0: 3.3, tone: 0x26352f, accent: 0x8fc8a8, type: 2 },
+    { id: "design", label: "WEB DESIGN", kicker: "/ 01 — CORE", title: "Web Design",
+      cls: "CORE", dist: "/ 01",
+      text: "Konzept, Art Direction, UX/UI. Wir entwerfen Interfaces, die wie ein Auspuffschlag wirken — laut, präzise, unverwechselbar. Art Direction · UX & UI · Design Systems · Prototyping.",
+      href: "kontakt.html", cta: "Briefing senden →",
+      radius: 0.50, orbit: 2.8, speed: 0.13, angle0: 0.6, tone: 0x2c3a4a, accent: 0x8fb3d6, type: 0 },
+    { id: "dev", label: "DEVELOPMENT", kicker: "/ 02 — BUILD", title: "Development",
+      cls: "BUILD", dist: "/ 02",
+      text: "Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen den Motor, der dein Projekt unter 2 Sekunden bringt. Next.js · Headless CMS · E-Commerce · API Integrations.",
+      href: "kontakt.html", cta: "Stack besprechen →",
+      radius: 0.46, orbit: 4.0, speed: 0.10, angle0: 2.4, tone: 0x213339, accent: 0x6fc4cf, type: 2 },
+    { id: "motion", label: "MOTION & 3D", kicker: "/ 03 — MOTION", title: "Motion & 3D",
+      cls: "MOTION", dist: "/ 03",
+      text: "GSAP, Three.js, WebGL-Shader. Bewegung, die deine Marke nicht dekoriert, sondern transportiert. Scroll Storytelling · WebGL Scenes · Microinteractions · Reels & Showcases.",
+      href: "kontakt.html", cta: "Reel anfragen →",
+      radius: 0.40, orbit: 5.2, speed: 0.08, angle0: 4.4, tone: 0x322f44, accent: 0xb3a6d8, type: 1 },
+    { id: "brand", label: "BRAND IDENTITY", kicker: "/ 04 — BRAND", title: "Brand Identity",
+      cls: "BRAND", dist: "/ 04",
+      text: "Logos, Tonalität, visuelles System. Wir bauen Marken, die ein Statement sind, bevor du den ersten Satz gelesen hast. Logo & Marke · Voice & Tone · Guidelines · Launch Kampagnen.",
+      href: "kontakt.html", cta: "Marke bauen →",
+      radius: 0.44, orbit: 6.4, speed: 0.062, angle0: 1.5, tone: 0x35302c, accent: 0xd9c9a0, type: 1, ring: true },
   ];
 
   /* ---------- RENDERER ---------- */
@@ -100,7 +102,7 @@ import * as THREE from "three";
   const CAM_BASE = new THREE.Vector3(0, 3.0, 10.6);
   camera.position.copy(CAM_BASE);
 
-  /* ---------- SYSTEM GROUP — more foreground: bigger + centred-right ---------- */
+  /* ---------- SYSTEM GROUP — bigger + centred-right (heading sits left) ---------- */
   const SYSTEM_X = isMobile ? 0 : 1.6;
   const system = new THREE.Group();
   system.position.x = SYSTEM_X;
@@ -369,7 +371,7 @@ import * as THREE from "three";
   /* ---------- STARFIELD (twinkling, mostly white / blue-white) ---------- */
   const starUniforms = { uTime: { value: 0 }, uSize: { value: isMobile ? 1.2 : 1.7 } };
   {
-    const N = isMobile ? 1000 : 2400;
+    const N = isMobile ? 900 : 2000;
     const pos    = new Float32Array(N * 3);
     const acol   = new Float32Array(N * 3);
     const ascale = new Float32Array(N);
@@ -444,21 +446,41 @@ import * as THREE from "three";
     mkNeb(nebTex(40, 150, 150),  12, -6, -30, 40, 0.07);  // teal
   }
 
-  /* ---------- SIZE ---------- */
+  /* ---------- SIZE (to the SECTION, not the window) ---------- */
   const sizeState = { w: 0, h: 0 };
+  let canvasRect = null;
+  const measure = () => { canvasRect = canvas.getBoundingClientRect(); };
   const resize = () => {
-    const w = window.innerWidth, h = window.innerHeight;
+    const w = canvas.clientWidth  || host.clientWidth  || window.innerWidth;
+    const h = canvas.clientHeight || host.clientHeight || window.innerHeight;
     sizeState.w = w; sizeState.h = h;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    if (linkSvg) { linkSvg.setAttribute("viewBox", `0 0 ${w} ${h}`); }
+    // The leader-line SVG + HUD panel stay viewport-fixed (JARVIS style), so
+    // the SVG viewBox tracks the window, not the section.
+    if (linkSvg) linkSvg.setAttribute("viewBox", `0 0 ${window.innerWidth} ${window.innerHeight}`);
+    measure();
     refreshPanelRect();
   };
   resize();
   window.addEventListener("resize", resize);
+  window.addEventListener("scroll", () => { measure(); refreshPanelRect(); }, { passive: true });
 
-  /* ---------- PICKING ---------- */
+  /* ---------- VISIBILITY GATE (pause WebGL when section off-screen) ---------- */
+  let sectionVisible = true;
+  if ("IntersectionObserver" in window) {
+    sectionVisible = false;
+    new IntersectionObserver(
+      (entries) => {
+        sectionVisible = entries.some(e => e.isIntersecting);
+        if (!sectionVisible) closePanel();   // don't leave the fixed HUD lingering
+      },
+      { threshold: 0 }
+    ).observe(host);
+  }
+
+  /* ---------- PICKING (section-relative) ---------- */
   const raycaster = new THREE.Raycaster();
   const pointerNdc = new THREE.Vector2(10, 10);
   const pickables = [sunMesh, ...planets.map(p => p.mesh)];
@@ -471,9 +493,18 @@ import * as THREE from "three";
     ".solar-panel, .footer, .contact__form, .nav__burger, .map-wrap, iframe, " +
     ".chip, .field, [data-magnetic]";
 
+  // Map a client point into the canvas/section, returning whether it is inside.
+  const toLocalNdc = (cx, cy) => {
+    const r = canvasRect;
+    if (!r || r.width === 0 || r.height === 0) return false;
+    const inside = cx >= r.left && cx <= r.right && cy >= r.top && cy <= r.bottom;
+    pointerNdc.x = ((cx - r.left) / r.width) * 2 - 1;
+    pointerNdc.y = -((cy - r.top) / r.height) * 2 + 1;
+    return inside;
+  };
+
   window.addEventListener("pointermove", (e) => {
-    pointerNdc.x = (e.clientX / window.innerWidth) * 2 - 1;
-    pointerNdc.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    if (!toLocalNdc(e.clientX, e.clientY)) pointerNdc.set(10, 10);
   }, { passive: true });
 
   const openPanel = (cfg) => {
@@ -482,28 +513,27 @@ import * as THREE from "three";
     if (pTitle) pTitle.textContent = cfg.title;
     if (pText)  pText.textContent  = cfg.text;
     if (pClass) pClass.textContent = cfg.cls || "—";
-    if (pOrbit) pOrbit.textContent = cfg.dist || (cfg.orbit ? cfg.orbit.toFixed(1) + " AU" : "—");
-    if (pCta) {
-      pCta.href = cfg.href;
-      const here = location.pathname.split("/").pop() || "index.html";
-      pCta.textContent = (cfg.href.split("#")[0] === here) ? "Du bist hier ●" : cfg.cta;
-    }
+    if (pOrbit) pOrbit.textContent = cfg.dist || (cfg.orbit ? cfg.orbit.toFixed(1) : "—");
+    if (pCta) { pCta.href = cfg.href; pCta.textContent = cfg.cta; }
     panel.classList.add("is-open");
     panel.setAttribute("aria-hidden", "false");
     hint?.classList.add("is-dim");
     refreshPanelRect();   // initial (pre-transition) measure
   };
-  const closePanel = () => {
+  // Function declaration (hoisted) so the IntersectionObserver above can call it.
+  function closePanel() {
     selected = null;
     panel?.classList.remove("is-open");
     panel?.setAttribute("aria-hidden", "true");
     linkSvg?.classList.remove("is-on");
-  };
+  }
 
   window.addEventListener("click", (e) => {
     // Guard: only Element targets have closest(); ignore exotic targets.
     const t = e.target;
     if (t && typeof t.closest === "function" && t.closest(INTERACTIVE_SEL)) return;
+    // Require the click to land inside the section, then raycast.
+    if (!toLocalNdc(e.clientX, e.clientY)) return;
     raycaster.setFromCamera(pointerNdc, camera);
     const hit = raycaster.intersectObjects(pickables, false)[0];
     if (hit) {
@@ -527,7 +557,9 @@ import * as THREE from "three";
   const FOCUS_OFFSET = new THREE.Vector3(0, 0.7, 2.4);
   let sunPulse = 0;
 
-  // Update the JARVIS leader line from selected planet → panel anchor
+  // Update the JARVIS leader line from selected planet → panel anchor.
+  // All coordinates are SECTION-local (the SVG fills #services, viewBox =
+  // section size; the panel is absolutely positioned within #services).
   const updateLink = () => {
     if (!linkSvg || !selected || !panel || !panel.classList.contains("is-open")) {
       linkSvg?.classList.remove("is-on");
@@ -536,14 +568,19 @@ import * as THREE from "three";
     selected.getWorldPosition(tmpProj);
     tmpProj.project(camera);
     if (tmpProj.z > 1) { linkSvg.classList.remove("is-on"); return; }  // behind camera
-    const sx = (tmpProj.x * 0.5 + 0.5) * sizeState.w;
-    const sy = (-tmpProj.y * 0.5 + 0.5) * sizeState.h;
+    // Viewport coords: NDC → canvas screen rect (the canvas is section-sized
+    // and scrolls), so add the live canvasRect offset. The SVG + panel are
+    // viewport-fixed, so everything resolves in client space.
+    const cr = canvasRect;
+    if (!cr) { linkSvg.classList.remove("is-on"); return; }
+    const sx = cr.left + (tmpProj.x * 0.5 + 0.5) * cr.width;
+    const sy = cr.top + (-tmpProj.y * 0.5 + 0.5) * cr.height;
     if (!panelRect) refreshPanelRect();
-    const r = panelRect;
-    if (!r) { linkSvg.classList.remove("is-on"); return; }
+    const pr = panelRect;
+    if (!pr) { linkSvg.classList.remove("is-on"); return; }
     // anchor: bottom-left corner of the panel (closest to centre)
-    const ax = r.left;
-    const ay = r.bottom - 14;
+    const ax = pr.left;
+    const ay = pr.bottom - 14;
     linkLine.setAttribute("x1", sx.toFixed(1));
     linkLine.setAttribute("y1", sy.toFixed(1));
     linkLine.setAttribute("x2", ax.toFixed(1));
@@ -556,7 +593,11 @@ import * as THREE from "three";
 
   const render = () => {
     requestAnimationFrame(render);
-    if (document.hidden) return;
+    if (document.hidden || !sectionVisible) return;
+
+    // One rect per visible frame keeps pointer + leader line correct as the
+    // section scrolls (the canvas moves with it). Cheap: a single element.
+    canvasRect = canvas.getBoundingClientRect();
 
     const dt = Math.min(clock.getDelta(), 0.05);
     const speedMul = reduce ? 0 : 1;
