@@ -269,3 +269,85 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 4. **Vorhandenen Code beim Bauen hinterfragen**: gibt's ein `setInterval` ohne Gate? Ein `scroll`-Listener ohne rAF? Sofort mitfixen.
 5. Browser-Smoke-Test mit Playwright durchziehen (siehe §10 Checklist).
 6. **Im Zweifel weniger als mehr.** Das Design lebt von Disziplin, nicht von Effekt-Stacking.
+
+---
+
+## 13. VIDEO-SCROLL — Exakte Einstellungen (1:1-Copy-Paste-Referenz)
+
+> §5A erklärt das **Warum**. Dieser Abschnitt ist das **Was genau** — jede Konstante, jeder CSS-Wert, jeder ffmpeg-Befehl, mit dem das ruckelfreie + verlustfreie Scroll-Video im aktuellen Projekt läuft. Bei „mach das Scroll-Video wie bei Apex" diese Werte nehmen, nicht neu raten. Quelle: `main.js` Desktop-Branch + `style.css` `.bg-scroll*`.
+
+### 13.1 Encoding der Quell-Videos (ffmpeg)
+Zwei Clips: Desktop 16:9 (`scroll.mp4`) + Mobile 9:16 (`scroll-mobile.mp4`).
+```bash
+# Desktop-Scrub-Clip — DICHTE Keyframes sind Pflicht (jeder Frame seekbar):
+ffmpeg -i src.mp4 -an -vf "scale=1920:-2,fps=30" \
+  -c:v libx264 -preset slow -crf 23 \
+  -x264opts keyint=1:min-keyint=1:no-scenecut -movflags +faststart scroll.mp4
+#  keyint=1  → jeder Frame ist ein I-Frame → currentTime-Seek landet sofort, kein Ruckeln.
+#  -an       → Tonspur weg (Background-Video, spart Größe).
+#  +faststart→ moov-Atom nach vorn → startet ohne Full-Download.
+#  CRF 23    → sichtbar verlustfrei bei vertretbarer Größe. Budget: ≤ 18 MB / ≤ 30s (§6).
+
+# Mobile-Loop-Clip — KEIN Scrub, normaler Loop, normale Keyframes reichen:
+ffmpeg -i src.mp4 -an -vf "scale=1080:-2,fps=30" \
+  -c:v libx264 -preset slow -crf 24 -movflags +faststart scroll-mobile.mp4
+```
+Faustregel: Scrub-Clip = `keyint=1`. Loop-Clip = egal. Wird der Scrub-Clip ohne dichte Keyframes encoded, ruckelt's trotz korrektem JS — **immer zuerst das Encoding prüfen.**
+
+### 13.2 Die JS-Konstanten (main.js, Desktop-Branch)
+| Konstante | Wert | Bedeutung / warum genau so |
+|---|---|---|
+| `FRAME_TARGET` | `96` (reduced-motion: `10`) | Proxy-Frames für die Bewegungsphase. 96 ≈ flüssig, ~170 MB. Mehr → Memory-Risiko. |
+| `PROXY_W` | `960` px | Breite der Proxy-Frames. Halbe Full-HD-Breite = scharf genug in Bewegung, ¼ Memory. |
+| Seek-„in-flight"-Gate | nur **1** Seek gleichzeitig | Nächster Seek erst nach `seeked`-Event. **Das** killt den Decoder-Stau = killt das Ruckeln. |
+| Seek-Stall-Timeout | `300` ms | Feuert `seeked` mal nicht, wird nach 300 ms entsperrt („latest target wins"). |
+| Seek-Mindestdistanz | `0.033` s | `< 1` Frame Unterschied → gar nicht seeken (spart sinnlose Seeks). |
+| Scroll-Glättung (lerp) | `0.11` pro Frame | `smoothedProg = lerp(smoothedProg, targetProg, 0.11)`. Kleiner = träger/weicher, größer = direkter/härter. |
+| „in Bewegung"-Schwelle | `0.0015` | `|targetProg − smoothedProg| > 0.0015` → Proxy zeigen. |
+| „Video holt noch auf" | `0.05` s | `|currentTime − targetT| > 0.05` → noch Proxy zeigen, bis das native Bild sitzt. |
+| `motionHold` | `14` Frames (~230 ms) | Nach letzter Bewegung bleibt der Proxy 14 Frames, dann Fade-out. Verhindert Flackern bei Mikro-Scrolls. |
+| Extraktion | `requestVideoFrameCallback` @ `playbackRate 4.0` | Einmaliger 4×-Durchlauf zieht die Proxy-Frames. Fallback: Seek-Stepping (`duration/FRAME_TARGET`, 400 ms Timeout). |
+| Aktiv-Bereich | `#manifesto` → 70 % von `.contact` | Außerhalb ist das Video aus (`is-active` weg). |
+
+**Pflicht-Guard:** Während der Extraktion (`extracting === true`) das Canvas-Overlay **nie** aktivieren — sonst sieht man den 4×-Durchlauf.
+
+### 13.3 Die CSS-Werte (style.css)
+```css
+.bg-scroll {                /* fixed Layer hinter allem */
+  position: fixed; inset: 0; z-index: -3;
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.2s var(--ease-out);   /* sanftes Ein-/Ausblenden am Bereichsrand */
+}
+.bg-scroll.is-active { opacity: 1; }
+.bg-scroll__video {          /* native, IMMER sichtbare Ebene = volle Qualität im Ruhezustand */
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(1.15) saturate(1.4) brightness(1.0);   /* Look-Grading */
+  transform: scale(1.05);    /* 5 % Overscan, kaschiert Kanten */
+}
+.bg-scroll__canvas {         /* Bewegungs-Proxy, NUR beim Scrollen sichtbar (JS setzt opacity) */
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover;
+  filter: contrast(1.15) saturate(1.4) brightness(1.0);   /* MUSS identisch zum Video sein, sonst sichtbarer Sprung */
+  transform: scale(1.05);    /* identisch zum Video → kein Versatz beim Wechsel */
+  opacity: 0; transition: opacity 0.22s linear;           /* 220 ms Fade zwischen Proxy und nativem Frame */
+}
+```
+Wichtig: `filter` und `transform` **müssen** auf Video und Canvas exakt gleich sein — sonst „springt" das Bild beim Proxy↔Nativ-Wechsel.
+
+### 13.4 Markup-Skelett
+```html
+<div id="bgScroll" class="bg-scroll">
+  <video id="bgScrollVideo" class="bg-scroll__video" muted playsinline preload="auto"></video>
+  <canvas id="bgScrollCanvas" class="bg-scroll__canvas"></canvas>
+</div>
+```
+`<source>` wird im JS **nach dem ersten Paint** angehängt (Hero blockt nicht). `preload="auto"` ist Pflicht, sonst springt's beim ersten Sichtbarwerden.
+
+### 13.5 Wenn es trotzdem ruckelt — Checkliste in dieser Reihenfolge
+1. **Encoding**: Scrub-Clip wirklich mit `keyint=1` encoded? (häufigste Ursache)
+2. **Server**: lokal mit `npx http-server` getestet? `python -m http.server` kann keine Range-Requests → kein Seeking.
+3. **Seek-Gate**: läuft wirklich nur 1 Seek gleichzeitig (`pendingSeek`)? Ohne das staut der Decoder.
+4. **lerp**: zu hoch (> 0.2) → hart/ruckelig; zu niedrig (< 0.05) → träge. `0.11` ist der getunte Wert.
+5. **Memory**: `FRAME_TARGET`/`PROXY_W` nicht hochgedreht? > 96 @ > 960px riskiert Context-Loss auf schwachen GPUs.
+6. **Mobile**: auf dem Handy gar keinen Scrub — nur Loop (§5.6). Frame-Extraktion ist auf Phones unzuverlässig.
