@@ -36,6 +36,7 @@ import * as THREE from "three";
   const pText  = document.getElementById("solarText");
   const pCta   = document.getElementById("solarCta");
   const pClose = document.getElementById("solarClose");
+  const pBack  = document.getElementById("solarBack");
   const pOrbit = document.getElementById("solarMetaOrbit");
   const pClass = document.getElementById("solarMetaClass");
   const hint   = document.getElementById("solarHint");
@@ -216,17 +217,21 @@ import * as THREE from "three";
       // Day / night terminator (lit from the sun/core)
       vec3 sunDir = normalize(uSunWorld - vWorldPos);
       float diff  = max(dot(n, sunDir), 0.0);
-      vec3 lit = base * (0.24 + diff * 1.05);                // softer, less void-dark
-      lit += uAccent * (1.0 - diff) * 0.05;                  // night self-glow
-      lit += vec3(1.0, 0.86, 0.8) * pow(diff, 7.0) * 0.28;   // subsolar hotspot
-
-      // Atmosphere fresnel rim
       vec3 viewDir = normalize(cameraPosition - vWorldPos);
-      float fres = pow(1.0 - max(dot(n, viewDir), 0.0), 3.0);
-      lit += uAccent * fres * (0.55 + uActive * 1.0);
+      vec3 lit = base * (0.16 + diff * 1.2);                 // deeper night, brighter day
+      lit += uAccent * (1.0 - diff) * 0.04;                  // faint night self-glow
+      lit += vec3(1.0, 0.9, 0.82) * pow(diff, 6.0) * 0.28;   // subsolar hotspot
+
+      // specular glint on the lit side (rocky / ocean types only)
+      vec3 hdir = normalize(sunDir + viewDir);
+      float spec = pow(max(dot(n, hdir), 0.0), 32.0) * step(uType, 0.5);
+      lit += vec3(1.0) * spec * 0.55 * diff;
+
+      // atmosphere fresnel rim — brighter on the sunlit limb (more realistic)
+      float fres = pow(1.0 - max(dot(n, viewDir), 0.0), 3.2);
+      lit += uAccent * fres * (0.45 + diff * 0.9 + uActive * 1.0);
 
       lit += uAccent * uActive * 0.16;                        // select boost
-
       gl_FragColor = vec4(lit, 1.0);
     }
   `;
@@ -246,17 +251,25 @@ import * as THREE from "three";
         ${NOISE_GLSL}
         void main(){
           vec3 op = normalize(vObjPos);
-          float t = uTime * 0.12;
-          float f = fbm(op * 2.4 + vec3(t));
-          float veins = fbm(op * 5.0 - vec3(t * 0.6));
-          vec3 deep = vec3(0.55, 0.18, 0.08);   // warm ember (not blood)
-          vec3 hot  = vec3(1.0, 0.62, 0.30);    // warm amber
-          vec3 col = mix(deep, hot, smoothstep(0.2, 0.8, f * 0.5 + 0.5));
-          col += vec3(1.0, 0.66, 0.34) * pow(max(veins, 0.0), 2.0) * 0.5;
-          // limb darkening
+          float t = uTime * 0.07;
+          // multi-scale granulation (convection cells) — coarse + fine
+          float gran = fbm(op * 4.2 + vec3(t));
+          float fine = fbm(op * 10.5 - vec3(t * 0.55));
+          float s = (gran * 0.72 + fine * 0.28) * 0.5 + 0.5;
+          // photosphere: shadowed gold → gold → white-hot
+          vec3 deep = vec3(0.80, 0.34, 0.10);
+          vec3 mid  = vec3(1.0, 0.74, 0.40);
+          vec3 hot  = vec3(1.0, 0.95, 0.84);
+          vec3 col = mix(deep, mid, smoothstep(0.24, 0.58, s));
+          col = mix(col, hot, smoothstep(0.62, 0.96, s));
+          // bright flare filaments
+          float veins = fbm(op * 6.5 - vec3(t * 0.7));
+          col += vec3(1.0, 0.86, 0.58) * pow(max(veins, 0.0), 3.0) * 0.55;
+          // realistic limb darkening (centre bright, edge darker + warmer)
           vec3 viewDir = normalize(cameraPosition - vWorldPos);
-          float rim = pow(1.0 - max(dot(normalize(vWorldNormal), viewDir), 0.0), 2.0);
-          col += vec3(1.0, 0.5, 0.3) * rim * 0.55;
+          float mu = max(dot(normalize(vWorldNormal), viewDir), 0.0);
+          col *= 0.52 + 0.48 * mu;
+          col += vec3(1.0, 0.52, 0.22) * pow(1.0 - mu, 2.6) * 0.45;
           gl_FragColor = vec4(col, 1.0);
         }
       `,
@@ -279,8 +292,8 @@ import * as THREE from "three";
         varying vec3 vObjPos;
         void main(){
           vec3 viewDir = normalize(cameraPosition - vWorldPos);
-          float fres = pow(1.0 - max(dot(normalize(vWorldNormal), viewDir), 0.0), 2.4);
-          gl_FragColor = vec4(vec3(1.0, 0.46, 0.26) * fres, fres * 0.85);
+          float fres = pow(1.0 - max(dot(normalize(vWorldNormal), viewDir), 0.0), 2.2);
+          gl_FragColor = vec4(vec3(1.0, 0.66, 0.36) * fres, fres * 0.9);
         }
       `,
     })
@@ -293,9 +306,9 @@ import * as THREE from "three";
     c.width = c.height = 256;
     const x = c.getContext("2d");
     const g = x.createRadialGradient(128, 128, 0, 128, 128, 128);
-    g.addColorStop(0.0, "rgba(255, 150, 95, 0.85)");
-    g.addColorStop(0.32, "rgba(255, 90, 70, 0.26)");
-    g.addColorStop(1.0, "rgba(255, 80, 60, 0)");
+    g.addColorStop(0.0, "rgba(255, 226, 165, 0.92)");
+    g.addColorStop(0.30, "rgba(255, 150, 70, 0.30)");
+    g.addColorStop(1.0, "rgba(255, 120, 55, 0)");
     x.fillStyle = g; x.fillRect(0, 0, 256, 256);
     const t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
@@ -474,7 +487,10 @@ import * as THREE from "three";
     new IntersectionObserver(
       (entries) => {
         sectionVisible = entries.some(e => e.isIntersecting);
-        if (!sectionVisible) closePanel();   // don't leave the fixed HUD lingering
+        // hide the fixed HUD bits when the section scrolls away (else the hint
+        // lingers over the content sections below).
+        if (hint) hint.style.opacity = sectionVisible ? "" : "0";
+        if (!sectionVisible) closePanel();
       },
       { threshold: 0 }
     ).observe(host);
@@ -572,6 +588,7 @@ import * as THREE from "three";
   }, { passive: true });
   window.addEventListener("pointercancel", () => { dragging = false; }, { passive: true });
   pClose?.addEventListener("click", closePanel);
+  pBack?.addEventListener("click", closePanel);
   // Re-measure once the slide-in transition settles (transform changes the box)
   panel?.addEventListener("transitionend", refreshPanelRect);
   window.addEventListener("keydown", (e) => { if (e.key === "Escape") closePanel(); });
@@ -649,8 +666,11 @@ import * as THREE from "three";
     system.rotation.y = autoSpin + curRotY;
     system.rotation.x = 0.34 + curRotX;
 
-    sunPulse += dt * 1.6 * speedMul;
-    sunGlow.scale.setScalar(6.8 + Math.sin(sunPulse) * 0.5);
+    // gentle organic "breathing" — slow, two-wave, low amplitude
+    sunPulse += dt * 0.5 * speedMul;
+    const breathe = Math.sin(sunPulse) * 0.6 + Math.sin(sunPulse * 0.43 + 1.3) * 0.4;
+    sunGlow.scale.setScalar(6.5 + breathe * 0.4);
+    corona.scale.setScalar(1.0 + breathe * 0.012);
 
     // Hover raycast (objects move → test every frame)
     raycaster.setFromCamera(pointerNdc, camera);
@@ -684,7 +704,10 @@ import * as THREE from "three";
     tmpV2.x += pointerNdc.x * 0.5;
     tmpV2.y += pointerNdc.y * -0.3;
     camera.position.lerp(tmpV2, 0.045);
-    camera.lookAt(camTarget);
+    // On mobile, when a planet is open, look a touch BELOW it so it sits in the
+    // upper area above the bottom-sheet panel (planet visible + text below).
+    const lookY = (isMobile && selected) ? camTarget.y - 0.7 : camTarget.y;
+    camera.lookAt(camTarget.x, lookY, camTarget.z);
 
     updateLink();
     renderer.render(scene, camera);

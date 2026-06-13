@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260612a" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260612c" />
 </head>
-<body>
+<body class="theme-cool">
   <div class="noise" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
@@ -88,6 +88,7 @@
       </div>
 
       <aside class="solar-panel" id="solarPanel" aria-hidden="true">
+        <button class="solar-panel__back mono" id="solarBack" aria-label="Zurück zum System">&larr; Zur&uuml;ck</button>
         <button class="solar-panel__close" id="solarClose" aria-label="Info schliessen">&times;</button>
         <div class="solar-panel__lockbar"><b></b> TARGET LOCK <i></i> ATM-SYS</div>
         <span class="solar-panel__kicker mono" id="solarKicker"></span>
@@ -101,6 +102,131 @@
       </aside>
       <div class="solar-hint mono" id="solarHint"><b>&#9679;</b> <span id="solarHintText">SYSTEM ONLINE &mdash; DISZIPLIN W&Auml;HLEN</span></div>
     </section>
+
+    <div class="page">
+      <!-- LEISTUNGEN — the full toolset behind the four worlds -->
+      <section class="page-section">
+        <div class="page-section__head">
+          <span class="num">/ LEISTUNGEN</span>
+          <span>Was drinsteckt</span>
+          <span class="line"></span>
+        </div>
+        <h2>Vier Disziplinen. <em>Ein ganzes Arsenal.</em></h2>
+        <p>Jede Welt da oben ist nur die Spitze. Darunter liegt das volle Werkzeug — du wählst, was dein Projekt nach vorne bringt.</p>
+        <div class="partner-grid" style="margin-top: 32px;">
+          <article class="partner-card">
+            <span class="partner-card__cat">/ WEB DESIGN</span>
+            <span class="partner-card__name">Landingpages</span>
+            <p class="partner-card__desc">Conversion-getriebene Seiten, die in Sekunden überzeugen — Art Direction inklusive.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ WEB DESIGN</span>
+            <span class="partner-card__name">Design Systems</span>
+            <p class="partner-card__desc">Skalierbare Komponenten-Bibliotheken in Figma und Code — ein Look, jede Seite.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ DEVELOPMENT</span>
+            <span class="partner-card__name">Web-Apps</span>
+            <p class="partner-card__desc">Next.js- und React-Anwendungen mit Headless-Backend, sauber und wartbar.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ DEVELOPMENT</span>
+            <span class="partner-card__name">E-Commerce</span>
+            <p class="partner-card__desc">Shopify- und Stripe-Stores, die verkaufen statt zu laden.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ MOTION &amp; 3D</span>
+            <span class="partner-card__name">WebGL-Szenen</span>
+            <p class="partner-card__desc">Three.js-Welten, Shader und Scroll-Storytelling — wie das System hier oben.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ BRAND</span>
+            <span class="partner-card__name">Brand Identity</span>
+            <p class="partner-card__desc">Logo, Tonalität, Guidelines — ein Auftritt, der hängen bleibt.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ABLAUF — how a project runs -->
+      <section class="page-section">
+        <div class="page-section__head">
+          <span class="num">/ ABLAUF</span>
+          <span>Vom Brief zum Launch</span>
+          <span class="line"></span>
+        </div>
+        <div class="page-grid">
+          <dl class="page-grid__meta">
+            <dt>01 — Discovery</dt>
+            <dd>Ziele, Zielgruppe, Scope — ein klarer Brief.</dd>
+            <dt>02 — Design</dt>
+            <dd>Art Direction + High-Fidelity in Figma.</dd>
+            <dt>03 — Build</dt>
+            <dd>Sauberer Code, 60 fps, unter 2 Sekunden.</dd>
+            <dt>04 — Launch</dt>
+            <dd>Deploy, Feinschliff, Übergabe.</dd>
+          </dl>
+          <div>
+            <h2>Vier Etappen. <em>Kein Leerlauf.</em></h2>
+            <p>
+              Kurze, sichtbare Etappen statt monatelanger Blackbox. Nach jeder Etappe gibt es
+              einen Stand zum Anfassen — du steuerst jederzeit mit.
+            </p>
+            <p>
+              Erste sichtbare Ergebnisse in <strong>Tagen</strong>, nicht Wochen.
+              Pole Position ab dem ersten Sprint.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STANDARD — non-negotiables -->
+      <section class="page-section">
+        <div class="page-section__head">
+          <span class="num">/ STANDARD</span>
+          <span>Nicht verhandelbar</span>
+          <span class="line"></span>
+        </div>
+        <h2>Der <em>kompromisslose</em> Standard.</h2>
+        <p>Egal welche Disziplin du wählst — diese vier Dinge liefern wir immer.</p>
+        <div class="partner-grid" style="margin-top: 32px;">
+          <article class="partner-card">
+            <span class="partner-card__cat">/ PERFORMANCE</span>
+            <span class="partner-card__name">&lt; 2 s</span>
+            <p class="partner-card__desc">Ladezeit, Lighthouse 95+, 60 fps. Wenn es ruckelt, ist es nicht fertig.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ RESPONSIVE</span>
+            <span class="partner-card__name">375 → 4K</span>
+            <p class="partner-card__desc">Jede Section funktioniert auf jedem Screen — Mobile ist Pflicht, nicht Bonus.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ ACCESSIBLE</span>
+            <span class="partner-card__name">WCAG</span>
+            <p class="partner-card__desc">Kontrast, Fokus, Reduced-Motion — von Anfang an mitgedacht.</p>
+          </article>
+          <article class="partner-card">
+            <span class="partner-card__cat">/ SEO</span>
+            <span class="partner-card__name">Sichtbar</span>
+            <p class="partner-card__desc">Saubere Semantik, Meta-Daten und Speed — von Suchmaschinen geliebt.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="page-section">
+        <div class="page-section__head">
+          <span class="num">/ SIGNAL</span>
+          <span>Bereit?</span>
+          <span class="line"></span>
+        </div>
+        <h2>Such dir eine <em>Disziplin</em> — wir bauen den Rest.</h2>
+        <p style="margin-bottom: 28px;">Drei Sätze: was du baust, bis wann, welches Budget. Antwort in unter 24 Stunden — vom Gründer, nicht vom Bot.</p>
+        <a href="kontakt.html" class="nav__cta" data-magnetic style="display: inline-flex;">
+          <span>Projekt starten</span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
+        </a>
+      </section>
+    </div>
   </main>
 
   <footer class="footer">
@@ -160,6 +286,6 @@
     }
   }
   </script>
-  <script type="module" src="assets/js/solar.js?v=20260611d"></script>
+  <script type="module" src="assets/js/solar.js?v=20260612c"></script>
 </body>
 </html>
