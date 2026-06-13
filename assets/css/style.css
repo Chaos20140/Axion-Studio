@@ -134,12 +134,13 @@ input, textarea, select { font: inherit; color: inherit; }
 
 /* =========================================================
    REEL-REACTIVE LIGHT (team.html). main.js sets --reel-flash
-   (0..1) from the bg video's currentTime, peaking when the black
-   car turns white (~11–12s). The page then shifts into a LIGHT
-   tone from the INSIDE OUT: a light wash opens centre→edges (two
-   bright edges sweep apart) and the white text inverts to dark —
-   like the video's reveal projected onto the page. color-mix has
-   plain fallbacks so old browsers degrade to the base colours.
+   (0..1) from the bg video's currentTime, peaking briefly when the
+   black car turns white (~11s). A SHORT effect sweeps from the
+   CENTRE outward (two bright bands) WITHOUT washing the video — the
+   background stays transparent / fully visible. As the bands reach
+   the edges they clothe the TOP nav bar and the BOTTOM footer bar in
+   a light beige (text inverts to dark there), giving the page a
+   light look. Removed on mobile (--reel-flash stays 0).
    ========================================================= */
 @property --reel-flash {
   syntax: "<number>";
@@ -147,23 +148,10 @@ input, textarea, select { font: inherit; color: inherit; }
   initial-value: 0;
 }
 :root { --reel-flash: 0; }
-/* Two white banners start at the CENTRE and sweep outward (up + down) in sync
-   with the bg video's black→white moment; the band between them is clothed in a
-   lighter SCREEN tone (screen only ADDS light → the video always stays visible),
-   then they return to the centre as the car turns dark. Driven by --reel-flash.
-   Removed on mobile (≤900px) per request. */
-.reel-wash {
-  position: fixed; inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  /* BEIGE light: screen only adds light → dark surfaces lift toward beige while
-     the bright white car stays bright (white screen-blended with beige = white). */
-  background: linear-gradient(180deg, rgba(234, 219, 184, 0.72), rgba(224, 207, 168, 0.64));
-  /* reveal from the centre outward: clip top + bottom by (1 - flash) * 50% */
-  clip-path: inset(calc((1 - var(--reel-flash)) * 50%) 0%);
-  will-change: clip-path;
-}
+/* bar-light amount: ramps in as the bands near the top/bottom edges */
+.reel-live { --bar: clamp(0, calc((var(--reel-flash) - 0.55) / 0.4), 1); }
+
+/* two bright bands sweep from the centre out to the top + bottom edges */
 .reel-band {
   position: fixed; left: 0; right: 0;
   height: 2px;
@@ -171,33 +159,84 @@ input, textarea, select { font: inherit; color: inherit; }
   pointer-events: none;
   transform: translateY(-50%);
   mix-blend-mode: screen;
-  background: linear-gradient(90deg, transparent, #ffffff 15%, #ffffff 85%, transparent);
-  box-shadow: 0 0 32px 7px rgba(255, 255, 255, 0.92);
+  background: linear-gradient(90deg, transparent, #fff 15%, #fff 85%, transparent);
+  box-shadow: 0 0 30px 7px rgba(255, 255, 255, 0.9);
   opacity: clamp(0, calc(var(--reel-flash) * 8), 1);
 }
 .reel-band--top    { top: calc(50% - var(--reel-flash) * 50%); }  /* centre → top */
 .reel-band--bottom { top: calc(50% + var(--reel-flash) * 50%); }  /* centre → bottom */
 
-/* As the light band sweeps over the content, recolor it so it stays legible on
-   the beige tone: white text → near-black, kept on-brand red accents untouched.
-   Delayed onset (starts ~flash 0.45) so text only darkens once the band has
-   grown to cover it. Flash stays 0 on mobile → no recolor there. */
-.reel-live {
-  --ink-now: color-mix(in srgb, var(--ink), #0b0b0d calc((clamp(0.45, var(--reel-flash), 1) - 0.45) / 0.55 * 100%));
-  --ink-dim-now: color-mix(in srgb, var(--ink-dim), #1a160f calc((clamp(0.45, var(--reel-flash), 1) - 0.45) / 0.55 * 100%));
+/* TOP nav bar clothes light as the upper band reaches it (bg only — content stays) */
+.reel-live .nav::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #efe7d4, #e7ddc4);
+  opacity: var(--bar);
 }
-.reel-live h1, .reel-live h2, .reel-live h3,
-.reel-live .page-hero__title, .reel-live .team-card__name,
-.reel-live strong { color: var(--ink-now); }
-.reel-live p, .reel-live .page-hero__lead, .reel-live .team-card__bio,
-.reel-live .page-grid__meta dd, .reel-live .page-section__head { color: var(--ink-dim-now); }
-.reel-live .page-hero__lead, .reel-live .page-section > p,
-.reel-live .page-section > h2, .reel-live .page-section__head,
-.reel-live .page-grid__meta dd {
-  text-shadow: 0 1px 12px rgba(6, 3, 5, calc(0.6 * (1 - var(--reel-flash))));
+.reel-live .nav > * { position: relative; }   /* nav content above the light overlay */
+.reel-live .nav__logo-text { color: color-mix(in srgb, var(--ink), #0b0b0d calc(var(--bar) * 100%)); }
+.reel-live .nav__links a,
+.reel-live .nav__sep,
+.reel-live .nav__cta { color: color-mix(in srgb, var(--ink-dim), #0b0b0d calc(var(--bar) * 100%)); }
+.reel-live .nav__cta { border-color: color-mix(in srgb, var(--line), #0b0b0d calc(var(--bar) * 55%)); }
+
+/* BOTTOM footer bar clothes light as the lower band reaches it */
+.reel-live .footer { position: relative; }
+.reel-live .footer::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, #e7ddc4, #efe7d4);
+  opacity: var(--bar);
 }
+.reel-live .footer > * { position: relative; }
+.reel-live .footer__giant,
+.reel-live .footer__col p,
+.reel-live .footer__col a,
+.reel-live .footer__bottom .mono { color: color-mix(in srgb, var(--ink), #0b0b0d calc(var(--bar) * 100%)); }
+
 @media (max-width: 900px) {
-  .reel-wash, .reel-band { display: none; }   /* animation removed on mobile */
+  .reel-band { display: none; }   /* sweep removed on mobile */
+}
+
+/* =========================================================
+   PROJEKTE — big-type project index (premium, type-driven,
+   sits over the bg video; accents follow the page theme).
+   ========================================================= */
+.proj-list { list-style: none; border-top: 1px solid var(--line); }
+.proj { border-bottom: 1px solid var(--line); }
+.proj > a {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: baseline;
+  gap: 28px;
+  padding: clamp(18px, 3.2vh, 40px) 8px;
+  text-decoration: none; color: inherit;
+  position: relative;
+  transition: padding-left 0.45s var(--ease-out);
+}
+.proj > a::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 0;
+  background: linear-gradient(90deg, rgba(var(--red-glow), 0.12), transparent 72%);
+  transition: width 0.45s var(--ease-out);
+  z-index: -1;
+}
+.proj > a:hover { padding-left: 22px; }
+.proj > a:hover::before { width: 100%; }
+.proj__num { font-family: var(--font-mono); font-size: 12px; color: var(--red); letter-spacing: 0.1em; }
+.proj__name {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 62px);
+  line-height: 0.95; letter-spacing: -0.01em; text-transform: uppercase;
+  color: var(--ink);
+  transition: color 0.3s;
+}
+.proj > a:hover .proj__name { color: var(--red); }
+.proj__cat { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+.proj__year { font-family: var(--font-mono); font-size: 12px; color: var(--ink-mute); }
+@media (max-width: 760px) {
+  .proj > a { grid-template-columns: auto 1fr; gap: 4px 16px; }
+  .proj__cat { grid-column: 2; }
+  .proj__year { grid-column: 1; grid-row: 1; justify-self: end; }
 }
 .bg-scroll__video {
   position: absolute; inset: 0;

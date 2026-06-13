@@ -356,7 +356,7 @@
     {
       const root = document.documentElement;
       const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-      const whiteEnv = (t) => Math.max(0, Math.min(ss(10.6, 11.6, t), 1 - ss(12.2, 13.2, t)));
+      const whiteEnv = (t) => Math.max(0, Math.min(ss(10.9, 11.4, t), 1 - ss(11.7, 12.3, t)));
       let last = -1;
       const flashTick = () => {
         requestAnimationFrame(flashTick);
