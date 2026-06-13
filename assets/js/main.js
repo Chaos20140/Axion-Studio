@@ -331,24 +331,6 @@
     const canvas = $("#teamBgCanvas");
     if (!wrap || !video) return;
 
-    /* Reel-reactive light: drive --reel-flash (0..1) continuously from the bg
-       video's currentTime — it RISES as the black car turns white (~11s) and
-       FALLS as it turns back (~13s). CSS maps it to a thin strip that wanders
-       down the page (clothing it in a lighter SCREEN tone) and back up, in sync
-       with the video. Runs for scrub (desktop) AND loop (mobile). */
-    {
-      const root = document.documentElement;
-      const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-      const whiteEnv = (t) => Math.max(0, Math.min(ss(10.6, 11.6, t), 1 - ss(12.2, 13.2, t)));
-      let last = -1;
-      const flashTick = () => {
-        requestAnimationFrame(flashTick);
-        const f = (video.duration && !document.hidden) ? whiteEnv(video.currentTime) : 0;
-        if (Math.abs(f - last) > 0.003) { last = f; root.style.setProperty("--reel-flash", f.toFixed(3)); }
-      };
-      requestAnimationFrame(flashTick);
-    }
-
     if (isMobile) {
       canvas?.remove();
       const src = document.createElement("source");
@@ -365,6 +347,25 @@
       return;
     }
     if (!canvas) return;
+
+    /* Reel-reactive light (DESKTOP only — removed on mobile): drive --reel-flash
+       (0..1) continuously from the bg video's currentTime. It RISES as the black
+       car turns white (~11s) and FALLS as it turns dark (~13s); CSS maps it to
+       two banners opening from the CENTRE outward + a lighter SCREEN tone between
+       them (then closing again). */
+    {
+      const root = document.documentElement;
+      const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+      const whiteEnv = (t) => Math.max(0, Math.min(ss(10.6, 11.6, t), 1 - ss(12.2, 13.2, t)));
+      let last = -1;
+      const flashTick = () => {
+        requestAnimationFrame(flashTick);
+        const f = (video.duration && !document.hidden) ? whiteEnv(video.currentTime) : 0;
+        if (Math.abs(f - last) > 0.003) { last = f; root.style.setProperty("--reel-flash", f.toFixed(3)); }
+      };
+      requestAnimationFrame(flashTick);
+    }
+
     proxyScrub({
       wrap, video, canvas,
       src: "assets/video/team-reel.mp4?v=20260611a",

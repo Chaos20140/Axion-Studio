@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260611d" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260612a" />
 </head>
 <body class="reel-live">
   <div class="noise" aria-hidden="true"></div>
@@ -30,11 +30,13 @@
   </div>
   <div class="bg-scroll-tint" aria-hidden="true"></div>
 
-  <!-- REEL-REACTIVE LIGHT: a thin strip wanders down the page in sync with the bg
-       video's black→white moment, clothing the page above it in a lighter tone
-       (screen blend → the video stays visible), then recedes again. -->
+  <!-- REEL-REACTIVE LIGHT: two white banners open from the CENTRE outward (up +
+       down) in sync with the bg video's black→white moment, clothing the page
+       between them in a lighter tone (screen blend → the video stays visible),
+       then closing back to the centre. Desktop only (removed on mobile). -->
   <div class="reel-wash" aria-hidden="true"></div>
-  <div class="reel-strip" aria-hidden="true"></div>
+  <div class="reel-band reel-band--top" aria-hidden="true"></div>
+  <div class="reel-band reel-band--bottom" aria-hidden="true"></div>
 
   <header class="nav is-scrolled" id="nav">
     <a href="index.html" class="nav__logo" aria-label="APEX/THRUST MEDIA — Startseite">
@@ -271,6 +273,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260611d"></script>
+  <script src="assets/js/main.js?v=20260612a"></script>
 </body>
 </html>
