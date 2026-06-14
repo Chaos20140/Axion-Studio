@@ -194,7 +194,7 @@
     const fmt = (n) => String(n).padStart(2, "0");
     const tickClock = () => {
       const d = new Date();
-      clock.textContent = `${fmt(d.getHours())} : ${fmt(d.getMinutes())} : ${fmt(d.getSeconds())} — DRESDEN`;
+      clock.textContent = `${fmt(d.getHours())} : ${fmt(d.getMinutes())} : ${fmt(d.getSeconds())} — BERLIN`;
     };
     tickClock();
     setInterval(tickClock, 1000);
