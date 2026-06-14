@@ -256,6 +256,7 @@ input, textarea, select { font: inherit; color: inherit; }
   position: relative;
   transition: border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out);
 }
+.case-feature + .case-feature { margin-top: clamp(20px, 3.5vh, 40px); }
 .case-feature:hover { border-color: rgba(var(--red-glow), 0.55); transform: translateY(-3px); }
 .case-feature__media {
   position: relative;
