@@ -3198,3 +3198,57 @@ body.nav-open { overflow: hidden; }
   }
   .marquee__track { animation: none; }
 }
+
+/* =========================================================
+   COOKIE CONSENT BAR (JS-injected on first visit, all pages)
+   ========================================================= */
+.cookie-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 1200;
+  background: rgba(8, 5, 7, 0.97);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  padding: 16px clamp(16px, 4vw, 40px);
+  transform: translateY(110%);
+  transition: transform 0.5s var(--ease-out);
+}
+.cookie-bar.is-in { transform: translateY(0); }
+.cookie-bar__inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; gap: 22px; flex-wrap: wrap;
+  justify-content: space-between;
+}
+.cookie-bar__text {
+  font-family: var(--font-body);
+  font-size: 13px; line-height: 1.5; color: var(--ink-dim);
+  max-width: 72ch; margin: 0;
+}
+.cookie-bar__text a { color: var(--red); border-bottom: 1px solid rgba(var(--red-glow), 0.5); }
+.cookie-bar__actions { display: flex; gap: 12px; flex-shrink: 0; }
+.cookie-bar__btn {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 12px 20px; cursor: pointer;
+  border: 1px solid var(--line);
+  background: transparent; color: var(--ink);
+  transition: border-color 0.3s, background 0.3s, color 0.3s, filter 0.3s;
+}
+.cookie-bar__btn--ghost:hover { border-color: var(--ink-dim); }
+.cookie-bar__btn--solid { background: var(--red); border-color: var(--red); color: #fff; }
+.cookie-bar__btn--solid:hover { filter: brightness(1.12); }
+@media (max-width: 600px) {
+  .cookie-bar__inner { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .cookie-bar__actions { width: 100%; }
+  .cookie-bar__btn { flex: 1; }
+}
+
+/* Consent placeholder over a gated embed (Google Maps on kontakt) */
+.map-consent {
+  position: absolute; inset: 0; z-index: 3;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; text-align: center; padding: 28px;
+  background: rgba(8, 5, 7, 0.92);
+}
+.map-consent p {
+  font-family: var(--font-body);
+  font-size: 13px; line-height: 1.5; color: var(--ink-dim); max-width: 38ch; margin: 0;
+}

@@ -844,3 +844,59 @@
     });
   })();
 })();
+
+/* =========================================================
+   COOKIE CONSENT — shown on first visit (all pages). The choice
+   is stored in localStorage. Third-party embeds (Google Maps)
+   carry data-consent-src and are only loaded after "accept".
+   ========================================================= */
+(() => {
+  const KEY = "atm-consent";
+  let stored = null;
+  try { stored = localStorage.getItem(KEY); } catch (_) {}
+
+  const loadGated = () => {
+    document.querySelectorAll("[data-consent-src]").forEach((el) => {
+      if (!el.getAttribute("src")) el.setAttribute("src", el.getAttribute("data-consent-src"));
+    });
+    document.querySelectorAll(".map-consent").forEach((el) => el.remove());
+  };
+
+  const setConsent = (choice) => {
+    try { localStorage.setItem(KEY, choice); } catch (_) {}
+    if (choice === "accepted") loadGated();
+    const bar = document.querySelector(".cookie-bar");
+    if (bar) { bar.classList.remove("is-in"); setTimeout(() => bar.remove(), 450); }
+  };
+
+  // Delegated handler — works for the banner buttons AND a "Karte laden" button.
+  document.addEventListener("click", (e) => {
+    const btn = e.target instanceof Element && e.target.closest("[data-consent]");
+    if (!btn) return;
+    e.preventDefault();
+    setConsent(btn.getAttribute("data-consent"));
+  });
+
+  if (stored === "accepted") { loadGated(); return; }
+  if (stored === "declined") { return; }  // already chose — no banner
+
+  const bar = document.createElement("div");
+  bar.className = "cookie-bar";
+  bar.setAttribute("role", "dialog");
+  bar.setAttribute("aria-label", "Cookie-Hinweis");
+  bar.innerHTML =
+    '<div class="cookie-bar__inner">' +
+      '<p class="cookie-bar__text">Wir verwenden nur technisch notwendige Cookies. Externe Inhalte wie Google Maps werden erst nach deiner Zustimmung geladen. Mehr dazu in der <a href="impressum.html#datenschutz">Datenschutzerklärung</a>.</p>' +
+      '<div class="cookie-bar__actions">' +
+        '<button type="button" class="cookie-bar__btn cookie-bar__btn--ghost" data-consent="declined">Nur notwendige</button>' +
+        '<button type="button" class="cookie-bar__btn cookie-bar__btn--solid" data-consent="accepted">Alle akzeptieren</button>' +
+      '</div>' +
+    '</div>';
+
+  const mount = () => {
+    document.body.appendChild(bar);
+    requestAnimationFrame(() => bar.classList.add("is-in"));
+  };
+  if (document.body) mount();
+  else document.addEventListener("DOMContentLoaded", mount, { once: true });
+})();
