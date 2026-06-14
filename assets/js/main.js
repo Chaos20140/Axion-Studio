@@ -109,21 +109,6 @@
   window.addEventListener("scroll", onNavScroll, { passive: true });
   onNavScroll();
 
-  /* ---------- MAGNETIC ELEMENTS ---------- */
-  $$("[data-magnetic]").forEach((el) => {
-    let rect;
-    el.addEventListener("mouseenter", () => { rect = el.getBoundingClientRect(); });
-    el.addEventListener("mousemove", (e) => {
-      if (!rect) rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) * 0.25;
-      const dy = (e.clientY - cy) * 0.25;
-      el.style.transform = `translate(${dx}px, ${dy}px)`;
-    });
-    el.addEventListener("mouseleave", () => { el.style.transform = ""; rect = null; });
-  });
-
   /* ---------- SERVICE CARD GLOW TRACKING ---------- */
   $$(".service").forEach((card) => {
     card.addEventListener("mousemove", (e) => {
