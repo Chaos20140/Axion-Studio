@@ -71,12 +71,12 @@ import * as THREE from "three";
   const PLANET_CFG = [
     { id: "design", label: "WEB DESIGN", kicker: "/ 01 — CORE", title: "Web Design",
       cls: "CORE", dist: "/ 01",
-      text: "Konzept, Art Direction, UX/UI. Wir entwerfen Interfaces, die wie ein Auspuffschlag wirken — laut, präzise, unverwechselbar. Art Direction · UX & UI · Design Systems · Prototyping.",
+      text: "Konzept, Art Direction, UX/UI. Wir gestalten Interfaces, die deine Besucher führen und deine Marke unverwechselbar machen — klar, präzise, durchdacht. Art Direction · UX & UI · Design Systems · Prototyping.",
       href: "kontakt.html", cta: "Briefing senden →",
       radius: 0.50, orbit: 2.8, speed: 0.13, angle0: 0.6, tone: 0x2c3a4a, accent: 0x8fb3d6, type: 0 },
     { id: "dev", label: "DEVELOPMENT", kicker: "/ 02 — BUILD", title: "Development",
       cls: "BUILD", dist: "/ 02",
-      text: "Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen den Motor, der dein Projekt unter 2 Sekunden bringt. Next.js · Headless CMS · E-Commerce · API Integrations.",
+      text: "Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen die Technik, die deine Seite zuverlässig unter 2 Sekunden lädt. Next.js · Headless CMS · E-Commerce · API Integrations.",
       href: "kontakt.html", cta: "Stack besprechen →",
       radius: 0.46, orbit: 4.0, speed: 0.10, angle0: 2.4, tone: 0x213339, accent: 0x6fc4cf, type: 2 },
     { id: "motion", label: "MOTION & 3D", kicker: "/ 03 — MOTION", title: "Motion & 3D",
@@ -86,7 +86,7 @@ import * as THREE from "three";
       radius: 0.40, orbit: 5.2, speed: 0.08, angle0: 4.4, tone: 0x322f44, accent: 0xb3a6d8, type: 1 },
     { id: "brand", label: "BRAND IDENTITY", kicker: "/ 04 — BRAND", title: "Brand Identity",
       cls: "BRAND", dist: "/ 04",
-      text: "Logos, Tonalität, visuelles System. Wir bauen Marken, die ein Statement sind, bevor du den ersten Satz gelesen hast. Logo & Marke · Voice & Tone · Guidelines · Launch Kampagnen.",
+      text: "Logos, Tonalität, visuelles System. Wir bauen Marken, die schon wirken, bevor du den ersten Satz gelesen hast. Logo & Marke · Voice & Tone · Guidelines · Launch Kampagnen.",
       href: "kontakt.html", cta: "Marke bauen →",
       radius: 0.44, orbit: 6.4, speed: 0.062, angle0: 1.5, tone: 0x35302c, accent: 0xd9c9a0, type: 1, ring: true },
   ];
