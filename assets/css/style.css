@@ -1079,10 +1079,10 @@ body.nav-open { overflow: hidden; }
   position: absolute; inset: 0;
   z-index: 0;
   width: 100%; height: 100%;
-  /* Tap a planet to target it (no drag/orbit). pointer-events:auto so taps
-     register; touch-action:auto lets the page scroll normally over the canvas. */
+  /* draggable surface: orbit the system. touch-action pan-y keeps vertical
+     page-scroll working while horizontal drags rotate the system on mobile. */
   pointer-events: auto;
-  touch-action: auto;
+  touch-action: pan-y;
 }
 .services--solar .services__intro {
   position: relative;
