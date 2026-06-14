@@ -3267,7 +3267,9 @@ body.nav-open { overflow: hidden; }
   aspect-ratio: 4 / 5;
   border: 1px solid var(--line);
   overflow: hidden;
-  background: linear-gradient(160deg, var(--bg-2), var(--bg));
+  background:
+    radial-gradient(ellipse 72% 56% at 50% 32%, rgba(var(--red-glow), 0.16), transparent 70%),
+    linear-gradient(160deg, var(--bg-2), var(--bg));
   display: flex; align-items: center; justify-content: center;
 }
 .member__photo img {
