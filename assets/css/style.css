@@ -496,16 +496,16 @@ input, textarea, select { font: inherit; color: inherit; }
 .nav__logo-text { white-space: nowrap; }
 .nav__logo-mark {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px;
+  width: 50px; height: 50px;
   transition: transform 0.4s var(--ease-out), filter 0.3s;
   /* The user's logo PNG is BLACK on TRANSPARENT.
      invert(1) flips the black pixels to white (alpha is preserved),
      giving us a clean white logo on the dark site without touching
-     the original artwork. Red drop-shadow stays as on-brand glow. */
+     the original artwork. Crisp white + subtle glow so it reads clearly. */
   filter:
     invert(1)
     drop-shadow(0 0 0 transparent)
-    drop-shadow(0 0 14px rgba(255, 255, 255, 0.15));
+    drop-shadow(0 0 16px rgba(255, 255, 255, 0.28));
 }
 .nav__logo-mark img,
 .nav__logo-mark svg {
@@ -2449,7 +2449,7 @@ body.nav-open { overflow: hidden; }
   .hero__sub { font-size: 13px; }
   .nav { padding: 12px 18px; }
   .nav__logo { font-size: 17px; gap: 10px; }
-  .nav__logo-mark { width: 32px; height: 32px; }
+  .nav__logo-mark { width: 38px; height: 38px; }
   .footer__grid { grid-template-columns: 1fr; }       /* 1 col footer */
   .marquee__track { font-size: 17px; gap: 18px; }
   .marquee__track--xl { font-size: clamp(40px, 17vw, 78px); }
