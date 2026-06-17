@@ -822,9 +822,10 @@ body.nav-open { overflow: hidden; }
   display: block;
   overflow: hidden;
 }
-/* Tidy the hero block: tune per-line size so all three lines render at ~the
-   same width (flush left + right) instead of "AT APEX" sticking out right. */
-.hero__title .line:nth-child(2) { font-size: 0.82em; }
+/* Tidy the hero: DESIGN + AT APEX same SIZE (same letter height); AT APEX is
+   condensed horizontally so it matches DESIGN's width — no overhang. THRUST
+   MEDIA. stays the smaller tagline (.small below). */
+.hero__title .line:nth-child(2) { transform: scaleX(0.815); transform-origin: left center; }
 .hero__title .word {
   display: inline-block;
   position: relative;
