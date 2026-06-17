@@ -93,15 +93,15 @@
       <div class="page-grid">
         <dl class="page-grid__meta">
           <dt>E-Mail</dt>
-          <dd><a href="mailto:Tolunay.u@outlook.de" style="color: var(--ink); border-bottom: 1px solid var(--red);">Tolunay.u@outlook.de</a></dd>
+          <dd><a data-cms="kontakt.email" data-cms-href="kontakt.emailHref" href="mailto:Tolunay.u@outlook.de" style="color: var(--ink); border-bottom: 1px solid var(--red);">Tolunay.u@outlook.de</a></dd>
           <dt>WhatsApp</dt>
-          <dd><a href="https://wa.me/4917676668002?text=Hallo%20Apex%20Thrust%20Media!" target="_blank" rel="noopener noreferrer" style="color: var(--ink); border-bottom: 1px solid var(--red);">+49 176 76668002 — direkt schreiben</a></dd>
+          <dd><a data-cms="kontakt.whatsapp" data-cms-href="kontakt.whatsappHref" href="https://wa.me/4917676668002?text=Hallo%20Apex%20Thrust%20Media!" target="_blank" rel="noopener noreferrer" style="color: var(--ink); border-bottom: 1px solid var(--red);">+49 176 76668002 — direkt schreiben</a></dd>
           <dt>Telefon</dt>
-          <dd><a href="tel:+4917676668002" style="color: var(--ink); border-bottom: 1px solid var(--red);">+49 176 76668002</a></dd>
+          <dd><a data-cms="kontakt.phone" data-cms-href="kontakt.phoneHref" href="tel:+4917676668002" style="color: var(--ink); border-bottom: 1px solid var(--red);">+49 176 76668002</a></dd>
           <dt>Erreichbar</dt>
-          <dd>Mo – Fr · 09:00 – 18:00 CET</dd>
+          <dd data-cms="kontakt.hours">Mo – Fr · 09:00 – 18:00 CET</dd>
           <dt>Response</dt>
-          <dd>Ø &lt; 24 h</dd>
+          <dd data-cms="kontakt.response">Ø &lt; 24 h</dd>
         </dl>
         <div>
           <h2>Du hast <em>30 Sekunden?</em></h2>
@@ -192,10 +192,10 @@
         <fieldset class="field field--chips">
           <span class="field__label mono">/ 05 BUDGET</span>
           <div class="chips chips--radio">
-            <label class="chip"><input type="radio" name="budget" value="<1"/><span>&lt; 1K €</span></label>
-            <label class="chip"><input type="radio" name="budget" value="1-3"/><span>1–3K €</span></label>
-            <label class="chip"><input type="radio" name="budget" value="3-6"/><span>3–6K €</span></label>
-            <label class="chip"><input type="radio" name="budget" value="6+"/><span>6K+ €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="<1"/><span data-cms="budget.0">&lt; 1K €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="1-3"/><span data-cms="budget.1">1–3K €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="3-6"/><span data-cms="budget.2">3–6K €</span></label>
+            <label class="chip"><input type="radio" name="budget" value="6+"/><span data-cms="budget.3">6K+ €</span></label>
           </div>
         </fieldset>
         <label class="field">
@@ -260,6 +260,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
   <script src="assets/js/main.js?v=20260614h"></script>
+  <script src="assets/js/content.js?v=20260617a"></script>
 
 </body>
 </html>

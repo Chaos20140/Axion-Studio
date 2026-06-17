@@ -1,0 +1,13 @@
+{
+  "kontakt": {
+    "email": "Tolunay.u@outlook.de",
+    "emailHref": "mailto:Tolunay.u@outlook.de",
+    "phone": "+49 176 76668002",
+    "phoneHref": "tel:+4917676668002",
+    "whatsapp": "+49 176 76668002 — direkt schreiben",
+    "whatsappHref": "https://wa.me/4917676668002?text=Hallo%20Apex%20Thrust%20Media!",
+    "hours": "Mo – Fr · 09:00 – 18:00 CET",
+    "response": "Ø < 24 h"
+  },
+  "budget": ["< 1K €", "1–3K €", "3–6K €", "6K+ €"]
+}

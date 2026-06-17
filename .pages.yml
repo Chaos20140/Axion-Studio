@@ -1,0 +1,29 @@
+# Pages CMS configuration — https://pagescms.org/docs
+# Defines the friendly admin panel fields. Editing in Pages CMS commits to
+# content/site.json; the site reads that file at runtime (assets/js/content.js).
+media:
+  input: assets/images
+  output: assets/images
+content:
+  - name: site
+    label: Website-Inhalte
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: kontakt
+        label: Kontaktdaten
+        type: object
+        fields:
+          - { name: email, label: "E-Mail (Anzeige)", type: string }
+          - { name: emailHref, label: "E-Mail-Link (mailto:…)", type: string }
+          - { name: phone, label: "Telefon (Anzeige)", type: string }
+          - { name: phoneHref, label: "Telefon-Link (tel:…)", type: string }
+          - { name: whatsapp, label: "WhatsApp (Anzeige)", type: string }
+          - { name: whatsappHref, label: "WhatsApp-Link (https://wa.me/…)", type: string }
+          - { name: hours, label: "Erreichbar", type: string }
+          - { name: response, label: "Antwortzeit", type: string }
+      - name: budget
+        label: "Budget-Stufen"
+        type: string
+        list: true
