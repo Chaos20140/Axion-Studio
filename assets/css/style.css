@@ -825,7 +825,7 @@ body.nav-open { overflow: hidden; }
 /* Tidy the hero: DESIGN + AT APEX same SIZE (same letter height); AT APEX is
    condensed horizontally so it matches DESIGN's width — no overhang. THRUST
    MEDIA. stays the smaller tagline (.small below). */
-.hero__title .line:nth-child(2) { transform: scaleX(0.815); transform-origin: left center; }
+.hero__title .line:nth-child(2) { transform: scaleX(0.92); transform-origin: left center; }
 .hero__title .word {
   display: inline-block;
   position: relative;
