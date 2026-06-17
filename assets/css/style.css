@@ -822,6 +822,9 @@ body.nav-open { overflow: hidden; }
   display: block;
   overflow: hidden;
 }
+/* Tidy the hero block: tune per-line size so all three lines render at ~the
+   same width (flush left + right) instead of "AT APEX" sticking out right. */
+.hero__title .line:nth-child(2) { font-size: 0.82em; }
 .hero__title .word {
   display: inline-block;
   position: relative;
@@ -841,7 +844,7 @@ body.nav-open { overflow: hidden; }
 }
 .hero__title .small {
   font-family: var(--font-display-2);
-  font-size: 0.55em;
+  font-size: 0.51em;
   font-style: italic;
   color: var(--ink-dim);
   letter-spacing: 0;
