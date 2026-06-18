@@ -109,6 +109,10 @@
         desc,
       ]);
     },
+    // Generic: one <li> per string (e.g. service feature bullets)
+    bullet(item) {
+      return h("li", { text: String(item) });
+    },
   };
 
   fetch("content/site.json?ts=" + Date.now())
@@ -123,6 +127,14 @@
       document.querySelectorAll("[data-cms-href]").forEach((el) => {
         const v = safeHref(get(el.getAttribute("data-cms-href")));
         if (v) el.setAttribute("href", v);
+      });
+      // animated count-up stats: set the data-count target the script reads on scroll
+      document.querySelectorAll("[data-cms-count]").forEach((el) => {
+        const v = get(el.getAttribute("data-cms-count"));
+        if (v != null && String(v).trim() !== "") {
+          el.setAttribute("data-count", String(v).replace(/[^0-9.]/g, ""));
+          el.textContent = "0";
+        }
       });
       document.querySelectorAll("[data-cms-list]").forEach((box) => {
         const arr = get(box.getAttribute("data-cms-list"));

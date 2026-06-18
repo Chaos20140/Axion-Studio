@@ -70,3 +70,57 @@ content:
           - { name: name, label: Name, type: string }
           - { name: description, label: Beschreibung, type: text }
           - { name: url, label: "Website-Link (optional)", type: string }
+      - name: start
+        label: "Startseite"
+        type: object
+        fields:
+          - name: hero
+            label: "Hero (ganz oben)"
+            type: object
+            fields:
+              - { name: lead, label: "Untertitel", type: text }
+              - { name: leadAccent, label: "Pointe am Ende (fett)", type: string }
+              - { name: cta, label: "Button-Text", type: string }
+          - name: manifesto
+            label: "Manifest"
+            type: object
+            fields:
+              - { name: lead, label: "Absatz", type: text }
+          - name: stats
+            label: "Kennzahlen (Counter)"
+            type: object
+            list: true
+            fields:
+              - { name: num, label: "Zahl (nur Ziffern)", type: string }
+              - { name: suffix, label: "Einheit (%, s …)", type: string }
+              - { name: label, label: "Beschriftung", type: string }
+          - name: services
+            label: "Service-Karten"
+            type: object
+            list: true
+            fields:
+              - { name: title, label: "Titel", type: string }
+              - { name: desc, label: "Beschreibung", type: text }
+              - { name: items, label: "Stichpunkte", type: string, list: true }
+          - { name: servicesMore, label: "Service-Karten: Link-Text", type: string }
+          - name: process
+            label: "Ablauf-Schritte"
+            type: object
+            list: true
+            fields:
+              - { name: label, label: "Label (oben, klein)", type: string }
+              - { name: title, label: "Titel", type: string }
+              - { name: desc, label: "Beschreibung", type: text }
+              - { name: time, label: "Dauer", type: string }
+          - name: contact
+            label: "Kontakt-Bereich"
+            type: object
+            fields:
+              - { name: lead, label: "Einleitung", type: text }
+      - name: footer
+        label: "Footer (alle Seiten)"
+        type: object
+        fields:
+          - { name: studio, label: "Studio-Zeile 1", type: string }
+          - { name: location, label: "Studio-Zeile 2 (Ort)", type: string }
+          - { name: copyright, label: "Copyright-Zeile", type: string }

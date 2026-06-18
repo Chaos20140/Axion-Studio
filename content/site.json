@@ -51,5 +51,42 @@
       "description": "Social-Media- & Creative-Agency. Den digitalen Auftritt haben wir gemeinsam umgesetzt —",
       "url": "https://puron-media.de/"
     }
-  ]
+  ],
+  "start": {
+    "hero": {
+      "lead": "Wir gestalten und entwickeln Websites für Marken, die sichtbar werden wollen — strategisch durchdacht, technisch sauber, spürbar schnell. Keine Vorlagen von der Stange.",
+      "leadAccent": "Sondern Maßarbeit.",
+      "cta": "START THE ENGINE"
+    },
+    "manifesto": {
+      "lead": "Jedes Pixel hat einen Grund, jede Animation eine Aufgabe. Wir arbeiten strukturiert und schnell — von der ersten Skizze bis zum Go-Live. Was wir abliefern, überzeugt: visuell, technisch und wirtschaftlich."
+    },
+    "stats": [
+      { "num": "100", "suffix": "%", "label": "Kundenzufriedenheit" },
+      { "num": "9", "suffix": "", "label": "Aktive Mandate" },
+      { "num": "12", "suffix": "", "label": "Projekte realisiert" },
+      { "num": "3", "suffix": "s", "label": "First Paint Ø" }
+    ],
+    "services": [
+      { "title": "Web Design", "desc": "Konzept, Art Direction, UX/UI. Wir gestalten Interfaces, die deine Besucher führen und deine Marke unverwechselbar machen — klar, präzise, durchdacht.", "items": ["Art Direction", "UX & UI", "Design Systems", "Prototyping"] },
+      { "title": "Development", "desc": "Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen die Technik, die deine Seite zuverlässig unter 2 Sekunden lädt.", "items": ["Next.js / Astro", "Headless CMS", "E-Commerce", "API Integrations"] },
+      { "title": "Motion & 3D", "desc": "GSAP, Three.js, WebGL Shader. Bewegung, die deine Marke nicht dekoriert, sondern transportiert.", "items": ["Scroll Storytelling", "WebGL Scenes", "Microinteractions", "Reels & Showcases"] },
+      { "title": "Brand Identity", "desc": "Logos, Tonalität, visuelles System. Wir bauen Marken, die schon wirken, bevor du den ersten Satz gelesen hast.", "items": ["Logo & Marke", "Voice & Tone", "Guidelines", "Launch Kampagnen"] }
+    ],
+    "servicesMore": "Was wir anbieten →",
+    "process": [
+      { "label": "— FORMATION LAP · POLE POSITION", "title": "Discovery", "desc": "Wir verstehen dein Geschäftsmodell, deine Zielgruppe und deinen Markt. Ein klares Briefing ist die Basis für alles Weitere.", "time": "Ø 1 Woche" },
+      { "label": "— PIT BOX · KONZEPTION", "title": "Konzept & Design", "desc": "Art Direction, Wireframes, High-Fidelity-Designs in Figma. Du bekommst durchdachte Vorschläge, die du in Ruhe prüfen und mitgestalten kannst.", "time": "Ø 2–3 Wochen" },
+      { "label": "— FULL THROTTLE · BUILD", "title": "Development", "desc": "Code, Motion, Integration. Saubere Architektur, lückenlose Performance, jede Animation auf 60fps.", "time": "Ø 2–4 Wochen" },
+      { "label": "— CHECKERED FLAG · GO-LIVE", "title": "Launch & Support", "desc": "Go-Live, Analytics, Iteration. Wir verschwinden nicht nach dem Launch — wir bleiben für dich ansprechbar.", "time": "Laufend" }
+    ],
+    "contact": {
+      "lead": "Schreib uns. In der Regel antworten wir innerhalb von 24 Stunden — persönlich und unverbindlich."
+    }
+  },
+  "footer": {
+    "studio": "Independent Web Design Studio",
+    "location": "Meschede, Deutschland",
+    "copyright": "© 2026 APEX/THRUST MEDIA — ALL RIGHTS RESERVED"
+  }
 }

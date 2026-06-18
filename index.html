@@ -113,12 +113,12 @@
         <span class="line small"><span class="word" data-text="Thrust Media.">Thrust Media.</span></span>
       </h1>
       <p class="hero__sub">
-        Wir gestalten und entwickeln Websites für Marken, die sichtbar werden wollen — strategisch durchdacht, technisch sauber, spürbar schnell. Keine Vorlagen von der Stange.
-        <strong>Sondern Maßarbeit.</strong>
+        <span data-cms="start.hero.lead">Wir gestalten und entwickeln Websites für Marken, die sichtbar werden wollen — strategisch durchdacht, technisch sauber, spürbar schnell. Keine Vorlagen von der Stange.</span>
+        <strong data-cms="start.hero.leadAccent">Sondern Maßarbeit.</strong>
       </p>
       <div class="hero__cta">
         <a href="#contact" class="btn btn--primary" data-magnetic>
-          <span>START THE ENGINE</span>
+          <span data-cms="start.hero.cta">START THE ENGINE</span>
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 15L15 1M15 1H4M15 1V12" stroke="currentColor" stroke-width="1.6"/></svg>
         </a>
       </div>
@@ -157,7 +157,7 @@
           <span>die <em>wirken</em>.</span>
           <span>Messbar. Schnell. Verlässlich.</span>
         </h2>
-        <p class="manifesto__lead">
+        <p class="manifesto__lead" data-cms="start.manifesto.lead">
           Jedes Pixel hat einen Grund, jede Animation eine Aufgabe.
           Wir arbeiten strukturiert und schnell — von der ersten Skizze bis zum Go-Live. Was wir abliefern, überzeugt: visuell, technisch und wirtschaftlich.
         </p>
@@ -165,20 +165,20 @@
 
       <div class="manifesto__stats">
         <div class="stat">
-          <span class="stat__num" data-count="100">0</span><span class="stat__suffix">%</span>
-          <span class="stat__label">Kundenzufriedenheit</span>
+          <span class="stat__num" data-count="100" data-cms-count="start.stats.0.num">0</span><span class="stat__suffix" data-cms="start.stats.0.suffix">%</span>
+          <span class="stat__label" data-cms="start.stats.0.label">Kundenzufriedenheit</span>
         </div>
         <div class="stat">
-          <span class="stat__num" data-count="9">0</span>
-          <span class="stat__label">Aktive Mandate</span>
+          <span class="stat__num" data-count="9" data-cms-count="start.stats.1.num">0</span>
+          <span class="stat__label" data-cms="start.stats.1.label">Aktive Mandate</span>
         </div>
         <div class="stat">
-          <span class="stat__num" data-count="12">0</span>
-          <span class="stat__label">Projekte realisiert</span>
+          <span class="stat__num" data-count="12" data-cms-count="start.stats.2.num">0</span>
+          <span class="stat__label" data-cms="start.stats.2.label">Projekte realisiert</span>
         </div>
         <div class="stat">
-          <span class="stat__num" data-count="3">0</span><span class="stat__suffix">s</span>
-          <span class="stat__label">First Paint Ø</span>
+          <span class="stat__num" data-count="3" data-cms-count="start.stats.3.num">0</span><span class="stat__suffix" data-cms="start.stats.3.suffix">s</span>
+          <span class="stat__label" data-cms="start.stats.3.label">First Paint Ø</span>
         </div>
       </div>
     </div>
@@ -204,17 +204,17 @@
           <span class="service__num">/ 01</span>
           <span class="service__tag">CORE</span>
         </div>
-        <h3 class="service__title">Web Design</h3>
-        <p class="service__desc">
+        <h3 class="service__title" data-cms="start.services.0.title">Web Design</h3>
+        <p class="service__desc" data-cms="start.services.0.desc">
           Konzept, Art Direction, UX/UI. Wir gestalten Interfaces, die deine Besucher führen und deine Marke unverwechselbar machen — klar, präzise, durchdacht.
         </p>
-        <ul class="service__items">
+        <ul class="service__items" data-cms-list="start.services.0.items" data-cms-tpl="bullet">
           <li>Art Direction</li>
           <li>UX & UI</li>
           <li>Design Systems</li>
           <li>Prototyping</li>
         </ul>
-        <span class="service__more mono">Was wir anbieten →</span>
+        <span class="service__more mono" data-cms="start.servicesMore">Was wir anbieten →</span>
         <div class="service__glow"></div>
       </a>
 
@@ -223,17 +223,17 @@
           <span class="service__num">/ 02</span>
           <span class="service__tag">BUILD</span>
         </div>
-        <h3 class="service__title">Development</h3>
-        <p class="service__desc">
+        <h3 class="service__title" data-cms="start.services.1.title">Development</h3>
+        <p class="service__desc" data-cms="start.services.1.desc">
           Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen die Technik, die deine Seite zuverlässig unter 2 Sekunden lädt.
         </p>
-        <ul class="service__items">
+        <ul class="service__items" data-cms-list="start.services.1.items" data-cms-tpl="bullet">
           <li>Next.js / Astro</li>
           <li>Headless CMS</li>
           <li>E-Commerce</li>
           <li>API Integrations</li>
         </ul>
-        <span class="service__more mono">Was wir anbieten →</span>
+        <span class="service__more mono" data-cms="start.servicesMore">Was wir anbieten →</span>
         <div class="service__glow"></div>
       </a>
 
@@ -242,17 +242,17 @@
           <span class="service__num">/ 03</span>
           <span class="service__tag">MOTION</span>
         </div>
-        <h3 class="service__title">Motion & 3D</h3>
-        <p class="service__desc">
+        <h3 class="service__title" data-cms="start.services.2.title">Motion & 3D</h3>
+        <p class="service__desc" data-cms="start.services.2.desc">
           GSAP, Three.js, WebGL Shader. Bewegung, die deine Marke nicht dekoriert, sondern <em>transportiert</em>.
         </p>
-        <ul class="service__items">
+        <ul class="service__items" data-cms-list="start.services.2.items" data-cms-tpl="bullet">
           <li>Scroll Storytelling</li>
           <li>WebGL Scenes</li>
           <li>Microinteractions</li>
           <li>Reels & Showcases</li>
         </ul>
-        <span class="service__more mono">Was wir anbieten →</span>
+        <span class="service__more mono" data-cms="start.servicesMore">Was wir anbieten →</span>
         <div class="service__glow"></div>
       </a>
 
@@ -261,17 +261,17 @@
           <span class="service__num">/ 04</span>
           <span class="service__tag">BRAND</span>
         </div>
-        <h3 class="service__title">Brand Identity</h3>
-        <p class="service__desc">
+        <h3 class="service__title" data-cms="start.services.3.title">Brand Identity</h3>
+        <p class="service__desc" data-cms="start.services.3.desc">
           Logos, Tonalität, visuelles System. Wir bauen Marken, die schon wirken, bevor du den ersten Satz gelesen hast.
         </p>
-        <ul class="service__items">
+        <ul class="service__items" data-cms-list="start.services.3.items" data-cms-tpl="bullet">
           <li>Logo & Marke</li>
           <li>Voice & Tone</li>
           <li>Guidelines</li>
           <li>Launch Kampagnen</li>
         </ul>
-        <span class="service__more mono">Was wir anbieten →</span>
+        <span class="service__more mono" data-cms="start.servicesMore">Was wir anbieten →</span>
         <div class="service__glow"></div>
       </a>
     </div>
@@ -455,10 +455,10 @@
 
       <article class="grid__slot grid__slot--right" data-step data-pos="1">
         <div class="step__content">
-          <span class="step__label mono">— FORMATION LAP · POLE POSITION</span>
-          <h3>Discovery</h3>
-          <p>Wir verstehen dein Geschäftsmodell, deine Zielgruppe und deinen Markt. Ein klares Briefing ist die Basis für alles Weitere.</p>
-          <span class="step__time mono">Ø 1 Woche</span>
+          <span class="step__label mono" data-cms="start.process.0.label">— FORMATION LAP · POLE POSITION</span>
+          <h3 data-cms="start.process.0.title">Discovery</h3>
+          <p data-cms="start.process.0.desc">Wir verstehen dein Geschäftsmodell, deine Zielgruppe und deinen Markt. Ein klares Briefing ist die Basis für alles Weitere.</p>
+          <span class="step__time mono" data-cms="start.process.0.time">Ø 1 Woche</span>
         </div>
         <div class="grid__box" aria-hidden="true">
           <span class="grid__pos mono">01</span>
@@ -474,19 +474,19 @@
           <svg class="f1-car"><use href="#f1car"/></svg>
         </div>
         <div class="step__content">
-          <span class="step__label mono">— PIT BOX · KONZEPTION</span>
-          <h3>Konzept &amp; Design</h3>
-          <p>Art Direction, Wireframes, High-Fidelity-Designs in Figma. Du bekommst durchdachte Vorschläge, die du in Ruhe prüfen und mitgestalten kannst.</p>
-          <span class="step__time mono">Ø 2–3 Wochen</span>
+          <span class="step__label mono" data-cms="start.process.1.label">— PIT BOX · KONZEPTION</span>
+          <h3 data-cms="start.process.1.title">Konzept &amp; Design</h3>
+          <p data-cms="start.process.1.desc">Art Direction, Wireframes, High-Fidelity-Designs in Figma. Du bekommst durchdachte Vorschläge, die du in Ruhe prüfen und mitgestalten kannst.</p>
+          <span class="step__time mono" data-cms="start.process.1.time">Ø 2–3 Wochen</span>
         </div>
       </article>
 
       <article class="grid__slot grid__slot--right" data-step data-pos="3">
         <div class="step__content">
-          <span class="step__label mono">— FULL THROTTLE · BUILD</span>
-          <h3>Development</h3>
-          <p>Code, Motion, Integration. Saubere Architektur, lückenlose Performance, jede Animation auf 60fps.</p>
-          <span class="step__time mono">Ø 2–4 Wochen</span>
+          <span class="step__label mono" data-cms="start.process.2.label">— FULL THROTTLE · BUILD</span>
+          <h3 data-cms="start.process.2.title">Development</h3>
+          <p data-cms="start.process.2.desc">Code, Motion, Integration. Saubere Architektur, lückenlose Performance, jede Animation auf 60fps.</p>
+          <span class="step__time mono" data-cms="start.process.2.time">Ø 2–4 Wochen</span>
         </div>
         <div class="grid__box" aria-hidden="true">
           <span class="grid__pos mono">03</span>
@@ -502,10 +502,10 @@
           <svg class="f1-car"><use href="#f1car"/></svg>
         </div>
         <div class="step__content">
-          <span class="step__label mono">— CHECKERED FLAG · GO-LIVE</span>
-          <h3>Launch &amp; Support</h3>
-          <p>Go-Live, Analytics, Iteration. Wir verschwinden nicht nach dem Launch — wir bleiben für dich ansprechbar.</p>
-          <span class="step__time mono">Laufend</span>
+          <span class="step__label mono" data-cms="start.process.3.label">— CHECKERED FLAG · GO-LIVE</span>
+          <h3 data-cms="start.process.3.title">Launch &amp; Support</h3>
+          <p data-cms="start.process.3.desc">Go-Live, Analytics, Iteration. Wir verschwinden nicht nach dem Launch — wir bleiben für dich ansprechbar.</p>
+          <span class="step__time mono" data-cms="start.process.3.time">Laufend</span>
         </div>
       </article>
 
@@ -547,7 +547,7 @@
           <em>schnelle</em><br/>
           <span class="redline">Runde?</span>
         </h2>
-        <p class="contact__lead">
+        <p class="contact__lead" data-cms="start.contact.lead">
           Schreib uns. In der Regel antworten wir innerhalb von 24 Stunden — persönlich und unverbindlich.
         </p>
 
@@ -641,8 +641,8 @@
       <div class="footer__col">
         <span class="mono">/ STUDIO</span>
         <p>
-          Independent Web Design Studio<br/>
-          Meschede, Deutschland
+          <span data-cms="footer.studio">Independent Web Design Studio</span><br/>
+          <span data-cms="footer.location">Meschede, Deutschland</span>
         </p>
       </div>
       <div class="footer__col">
@@ -669,7 +669,7 @@
       </div>
     </div>
     <div class="footer__bottom">
-      <span class="mono">© 2026 APEX/THRUST MEDIA — ALL RIGHTS RESERVED</span>
+      <span class="mono" data-cms="footer.copyright">© 2026 APEX/THRUST MEDIA — ALL RIGHTS RESERVED</span>
       <span class="mono" id="clock">— : — : —</span>
       <a href="#top" class="footer__top-btn">BACK TO PIT LANE ↑</a>
     </div>
@@ -679,6 +679,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
   <script src="assets/js/main.js?v=20260614h"></script>
-  <script src="assets/js/content.js?v=20260618a"></script>
+  <script src="assets/js/content.js?v=20260618b"></script>
 </body>
 </html>
