@@ -34,5 +34,22 @@
       { "name": "Cura Doma", "category": "Pflege · Betreuung", "year": "2026", "url": "https://curadoma.de/" },
       { "name": "Bauschreinerei Urra", "category": "In Vorbereitung", "year": "2026", "url": "" }
     ]
-  }
+  },
+  "team": [
+    {
+      "name": "Tolunay Usul",
+      "role": "Gründer · Web Design & Entwicklung",
+      "photo": "assets/images/tolunay-web.webp",
+      "bio": "Hi, ich bin Tolunay — Gründer von Apex Thrust Media und studierter Elektrotechniker. Technik hat mich schon immer fasziniert: Ich wollte nie nur wissen, dass etwas funktioniert, sondern warum.\n\nAus dieser Begeisterung ist Apex Thrust Media entstanden — ein Studio, das moderne Webauftritte mit technischem Anspruch und einem Auge fürs Detail baut. Webdesign und Entwicklung waren für mich lange mehr als ein Hobby, bevor daraus ein Studio wurde.\n\nBei mir bekommst du keinen anonymen Dienstleister, sondern einen festen Ansprechpartner, der dein Projekt persönlich begleitet — von der ersten Idee bis zum Launch. Qualität ist mir dabei genauso wichtig wie dir.",
+      "skills": ["Art Direction", "UX / UI", "Frontend", "Motion", "Brand"]
+    }
+  ],
+  "partner": [
+    {
+      "category": "SOCIAL MEDIA",
+      "name": "Puron Media",
+      "description": "Social-Media- & Creative-Agency. Den digitalen Auftritt haben wir gemeinsam umgesetzt —",
+      "url": "https://puron-media.de/"
+    }
+  ]
 }

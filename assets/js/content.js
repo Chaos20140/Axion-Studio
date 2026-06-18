@@ -73,6 +73,42 @@
         : h("div", { class: "proj__row proj__row--soon" }, cells);
       return h("li", { class: "proj" }, [inner]);
     },
+    // Team: member intro block (photo left, text right). Bio = paragraphs split on blank lines.
+    teamMember(item) {
+      const photo = (typeof item.photo === "string" && SAFE_SRC.test(item.photo)) ? item.photo : null;
+      const bio = h("div", { class: "member__bio" },
+        String(item.bio || "").split(/\n{2,}/).map((p) => p.trim()).filter(Boolean)
+          .map((p) => h("p", { text: p })));
+      const skills = h("div", { class: "member__skills" },
+        (Array.isArray(item.skills) ? item.skills : []).map((s) => h("span", { text: String(s) })));
+      return h("article", { class: "member" }, [
+        h("div", { class: "member__photo" }, photo
+          ? [h("img", { src: photo, alt: item.name || "", loading: "lazy", decoding: "async" })] : []),
+        h("div", { class: "member__body" }, [
+          h("span", { class: "member__role mono", text: item.role || "" }),
+          h("h2", { class: "member__name", text: item.name || "" }),
+          bio, skills,
+        ]),
+      ]);
+    },
+    // Partner: card — category / name / description + optional link
+    partnerCard(item) {
+      const href = safeHref(item.url);
+      const desc = h("p", { class: "partner-card__desc", text: item.description || "" });
+      if (href) {
+        desc.appendChild(document.createTextNode(" "));
+        desc.appendChild(h("a", {
+          href, target: "_blank", rel: "noopener noreferrer",
+          style: "color: var(--red); border-bottom: 1px solid var(--red);",
+          text: domain(href) + " ↗",
+        }));
+      }
+      return h("article", { class: "partner-card" }, [
+        h("span", { class: "partner-card__cat", text: "/ " + (item.category || "") }),
+        h("span", { class: "partner-card__name", text: item.name || "" }),
+        desc,
+      ]);
+    },
   };
 
   fetch("content/site.json?ts=" + Date.now())

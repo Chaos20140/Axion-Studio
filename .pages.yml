@@ -51,3 +51,22 @@ content:
               - { name: category, label: Kategorie, type: string }
               - { name: year, label: Jahr, type: string }
               - { name: url, label: "Website-Link (leer lassen = „In Vorbereitung“)", type: string }
+      - name: team
+        label: Team
+        type: object
+        list: true
+        fields:
+          - { name: name, label: Name, type: string }
+          - { name: role, label: "Rolle / Position", type: string }
+          - { name: photo, label: Foto, type: image }
+          - { name: bio, label: "Bio (Absätze durch Leerzeile trennen)", type: text }
+          - { name: skills, label: Skills / Tags, type: string, list: true }
+      - name: partner
+        label: Partner
+        type: object
+        list: true
+        fields:
+          - { name: category, label: "Kategorie (ohne „/“ davor)", type: string }
+          - { name: name, label: Name, type: string }
+          - { name: description, label: Beschreibung, type: text }
+          - { name: url, label: "Website-Link (optional)", type: string }
