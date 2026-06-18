@@ -9,5 +9,30 @@
     "hours": "Mo – Fr · 09:00 – 18:00 CET",
     "response": "Ø < 24 h"
   },
-  "budget": ["< 1K €", "1–3K €", "3–6K €", "6K+ €"]
+  "budget": ["< 1K €", "1–3K €", "3–6K €", "6K+ €"],
+  "projekte": {
+    "featured": [
+      {
+        "name": "Puron Media Agency",
+        "category": "Social Media · Creative Agency",
+        "year": "2026",
+        "url": "https://puron-media.de/",
+        "image": "assets/images/puron-media.jpg",
+        "description": "Social-Media- & Creative-Agency mit einem klaren Auftrag: Sichtbarkeit ist kein Zufall. Wir haben den digitalen Auftritt umgesetzt — mit Bewegtbild-Hero, animiertem Partikel-Raum und markanter Typografie. Schau es dir live an."
+      },
+      {
+        "name": "Cura Doma",
+        "category": "Pflege · Betreuung",
+        "year": "2026",
+        "url": "https://curadoma.de/",
+        "image": "assets/images/curadoma.jpg",
+        "description": "Ambulanter Betreuungsdienst mit Herz — „Sie können nicht immer da sein. Wir können es.\" Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause: klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an."
+      }
+    ],
+    "index": [
+      { "name": "Puron Media Agency", "category": "Social Media · Creative Agency", "year": "2026", "url": "https://puron-media.de/" },
+      { "name": "Cura Doma", "category": "Pflege · Betreuung", "year": "2026", "url": "https://curadoma.de/" },
+      { "name": "Bauschreinerei Urra", "category": "In Vorbereitung", "year": "2026", "url": "" }
+    ]
+  }
 }

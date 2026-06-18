@@ -27,3 +27,27 @@ content:
         label: "Budget-Stufen"
         type: string
         list: true
+      - name: projekte
+        label: Projekte
+        type: object
+        fields:
+          - name: featured
+            label: "Featured Cases (große Karten)"
+            type: object
+            list: true
+            fields:
+              - { name: name, label: Name, type: string }
+              - { name: category, label: Kategorie, type: string }
+              - { name: year, label: Jahr, type: string }
+              - { name: url, label: "Website-Link (https://…)", type: string }
+              - { name: image, label: Vorschaubild, type: image }
+              - { name: description, label: Beschreibung, type: text }
+          - name: index
+            label: "Projekt-Liste (unten)"
+            type: object
+            list: true
+            fields:
+              - { name: name, label: Name, type: string }
+              - { name: category, label: Kategorie, type: string }
+              - { name: year, label: Jahr, type: string }
+              - { name: url, label: "Website-Link (leer lassen = „In Vorbereitung“)", type: string }
