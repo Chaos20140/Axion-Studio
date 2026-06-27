@@ -45,7 +45,7 @@
         h("span", { class: "case-feature__badge", text: "Live ↗" }),
       ]);
       const body = h("div", { class: "case-feature__body" }, [
-        h("span", { class: "case-feature__kicker mono", text: "/ FEATURED CASE" }),
+        h("span", { class: "case-feature__kicker mono", text: "/ AUSGEWÄHLTES PROJEKT" }),
         h("h2", { class: "case-feature__name", text: item.name || "" }),
         h("p", { class: "case-feature__desc", text: item.description || "" }),
         h("div", { class: "case-feature__meta" }, [

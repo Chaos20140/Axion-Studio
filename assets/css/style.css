@@ -1141,13 +1141,7 @@ body.nav-open { overflow: hidden; }
 }
 .service:hover .service__glow { opacity: 1; }
 .service:hover { background: rgba(var(--red-glow), 0.04); }
-.service::after {
-  content: "→"; position: absolute; top: 32px; right: 32px;
-  font-family: var(--font-display); font-size: 28px;
-  color: var(--ink-mute);
-  transform: rotate(-45deg);
-  transition: color 0.3s, transform 0.4s var(--ease-out);
-}
+.service::after { content: none; }
 .service:hover::after { color: var(--red); transform: rotate(0deg) translateX(4px); }
 
 .service__head {
@@ -2887,6 +2881,35 @@ body.nav-open { overflow: hidden; }
   font-family: var(--font-display-2);
   font-style: italic;
   color: var(--red);
+}
+
+/* ---------------------------------------------------------------
+   Akzentwörter (Big Shoulders Italic) optisch auf Anton-Höhe bringen.
+   Big Shoulders rendert bei gleicher font-size kleiner als Anton →
+   leicht hochskalieren, Grundlinie halten, Slant rechts ausgleichen,
+   damit "EIN", "VIER", "wirken", "DEINS", "ARBEITEN" etc. genauso groß
+   wirken wie der Rest der Headline und nicht ins Folgewort kleben.
+   (Hero-Titel bewusst ausgenommen — der ist millimetergenau gesetzt.)
+   --------------------------------------------------------------- */
+.manifesto__text h2 em,
+.services__title em,
+.process__title em,
+.contact__title em,
+.page-section h2 em,
+.page-hero__title em,
+.work__title em {
+  font-size: 1.12em;
+  line-height: 1;
+  padding-right: 0.06em;
+}
+/* Umlaut-Punkte (Ä/Ö/Ü) in mehrzeiligen Display-Headlines brauchen Luft
+   nach oben, sonst schneiden sie in die Zeile darüber (VERLÄSSLICH,
+   UNÜBERSEHBAR). Etwas mehr Zeilenhöhe gibt gleichmäßige Abstände. */
+.manifesto__text h2 { line-height: 1.05; }
+.page-section h2 { line-height: 1.04; }
+/* Akzent auf der rot getönten Manifesto-Bühne sichtbar machen (Rot auf Rot). */
+.manifesto__text h2 em {
+  text-shadow: 0 0 26px rgba(var(--red-glow), 0.95), 0 2px 22px rgba(0, 0, 0, 0.55);
 }
 .page-section p {
   color: var(--ink-dim);

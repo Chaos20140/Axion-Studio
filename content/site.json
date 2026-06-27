@@ -63,9 +63,7 @@
     },
     "stats": [
       { "num": "100", "suffix": "%", "label": "Kundenzufriedenheit" },
-      { "num": "9", "suffix": "", "label": "Aktive Mandate" },
-      { "num": "12", "suffix": "", "label": "Projekte realisiert" },
-      { "num": "3", "suffix": "s", "label": "First Paint Ø" }
+      { "num": "12", "suffix": "", "label": "Projekte realisiert" }
     ],
     "services": [
       { "title": "Web Design", "desc": "Konzept, Art Direction, UX/UI. Wir gestalten Interfaces, die deine Besucher führen und deine Marke unverwechselbar machen — klar, präzise, durchdacht.", "items": ["Art Direction", "UX & UI", "Design Systems", "Prototyping"] },
