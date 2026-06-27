@@ -2845,7 +2845,7 @@ body.nav-open { overflow: hidden; }
   font-size: clamp(15px, 1.3vw, 19px);
   line-height: 1.6;
   color: var(--ink-dim);
-  max-width: 720px;
+  max-width: 600px;
 }
 /* Defensive legibility: the solar background is now brighter/foreground,
    so bare text over the canvas gets a soft dark halo to guarantee contrast
@@ -2892,11 +2892,25 @@ body.nav-open { overflow: hidden; }
   color: var(--ink-dim);
   font-size: clamp(14px, 1vw, 17px);
   line-height: 1.7;
-  max-width: 700px;
+  max-width: 640px;
   margin-bottom: 14px;
 }
 .page-section p em { color: var(--red); font-style: italic; }
 .page-section p strong { color: var(--ink); font-weight: 700; }
+
+/* ---------------------------------------------------------------
+   Typografischer Feinschliff — saubere Umbrüche site-weit.
+   `pretty` verhindert einzelne Wort-Reste auf der letzten Zeile
+   (Schusterjunge); `balance` verteilt mehrzeilige Überschriften
+   gleichmäßig. Bewusst NICHT auf die animierten Homepage-Headlines
+   (.hero__title / .reveal-text / .phase__title) — die haben fixe
+   Zeilen-Spans/Glitch-Spiegel und dürfen nicht umbrochen werden.
+   --------------------------------------------------------------- */
+p { text-wrap: pretty; }
+.page-hero__title,
+.member__name,
+.case-feature__name,
+.legal__hero h1 { text-wrap: balance; }
 
 /* =========================================================
    TEAM SHOWREEL — full-bleed sticky scroll-scrub video.
