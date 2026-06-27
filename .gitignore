@@ -17,3 +17,7 @@ dist/
 
 # Logs
 *.log
+# private/originals — never publish
+Fairy-Tail-logo.png
+a4b28278-2fdd-4a30-9325-e60a0ece97d1.png
+assets/images/Tolunay.png
