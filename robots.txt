@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chaos20140.github.io/apex-thrust-media/sitemap.xml
