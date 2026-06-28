@@ -8,8 +8,8 @@
   --bg-2: #0c0608;
   --bg-3: #150a0d;
   --ink: #f4ecec;
-  --ink-dim: #9b8d8d;
-  --ink-mute: #5a4e4f;
+  --ink-dim: #c4b8b8;
+  --ink-mute: #8f8384;
   --line: rgba(255, 60, 80, 0.15);
   --line-2: rgba(255, 255, 255, 0.07);
   --red: #ff1f3d;
@@ -1277,6 +1277,8 @@ body.nav-open { overflow: hidden; }
   text-transform: uppercase; letter-spacing: 0.18em;
   z-index: 2;
   position: relative;
+  /* clear the absolutely-positioned corner telemetry (SEQ/MODULE) above */
+  margin-top: clamp(42px, 6vh, 64px);
 }
 
 /* ---- phases container — stacked, only one visible ---- */
@@ -1444,11 +1446,12 @@ body.nav-open { overflow: hidden; }
   border-left: 1px solid rgba(255, 255, 255, 0.10);
   border-right: 1px solid rgba(255, 255, 255, 0.10);
 }
-/* continuous centre line */
+/* continuous centre line — starts below the start-line header (its dashes were
+   painting over the "POLE POSITION · STARTLINIE" label) and runs to the cars. */
 .grid::before {
   content: "";
   position: absolute;
-  top: 0; bottom: 0;
+  top: clamp(96px, 10vh, 124px); bottom: 0;
   left: 50%;
   width: 2px;
   transform: translateX(-50%);

@@ -60,7 +60,7 @@ import * as THREE from "three";
      standard that ties them together.
      type: 0 rocky · 1 gas-bands · 2 swirl  (shader surface)  */
   const SUN_CFG = {
-    id: "core", label: "APEX STANDARD", kicker: "/ 00 — STANDARD",
+    id: "core", label: "APEX STANDARD", kicker: "00 — STANDARD",
     title: "Ein Standard", cls: "KERN", dist: "0.0",
     text: "Vier Disziplinen, ein kompromissloser Standard. Jede Welt hier draußen ist ein Weg dorthin — Web Design, Development, Motion & 3D, Brand Identity. Wähl einen Planeten.",
     href: "kontakt.html", cta: "Projekt starten →",
@@ -69,23 +69,23 @@ import * as THREE from "three";
   // all-red void. The SUN stays warm-red as the brand "core"; each
   // planet carries its own (mostly cool) accent for rim + hover.
   const PLANET_CFG = [
-    { id: "design", label: "WEB DESIGN", kicker: "/ 01 — CORE", title: "Web Design",
-      cls: "CORE", dist: "/ 01",
+    { id: "design", label: "WEB DESIGN", kicker: "01 — CORE", title: "Web Design",
+      cls: "CORE", dist: "01",
       text: "Konzept, Art Direction, UX/UI. Wir gestalten Interfaces, die deine Besucher führen und deine Marke unverwechselbar machen — klar, präzise, durchdacht. Art Direction · UX & UI · Design Systems · Prototyping.",
       href: "kontakt.html", cta: "Briefing senden →",
       radius: 0.50, orbit: 2.8, speed: 0.13, angle0: 0.6, tone: 0x2c3a4a, accent: 0x8fb3d6, type: 0 },
-    { id: "dev", label: "DEVELOPMENT", kicker: "/ 02 — BUILD", title: "Development",
-      cls: "BUILD", dist: "/ 02",
+    { id: "dev", label: "DEVELOPMENT", kicker: "02 — BUILD", title: "Development",
+      cls: "BUILD", dist: "02",
       text: "Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen die Technik, die deine Seite zuverlässig unter 2 Sekunden lädt. Next.js · Headless CMS · E-Commerce · API Integrations.",
       href: "kontakt.html", cta: "Stack besprechen →",
       radius: 0.46, orbit: 4.0, speed: 0.10, angle0: 2.4, tone: 0x213339, accent: 0x6fc4cf, type: 2 },
-    { id: "motion", label: "MOTION & 3D", kicker: "/ 03 — MOTION", title: "Motion & 3D",
-      cls: "MOTION", dist: "/ 03",
+    { id: "motion", label: "MOTION & 3D", kicker: "03 — MOTION", title: "Motion & 3D",
+      cls: "MOTION", dist: "03",
       text: "GSAP, Three.js, WebGL-Shader. Bewegung, die deine Marke nicht dekoriert, sondern transportiert. Scroll Storytelling · WebGL Scenes · Microinteractions · Reels & Showcases.",
       href: "kontakt.html", cta: "Reel anfragen →",
       radius: 0.40, orbit: 5.2, speed: 0.08, angle0: 4.4, tone: 0x322f44, accent: 0xb3a6d8, type: 1 },
-    { id: "brand", label: "BRAND IDENTITY", kicker: "/ 04 — BRAND", title: "Brand Identity",
-      cls: "BRAND", dist: "/ 04",
+    { id: "brand", label: "BRAND IDENTITY", kicker: "04 — BRAND", title: "Brand Identity",
+      cls: "BRAND", dist: "04",
       text: "Logos, Tonalität, visuelles System. Wir bauen Marken, die schon wirken, bevor du den ersten Satz gelesen hast. Logo & Marke · Voice & Tone · Guidelines · Launch Kampagnen.",
       href: "kontakt.html", cta: "Marke bauen →",
       radius: 0.44, orbit: 6.4, speed: 0.062, angle0: 1.5, tone: 0x35302c, accent: 0xd9c9a0, type: 1, ring: true },
@@ -523,6 +523,11 @@ import * as THREE from "three";
   let dragging = false, lastX = 0, lastY = 0;
   let userRotY = 0, userRotX = 0;          // accumulated drag target
   let curRotY = 0, curRotX = 0, autoSpin = 0;  // smoothed / applied in render
+  // ---------- ZOOM (wheel + pinch) — dolly the camera in/out ----------
+  let userZoom = 1, curZoom = 1, pinchDist = 0, pinching = false;
+  const pointers = new Map();
+  const ZMIN = 0.55, ZMAX = 2.7;
+  const clampZ = (z) => (z < ZMIN ? ZMIN : z > ZMAX ? ZMAX : z);
   const insideCanvas = (x, y) => {
     const r = canvasRect;
     return !!r && x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
@@ -530,7 +535,7 @@ import * as THREE from "three";
 
   window.addEventListener("pointermove", (e) => {
     if (!toLocalNdc(e.clientX, e.clientY)) pointerNdc.set(10, 10);
-    if (dragging) {
+    if (dragging && !pinching) {
       userRotY += (e.clientX - lastX) * 0.006;
       userRotX += (e.clientY - lastY) * 0.004;
       userRotX = Math.max(-0.55, Math.min(0.75, userRotX));  // limit vertical tilt
@@ -587,6 +592,34 @@ import * as THREE from "three";
     }
   }, { passive: true });
   window.addEventListener("pointercancel", () => { dragging = false; }, { passive: true });
+
+  // ---------- ZOOM input: mouse wheel (desktop) + two-finger pinch (touch) ----------
+  canvas.addEventListener("wheel", (e) => {
+    e.preventDefault();                       // scroll over the canvas = zoom the system
+    userZoom = clampZ(userZoom + e.deltaY * 0.0011);
+  }, { passive: false });
+  window.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "touch") pointers.set(e.pointerId, e);
+  }, { passive: true });
+  window.addEventListener("pointermove", (e) => {
+    if (e.pointerType !== "touch" || !pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, e);
+    if (pointers.size >= 2) {                 // two fingers down → pinch-zoom (no orbit)
+      pinching = true;
+      const [a, b] = [...pointers.values()];
+      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      if (pinchDist) userZoom = clampZ(userZoom - (d - pinchDist) * 0.0045);
+      pinchDist = d;
+    }
+  }, { passive: true });
+  const liftPointer = (e) => {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) pinchDist = 0;
+    if (pointers.size === 0) pinching = false;
+  };
+  window.addEventListener("pointerup", liftPointer, { passive: true });
+  window.addEventListener("pointercancel", liftPointer, { passive: true });
+
   pClose?.addEventListener("click", closePanel);
   pBack?.addEventListener("click", closePanel);
   // Re-measure once the slide-in transition settles (transform changes the box)
@@ -703,6 +736,8 @@ import * as THREE from "three";
     if (selected) tmpV2.lerp(tmpV1, 0.30).add(FOCUS_OFFSET);
     tmpV2.x += pointerNdc.x * 0.5;
     tmpV2.y += pointerNdc.y * -0.3;
+    curZoom = lerp(curZoom, userZoom, 0.08);                 // smooth user zoom
+    tmpV2.sub(camTarget).multiplyScalar(curZoom).add(camTarget);  // dolly from look target
     camera.position.lerp(tmpV2, 0.045);
     // On mobile, when a planet is open, look a touch BELOW it so it sits in the
     // upper area above the bottom-sheet panel (planet visible + text below).
