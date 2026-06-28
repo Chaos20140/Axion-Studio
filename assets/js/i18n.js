@@ -136,7 +136,7 @@
     "eingespieltes Team": "well-rehearsed team",
     ", in dem klar ist, wer wofür Verantwortung trägt.": ", where it's clear who's responsible for what.",
     "Ausgewählte": "Selected",
-    "Arbeiten.": "Work.",
+    "Arbeiten.": "Projects.",
     "Kein Stockfoto-Portfolio. Was hier steht, ist": "No stock-photo portfolio. What's here is",
     "echt gebaut": "really built",
     "— sorgfältig,\n        schnell und mit Anspruch. Ein Auszug aus unseren bisherigen Arbeiten.": "— careful,\n        fast and with standards. A selection of our work so far.",
