@@ -593,11 +593,9 @@ import * as THREE from "three";
   }, { passive: true });
   window.addEventListener("pointercancel", () => { dragging = false; }, { passive: true });
 
-  // ---------- ZOOM input: mouse wheel (desktop) + two-finger pinch (touch) ----------
-  canvas.addEventListener("wheel", (e) => {
-    e.preventDefault();                       // scroll over the canvas = zoom the system
-    userZoom = clampZ(userZoom + e.deltaY * 0.0011);
-  }, { passive: false });
+  // ---------- ZOOM: +/- buttons (no page-scroll conflict) + pinch (touch) ----------
+  document.getElementById("solarZoomOut")?.addEventListener("click", () => { userZoom = clampZ(userZoom + 0.4); });
+  document.getElementById("solarZoomIn") ?.addEventListener("click", () => { userZoom = clampZ(userZoom - 0.4); });
   window.addEventListener("pointerdown", (e) => {
     if (e.pointerType === "touch") pointers.set(e.pointerId, e);
   }, { passive: true });

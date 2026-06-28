@@ -8,8 +8,8 @@
   --bg-2: #0c0608;
   --bg-3: #150a0d;
   --ink: #f4ecec;
-  --ink-dim: #c4b8b8;
-  --ink-mute: #8f8384;
+  --ink-dim: #d8d0d0;
+  --ink-mute: #ab9fa0;
   --line: rgba(255, 60, 80, 0.15);
   --line-2: rgba(255, 255, 255, 0.07);
   --red: #ff1f3d;
@@ -2590,6 +2590,7 @@ body.nav-open { overflow: hidden; }
   letter-spacing: 0.22em; text-transform: uppercase;
   color: var(--red);
   margin-bottom: 14px;
+  padding-right: 40px;   /* keep "ATM-SYS" clear of the × close button */
 }
 .solar-panel__lockbar b {
   width: 6px; height: 6px; border-radius: 50%;
@@ -2693,6 +2694,34 @@ body.nav-open { overflow: hidden; }
   .solar-hint { font-size: 10px; bottom: 14px; }
   /* leader line is noisy on small screens — hide it */
   .solar-link { display: none; }
+}
+
+/* Solar zoom controls (+/−) — replaces wheel-zoom so the page still scrolls.
+   Section-absolute (scrolls away with the section), stacked above the WA FAB. */
+.solar-zoom {
+  position: absolute;
+  right: clamp(16px, 3vw, 40px);
+  bottom: clamp(92px, 14vh, 128px);
+  z-index: 40;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.solar-zoom__btn {
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 24px; line-height: 1;
+  color: var(--ink);
+  background: rgba(6, 3, 5, 0.5);
+  border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.1s;
+}
+.solar-zoom__btn:hover { border-color: var(--red); color: var(--red); background: rgba(6, 3, 5, 0.72); }
+.solar-zoom__btn:active { transform: scale(0.92); }
+.solar-zoom__btn:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
+@media (max-width: 900px) {
+  .solar-zoom { bottom: clamp(84px, 12vh, 110px); }
+  .solar-zoom__btn { width: 42px; height: 42px; font-size: 22px; }
 }
 
 /* =========================================================
