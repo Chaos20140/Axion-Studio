@@ -555,6 +555,7 @@ import * as THREE from "three";
     panel.setAttribute("aria-hidden", "false");
     hint?.classList.add("is-dim");
     refreshPanelRect();   // initial (pre-transition) measure
+    document.dispatchEvent(new Event("content:loaded"));   // let i18n translate the panel
   };
   // Function declaration (hoisted) so the IntersectionObserver above can call it.
   function closePanel() {
