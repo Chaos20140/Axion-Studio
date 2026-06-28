@@ -18,7 +18,7 @@
     // ---- nav / chrome ----
     "Über Uns": "About",
     "Angebot": "Services",
-    "Projekte": "Work",
+    "Projekte": "Projects",
     "Partner": "Partners",
     "Kontakt": "Contact",
     "Impressum": "Imprint",
@@ -304,7 +304,7 @@
     "03 UNTERNEHMEN": "03 COMPANY",
     "04 KONTAKT": "04 CONTACT",
     "06 BRIEFING": "06 BRIEF",
-    "05 — PROJEKTE": "05 — WORK",
+    "05 — PROJEKTE": "05 — PROJECTS",
     "04 — KANAL ÖFFNEN": "04 — OPEN A CHANNEL",
     "LEISTUNGEN": "SERVICES",
     "ANGEBOT": "SERVICES",
