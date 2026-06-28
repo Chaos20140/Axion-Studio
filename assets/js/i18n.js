@@ -508,12 +508,48 @@
     "← Zurück": "← Back",
     "← Zurück zur Pit Lane": "← Back to the Pit Lane",
 
+    // ---- kontakt: remote-first ops panel (replaces the map) ----
+    "Kein Büro.": "No office.",
+    "Volle Reichweite.": "Full reach.",
+    "Axion Studio ist remote-first. Von Meschede aus arbeiten wir mit Kunden in DACH, EU und Übersee — Briefing, Calls und Reviews laufen komplett digital. Kein Termin vor Ort nötig: kein Umweg, kein Zeitverlust.":
+      "Axion Studio is remote-first. From Meschede we work with clients across DACH, the EU and overseas — briefings, calls and reviews run entirely digital. No on-site appointment needed: no detour, no lost time.",
+    "Dein Projekt läuft.": "Your project's running.",
+    "Wir sind am Funk.": "We're on the radio.",
+    "REMOTE-FIRST · DACH · EU · ÜBERSEE": "REMOTE-FIRST · DACH · EU · OVERSEAS",
+    "Reichweite": "Reach",
+    "DACH · EU · Übersee": "DACH · EU · Overseas",
+    "Antwortzeit": "Response time",
+    "Ø < 24 h — persönlich": "Ø < 24 h — personal",
+    "Kanäle": "Channels",
+    "WhatsApp · E-Mail · Video-Call": "WhatsApp · Email · Video call",
+    "Basis": "Base",
+    "Meschede · NRW · Deutschland": "Meschede · NRW · Germany",
+
+    // ---- attributes (placeholder / aria-label / title / alt) ----
+    "Dein vollständiger Name": "Your full name",
+    "dein@unternehmen.de": "you@company.com",
+    "Optional — Brand / Firma": "Optional — brand / company",
+    "Erzähl uns von deinem Projekt — Ziele, Timeline, Konkurrenz, alles.": "Tell us about your project — goals, timeline, competition, everything.",
+    "Axion Studio — Startseite": "Axion Studio — Home",
+    "Was wir anbieten": "What we offer",
+    "Zurück zum System": "Back to the system",
+    "Info schliessen": "Close info",
+    "Heranzoomen": "Zoom in",
+    "Herauszoomen": "Zoom out",
+    "Tolunay Usul — Gründer von Axion Studio": "Tolunay Usul — founder of Axion Studio",
+    "Vorschau der Website von Puron Media — Social Media & Creative Agency": "Preview of the Puron Media website — social media & creative agency",
+    "Vorschau der Website von Cura Doma — Ambulanter Betreuungsdienst": "Preview of the Cura Doma website — outpatient care service",
+
     // ---- cookie banner ----
     "Wir verwenden nur technisch notwendige Mittel. Externe Inhalte (Google Maps) werden erst nach deiner Zustimmung geladen.":
       "We only use technically necessary means. External content (Google Maps) loads only after your consent.",
     "Akzeptieren": "Accept",
     "Ablehnen": "Decline",
     "Mehr": "More",
+    "Wir verwenden nur technisch notwendige Cookies. Mehr dazu in der": "We only use technically necessary cookies. More in the",
+    "Nur notwendige": "Only necessary",
+    "Alle akzeptieren": "Accept all",
+    "Cookie-Hinweis": "Cookie notice",
   };
 
   // Normalized lookup key: collapse internal whitespace and drop soft-hyphens /
@@ -532,6 +568,8 @@
   try { cur = localStorage.getItem(KEY) || "de"; } catch (_) {}
 
   const origText = new WeakMap();  // text node → original German value
+  const origAttr = new WeakMap();  // element → { attr: original German value }
+  const ATTRS = ["placeholder", "title", "aria-label", "alt"];
 
   const skipParent = (p) => {
     const t = p && p.nodeName;
@@ -577,6 +615,23 @@
         n.nodeValue = de;
       }
     }
+    // text-bearing attributes (placeholder/title/aria-label/alt) aren't text
+    // nodes, so translate them separately.
+    document.querySelectorAll("[placeholder],[title],[aria-label],[alt]").forEach((el) => {
+      for (const a of ATTRS) {
+        if (!el.hasAttribute(a)) continue;
+        let store = origAttr.get(el);
+        if (!store) { store = {}; origAttr.set(el, store); }
+        if (!(a in store)) store[a] = el.getAttribute(a);
+        const de = store[a];
+        if (lang === "en") {
+          const en = ENn[normKey(de)];
+          if (en != null && el.getAttribute(a) !== en) el.setAttribute(a, en);
+        } else if (el.getAttribute(a) !== de) {
+          el.setAttribute(a, de);
+        }
+      }
+    });
     document.documentElement.lang = lang;
     document.querySelectorAll(".lang-toggle__opt").forEach((o) =>
       o.classList.toggle("is-active", o.dataset.lang === lang)

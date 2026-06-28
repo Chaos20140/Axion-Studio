@@ -847,8 +847,8 @@
 
 /* =========================================================
    COOKIE CONSENT — shown on first visit (all pages). The choice
-   is stored in localStorage. Third-party embeds (Google Maps)
-   carry data-consent-src and are only loaded after "accept".
+   is stored in localStorage. Any third-party embed carrying a
+   data-consent-src is only loaded after "accept" (generic gate).
    ========================================================= */
 (() => {
   const KEY = "atm-consent";
@@ -887,7 +887,7 @@
   bar.setAttribute("aria-label", "Cookie-Hinweis");
   bar.innerHTML =
     '<div class="cookie-bar__inner">' +
-      '<p class="cookie-bar__text">Wir verwenden nur technisch notwendige Cookies. Externe Inhalte wie Google Maps werden erst nach deiner Zustimmung geladen. Mehr dazu in der <a href="impressum.html#datenschutz">Datenschutzerklärung</a>.</p>' +
+      '<p class="cookie-bar__text">Wir verwenden nur technisch notwendige Cookies. Mehr dazu in der <a href="impressum.html#datenschutz">Datenschutzerklärung</a>.</p>' +
       '<div class="cookie-bar__actions">' +
         '<button type="button" class="cookie-bar__btn cookie-bar__btn--ghost" data-consent="declined">Nur notwendige</button>' +
         '<button type="button" class="cookie-bar__btn cookie-bar__btn--solid" data-consent="accepted">Alle akzeptieren</button>' +
@@ -898,6 +898,7 @@
     document.body.appendChild(bar);
     document.body.classList.add("cookie-open");
     requestAnimationFrame(() => bar.classList.add("is-in"));
+    document.dispatchEvent(new Event("content:loaded"));  // let i18n translate the banner
   };
   if (document.body) mount();
   else document.addEventListener("DOMContentLoaded", mount, { once: true });

@@ -3276,6 +3276,43 @@ p { text-wrap: pretty; }
   line-height: 1.5;
 }
 
+/* Remote-first ops panel (replaces the kontakt map — no address shown) */
+.ops-panel {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center; gap: 20px;
+  padding: clamp(28px, 5vw, 60px);
+  background:
+    radial-gradient(135% 120% at 88% -15%, color-mix(in srgb, var(--red) 18%, transparent), transparent 56%),
+    repeating-linear-gradient(0deg, transparent 0 39px, var(--line) 39px 40px),
+    repeating-linear-gradient(90deg, transparent 0 39px, var(--line) 39px 40px);
+}
+.ops-panel__tag {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--red);
+}
+.ops-panel__lead {
+  margin: 0; font-family: var(--font-display); text-transform: uppercase;
+  font-size: clamp(30px, 5.2vw, 62px); line-height: 0.94; color: var(--ink); max-width: 13ch;
+}
+.ops-panel__lead em {
+  font-family: var(--font-display-2); font-style: italic; color: var(--red);
+  font-weight: 400;
+}
+.ops-panel__sub {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-mute);
+}
+.ops-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 22px 24px; margin-top: 24px; padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em;
+}
+.ops-grid dt { color: var(--red); text-transform: uppercase; margin-bottom: 6px; }
+.ops-grid dd { color: var(--ink); line-height: 1.5; margin: 0; }
+@media (max-width: 900px) { .ops-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .ops-grid { grid-template-columns: 1fr; } }
+
 @media (max-width: 900px) {
   .page-grid { grid-template-columns: 1fr; }
   .map-meta { grid-template-columns: 1fr; }
