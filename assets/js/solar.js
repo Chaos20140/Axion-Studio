@@ -62,7 +62,7 @@ import * as THREE from "three";
   const SUN_CFG = {
     id: "core", label: "APEX STANDARD", kicker: "00 — STANDARD",
     title: "Ein Standard", cls: "KERN", dist: "0.0",
-    text: "Vier Disziplinen, ein kompromissloser Standard. Jede Welt hier draußen ist ein Weg dorthin — Web Design, Development, Motion & 3D, Brand Identity. Wähl einen Planeten.",
+    text: "Vier Disziplinen, ein kompromissloser Standard. Jede Welt hier draußen ist ein Weg dorthin — Web Design, Development, Motion & 3D, Hosting & Wartung. Wähl einen Planeten.",
     href: "kontakt.html", cta: "Projekt starten →",
   };
   // Calm cosmic palette: cool/neutral planets so the scene isn't an
@@ -84,10 +84,10 @@ import * as THREE from "three";
       text: "GSAP, Three.js, WebGL-Shader. Bewegung, die deine Marke nicht dekoriert, sondern transportiert. Scroll Storytelling · WebGL Scenes · Microinteractions · Reels & Showcases.",
       href: "kontakt.html", cta: "Reel anfragen →",
       radius: 0.40, orbit: 5.2, speed: 0.08, angle0: 4.4, tone: 0x322f44, accent: 0xb3a6d8, type: 1 },
-    { id: "brand", label: "BRAND IDENTITY", kicker: "04 — BRAND", title: "Brand Identity",
-      cls: "BRAND", dist: "04",
-      text: "Logos, Tonalität, visuelles System. Wir bauen Marken, die schon wirken, bevor du den ersten Satz gelesen hast. Logo & Marke · Voice & Tone · Guidelines · Launch Kampagnen.",
-      href: "kontakt.html", cta: "Marke bauen →",
+    { id: "brand", label: "HOSTING & WARTUNG", kicker: "04 — HOSTING", title: "Hosting & Wartung",
+      cls: "HOSTING", dist: "04",
+      text: "Schnelles, sicheres Hosting plus laufende Pflege: Updates, Backups, Monitoring und schneller Support. Deine Seite bleibt erreichbar, aktuell und geschützt — du musst dich um nichts kümmern. Managed Hosting · Updates & Security · Backups · Monitoring & Support.",
+      href: "kontakt.html", cta: "Setup anfragen →",
       radius: 0.44, orbit: 6.4, speed: 0.062, angle0: 1.5, tone: 0x35302c, accent: 0xd9c9a0, type: 1, ring: true },
   ];
 

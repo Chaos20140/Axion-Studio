@@ -2937,8 +2937,8 @@ body.nav-open { overflow: hidden; }
 /* Umlaut-Punkte (Ä/Ö/Ü) in mehrzeiligen Display-Headlines brauchen Luft
    nach oben, sonst schneiden sie in die Zeile darüber (VERLÄSSLICH,
    UNÜBERSEHBAR). Etwas mehr Zeilenhöhe gibt gleichmäßige Abstände. */
-.manifesto__text h2 { line-height: 1.05; }
-.page-section h2 { line-height: 1.04; }
+.manifesto__text h2 { line-height: 1.16; }   /* room so Ä/Ö dots clear the line above (VERLÄSSLICH) */
+.page-section h2 { line-height: 1.14; }   /* room so Ü/Ä dots clear the line above (UNÜBERSEHBAR) */
 /* Akzent auf der rot getönten Manifesto-Bühne sichtbar machen (Rot auf Rot). */
 .manifesto__text h2 em {
   text-shadow: 0 0 26px rgba(var(--red-glow), 0.95), 0 2px 22px rgba(0, 0, 0, 0.55);

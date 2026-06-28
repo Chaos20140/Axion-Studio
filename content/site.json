@@ -41,7 +41,7 @@
       "role": "Gründer · Web Design & Entwicklung",
       "photo": "assets/images/tolunay-web.webp",
       "bio": "Hi, ich bin Tolunay — Gründer von Apex Thrust Media und studierter Elektrotechniker. Technik hat mich schon immer fasziniert: Ich wollte nie nur wissen, dass etwas funktioniert, sondern warum.\n\nAus dieser Begeisterung ist Apex Thrust Media entstanden — ein Studio, das moderne Webauftritte mit technischem Anspruch und einem Auge fürs Detail baut. Webdesign und Entwicklung waren für mich lange mehr als ein Hobby, bevor daraus ein Studio wurde.\n\nBei mir bekommst du keinen anonymen Dienstleister, sondern einen festen Ansprechpartner, der dein Projekt persönlich begleitet — von der ersten Idee bis zum Launch. Qualität ist mir dabei genauso wichtig wie dir.",
-      "skills": ["Art Direction", "UX / UI", "Frontend", "Motion", "Brand"]
+      "skills": ["Art Direction", "UX / UI", "Frontend", "Motion"]
     }
   ],
   "partner": [
@@ -69,7 +69,7 @@
       { "title": "Web Design", "desc": "Konzept, Art Direction, UX/UI. Wir gestalten Interfaces, die deine Besucher führen und deine Marke unverwechselbar machen — klar, präzise, durchdacht.", "items": ["Art Direction", "UX & UI", "Design Systems", "Prototyping"] },
       { "title": "Development", "desc": "Sauberer, performanter Frontend-Code. React, Next, WebGL, Headless CMS — wir wählen die Technik, die deine Seite zuverlässig unter 2 Sekunden lädt.", "items": ["Next.js / Astro", "Headless CMS", "E-Commerce", "API Integrations"] },
       { "title": "Motion & 3D", "desc": "GSAP, Three.js, WebGL Shader. Bewegung, die deine Marke nicht dekoriert, sondern transportiert.", "items": ["Scroll Storytelling", "WebGL Scenes", "Microinteractions", "Reels & Showcases"] },
-      { "title": "Brand Identity", "desc": "Logos, Tonalität, visuelles System. Wir bauen Marken, die schon wirken, bevor du den ersten Satz gelesen hast.", "items": ["Logo & Marke", "Voice & Tone", "Guidelines", "Launch Kampagnen"] }
+      { "title": "Hosting & Wartung", "desc": "Schnelles, sicheres Hosting plus laufende Pflege. Updates, Backups und Monitoring laufen automatisch — deine Seite bleibt erreichbar, aktuell und geschützt.", "items": ["Managed Hosting", "Updates & Security", "Backups", "Monitoring & Support"] }
     ],
     "servicesMore": "Was wir anbieten →",
     "process": [
