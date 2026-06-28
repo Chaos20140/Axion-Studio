@@ -905,10 +905,11 @@ body.nav-open { overflow: hidden; }
 .btn:hover { color: var(--ink); border-color: var(--red); box-shadow: 0 0 40px rgba(var(--red-glow), 0.4); }
 
 .btn--primary {
-  background: var(--ink); color: var(--bg);
-  border-color: var(--ink);
+  background: rgba(6, 3, 5, 0.42); color: var(--ink);
+  border-color: var(--red);
+  font-weight: 700;
 }
-.btn--primary:hover { color: var(--ink); }
+.btn--primary:hover { color: #fff; box-shadow: 0 0 46px rgba(var(--red-glow), 0.55); }
 .btn--ghost { color: var(--ink); border-color: rgba(255,255,255,0.4); }
 .btn--block { width: 100%; justify-content: space-between; padding: 22px 28px; }
 

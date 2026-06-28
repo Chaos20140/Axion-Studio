@@ -511,6 +511,8 @@
     // ---- kontakt: remote-first ops panel (replaces the map) ----
     "Kein Büro.": "No office.",
     "Volle Reichweite.": "Full reach.",
+    "Volle": "Full",
+    "Reichweite.": "Reach.",
     "Axion Studio ist remote-first. Von Meschede aus arbeiten wir mit Kunden in DACH, EU und Übersee — Briefing, Calls und Reviews laufen komplett digital. Kein Termin vor Ort nötig: kein Umweg, kein Zeitverlust.":
       "Axion Studio is remote-first. From Meschede we work with clients across DACH, the EU and overseas — briefings, calls and reviews run entirely digital. No on-site appointment needed: no detour, no lost time.",
     "Dein Projekt läuft.": "Your project's running.",
