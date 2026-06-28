@@ -905,7 +905,7 @@ body.nav-open { overflow: hidden; }
 .btn:hover { color: var(--ink); border-color: var(--red); box-shadow: 0 0 40px rgba(var(--red-glow), 0.4); }
 
 .btn--primary {
-  background: rgba(6, 3, 5, 0.42); color: var(--ink);
+  background: #fff; color: #000;
   border-color: var(--red);
   font-weight: 700;
 }
