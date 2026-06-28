@@ -1713,9 +1713,11 @@ body.nav-open { overflow: hidden; }
      and ignore source order. */
   .grid { gap: 26px; border-left: 0; border-right: 0; padding: 28px 0 40px; }
   .grid::before { display: none; }            /* drop the centre line on mobile */
-  .grid__startline, .grid__finishline { grid-template-columns: 1fr; }
-  .grid__startline-flag, .grid__checker,
-  .grid__startline-lights { display: none; }
+  .grid__startline, .grid__finishline { grid-template-columns: 1fr; gap: 12px; }
+  .grid__startline-flag, .grid__startline-lights { display: none; }
+  /* keep the checkered ZIELFLAGGE visible on mobile: stack it under the label */
+  .grid__finishline::before { display: none; }
+  .grid__finishline .grid__checker { display: block; width: 100%; height: 16px; }
 
   .grid__slot {
     grid-template-columns: 84px 1fr;
