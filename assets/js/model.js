@@ -1,5 +1,5 @@
 /* =========================================================
-   APEX/THRUST MEDIA — 3D MODEL VIEWER (about.html)
+   Axion Studio — 3D MODEL VIEWER (about.html)
    Loads a Meshy-generated GLB and presents it as an
    interactive piece on the About page:
    - Auto-rotate while idle

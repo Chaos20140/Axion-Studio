@@ -1,4 +1,4 @@
-# CLAUDE.md — APEX/THRUST MEDIA Buildbook
+# CLAUDE.md — Axion Studio Buildbook
 
 > Diese Datei ist meine eigene Bauanleitung. Vor jeder größeren Änderung **erst diese Datei lesen**, danach den eigenen Code hinterfragen.
 
@@ -16,7 +16,7 @@
 
 ## 1. Projekt-Identität
 
-- **Studio**: Apex Thrust Media (Inhaber: `Tolunay Usul`, Dresden). Logo-Lockup: `APEX/THRUST MEDIA`.
+- **Studio**: Axion Studio (Inhaber: `Tolunay Usul`, Dresden). Logo-Lockup: `Axion Studio`.
 - **Positionierung**: aggressives Web-Design-Studio, F1-/Karbon-/Cyberpunk-Sprache.
 - **Name-Bedeutung**:
   - „Apex" = Scheitelpunkt einer Rennlinie / höchster Punkt / typografisch Spitze eines Buchstabens — Präzision.

@@ -470,7 +470,7 @@ input, textarea, select { font: inherit; color: inherit; }
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: 16px clamp(20px, 4vw, 48px);
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   align-items: center;
   gap: 24px;
   background: linear-gradient(180deg, rgba(6, 3, 5, 0.85) 0%, rgba(6, 3, 5, 0.55) 100%);
@@ -607,9 +607,28 @@ input, textarea, select { font: inherit; color: inherit; }
   .nav__links { display: none; }
   .nav__cta { display: none; }
   .nav__burger { display: block; justify-self: end; }
-  /* logo gets the 1fr so the burger can stick to the right edge */
-  .nav { grid-template-columns: 1fr auto; }
+  /* logo gets the 1fr; the language toggle + burger stick to the right */
+  .nav { grid-template-columns: 1fr auto auto; }
 }
+
+/* ---- Language toggle (DE / EN) ---- */
+.lang-toggle {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.08em;
+  overflow: hidden;
+  justify-self: end;
+}
+.lang-toggle__opt {
+  padding: 6px 9px; background: transparent; border: 0;
+  color: var(--ink-dim); cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.lang-toggle__opt + .lang-toggle__opt { border-left: 1px solid var(--line); }
+.lang-toggle__opt.is-active { background: var(--red); color: #fff; }
+.lang-toggle__opt:not(.is-active):hover { color: var(--ink); }
+@media (hover: none) { .lang-toggle__opt { cursor: default; } }
 
 /* =========================================================
    MOBILE NAV OVERLAY
@@ -825,7 +844,7 @@ body.nav-open { overflow: hidden; }
 /* Tidy the hero: DESIGN + AT APEX same SIZE (same letter height); AT APEX is
    condensed horizontally so it matches DESIGN's width — no overhang. THRUST
    MEDIA. stays the smaller tagline (.small below). */
-.hero__title .line:nth-child(2) { transform: scaleX(0.92); transform-origin: left center; }
+.hero__title .line:nth-child(2) { transform-origin: left center; }
 .hero__title .word {
   display: inline-block;
   position: relative;

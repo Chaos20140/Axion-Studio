@@ -144,6 +144,7 @@
         arr.forEach((item, i) => { try { frag.appendChild(tpl(item, i)); } catch (_) {} });
         if (frag.childNodes.length) { box.textContent = ""; box.appendChild(frag); }
       });
+      document.dispatchEvent(new Event("content:loaded"));   // let i18n re-translate CMS content
     })
-    .catch(() => {/* keep HTML defaults */});
+    .catch(() => { document.dispatchEvent(new Event("content:loaded")); });
 })();

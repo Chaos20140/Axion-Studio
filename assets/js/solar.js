@@ -1,5 +1,5 @@
 /* =========================================================
-   APEX/THRUST MEDIA — SOLAR OFFER EXPLORER
+   Axion Studio — SOLAR OFFER EXPLORER
    The "Was wir anbieten" (Services) section IS an interactive
    solar system: the sun is the studio standard, each planet is
    one of the four disciplines we offer. Click a planet → the
@@ -60,7 +60,7 @@ import * as THREE from "three";
      standard that ties them together.
      type: 0 rocky · 1 gas-bands · 2 swirl  (shader surface)  */
   const SUN_CFG = {
-    id: "core", label: "APEX STANDARD", kicker: "00 — STANDARD",
+    id: "core", label: "AXION STANDARD", kicker: "00 — STANDARD",
     title: "Ein Standard", cls: "KERN", dist: "0.0",
     text: "Vier Disziplinen, ein kompromissloser Standard. Jede Welt hier draußen ist ein Weg dorthin — Web Design, Development, Motion & 3D, Hosting & Wartung. Wähl einen Planeten.",
     href: "kontakt.html", cta: "Projekt starten →",

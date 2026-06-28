@@ -5,7 +5,7 @@
     "phone": "+49 176 76668002",
     "phoneHref": "tel:+4917676668002",
     "whatsapp": "+49 176 76668002 — direkt schreiben",
-    "whatsappHref": "https://wa.me/4917676668002?text=Hallo%20Apex%20Thrust%20Media!",
+    "whatsappHref": "https://wa.me/4917676668002?text=Hallo%20Axion%20Studio!",
     "hours": "Mo – Fr · 09:00 – 18:00 CET",
     "response": "Ø < 24 h"
   },
@@ -40,7 +40,7 @@
       "name": "Tolunay Usul",
       "role": "Gründer · Web Design & Entwicklung",
       "photo": "assets/images/tolunay-web.webp",
-      "bio": "Hi, ich bin Tolunay — Gründer von Apex Thrust Media und studierter Elektrotechniker. Technik hat mich schon immer fasziniert: Ich wollte nie nur wissen, dass etwas funktioniert, sondern warum.\n\nAus dieser Begeisterung ist Apex Thrust Media entstanden — ein Studio, das moderne Webauftritte mit technischem Anspruch und einem Auge fürs Detail baut. Webdesign und Entwicklung waren für mich lange mehr als ein Hobby, bevor daraus ein Studio wurde.\n\nBei mir bekommst du keinen anonymen Dienstleister, sondern einen festen Ansprechpartner, der dein Projekt persönlich begleitet — von der ersten Idee bis zum Launch. Qualität ist mir dabei genauso wichtig wie dir.",
+      "bio": "Hi, ich bin Tolunay — Gründer von Axion Studio und studierter Elektrotechniker. Technik hat mich schon immer fasziniert: Ich wollte nie nur wissen, dass etwas funktioniert, sondern warum.\n\nAus dieser Begeisterung ist Axion Studio entstanden — ein Studio, das moderne Webauftritte mit technischem Anspruch und einem Auge fürs Detail baut. Webdesign und Entwicklung waren für mich lange mehr als ein Hobby, bevor daraus ein Studio wurde.\n\nBei mir bekommst du keinen anonymen Dienstleister, sondern einen festen Ansprechpartner, der dein Projekt persönlich begleitet — von der ersten Idee bis zum Launch. Qualität ist mir dabei genauso wichtig wie dir.",
       "skills": ["Art Direction", "UX / UI", "Frontend", "Motion"]
     }
   ],
@@ -85,6 +85,6 @@
   "footer": {
     "studio": "Independent Web Design Studio",
     "location": "Meschede, Deutschland",
-    "copyright": "© 2026 APEX/THRUST MEDIA — ALL RIGHTS RESERVED"
+    "copyright": "© 2026 Axion Studio — ALL RIGHTS RESERVED"
   }
 }
