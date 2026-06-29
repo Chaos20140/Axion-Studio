@@ -174,15 +174,16 @@ const HEADER_IMG = `${SITE}/assets/images/email-header.jpg`;
 // Gemeinsames Gerüst: gebrandeter Motorsport-Header (ein gehostetes Bild →
 // rendert überall identisch, auch in Outlook) + Marken-Fußleiste. "inner"
 // liefert die mittleren <tr>…</tr>-Zeilen, "note" die Footer-Kontextzeile.
-function wrap(inner: string, note: string): string {
-  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-  <body style="margin:0;padding:0;background:${BG};">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};">
-   <tr><td align="center" style="padding:28px 14px;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${CARD};border:1px solid ${LINE};">
+function wrap(inner: string, note: string, pre: string): string {
+  return `<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"></head>
+  <body style="margin:0;padding:0;background:#050607;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${pre}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#050607;">
+   <tr><td align="center" style="padding:32px 12px;">
+    <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#090a0b;border:1px solid #2a2c30;box-shadow:0 18px 60px rgba(0,0,0,.45);">
       <tr><td style="height:4px;background:${RED};font-size:0;line-height:0;">&nbsp;</td></tr>
       <tr><td style="padding:0;font-size:0;line-height:0;">
-        <img src="${HEADER_IMG}" width="600" alt="Axion Studio — Web-Design-Studio aus Meschede" style="display:block;width:100%;max-width:600px;height:auto;border:0;" />
+        <img src="${HEADER_IMG}" width="640" alt="Axion Studio — Web-Design-Studio aus Meschede" style="display:block;width:100%;max-width:640px;height:auto;border:0;" />
       </td></tr>
       ${inner}
       <tr><td style="padding:26px 32px;border-top:1px solid ${LINE};">
@@ -230,7 +231,7 @@ function notifyHtml(d: {
       <tr><td style="padding:8px 32px 30px;">
         <a href="mailto:${esc(d.email)}" style="display:inline-block;background:${RED};color:#fff;font:700 12px ${FONT};letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:14px 26px;">Direkt antworten →</a>
       </td></tr>`;
-  return wrap(inner, "Automatische Benachrichtigung vom Kontaktformular auf axion-studio.de.");
+  return wrap(inner, "Automatische Benachrichtigung vom Kontaktformular auf axion-studio.de.", "Neue Kontaktanfrage über axion-studio.de.");
 }
 
 function replyHtml(name: string): string {
@@ -246,7 +247,7 @@ function replyHtml(name: string): string {
         <br><br>
         — Tolunay, Axion Studio
       </td></tr>`;
-  return wrap(inner, "Du erhältst diese E-Mail, weil du eine Anfrage über axion-studio.de gestellt hast.");
+  return wrap(inner, "Du erhältst diese E-Mail, weil du eine Anfrage über axion-studio.de gestellt hast.", "Danke für deine Anfrage bei Axion Studio — wir melden uns in der Regel innerhalb von 24 Stunden.");
 }
 
 // ---- request handler -------------------------------------------------------
