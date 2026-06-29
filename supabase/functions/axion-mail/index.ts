@@ -169,7 +169,7 @@ async function sendEmail(opts: {
 const BG = "#060305", CARD = "#0c0709", RED = "#ff1f3d", INK = "#f4ecec", MUTE = "#ab9fa0", LINE = "rgba(255,31,61,0.28)";
 const FONT = "Arial,Helvetica,sans-serif";
 const SITE = "https://axion-studio.de";
-const HEADER_IMG = `${SITE}/assets/images/og-cover.jpg`;
+const HEADER_IMG = `${SITE}/assets/images/email-header.jpg`;
 
 // Gemeinsames Gerüst: gebrandeter Motorsport-Header (ein gehostetes Bild →
 // rendert überall identisch, auch in Outlook) + Marken-Fußleiste. "inner"
