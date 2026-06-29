@@ -221,7 +221,7 @@ function replyHtml(name: string): string {
         <div style="font:800 34px/1.02 ${FONT};text-transform:uppercase;color:${INK};margin-top:14px;">Danke, ${esc(name)}.</div>
       </td></tr>
       <tr><td style="padding:6px 34px 26px;font:400 16px/1.65 ${FONT};color:${INK};">
-        Deine Anfrage ist bei uns eingegangen. Wir melden uns in der Regel <strong style="color:${INK};">innerhalb von 24 Stunden</strong> persönlich bei dir — mit einer ehrlichen Einschätzung, ob wir der richtige Partner sind, was es kostet und wann wir starten können.
+        Deine Anfrage ist bei uns <strong style="color:${INK};">eingegangen</strong> und wird bereits bearbeitet. Einer von uns meldet sich in der Regel <strong style="color:${INK};">innerhalb von 24 Stunden</strong> persönlich bei dir — mit einer ehrlichen Einschätzung, ob wir der richtige Partner sind, was es kostet und wann wir starten können.
         <br><br>
         <span style="color:${MUTE};">Bis dahin: Vollgas. 🏁</span>
         <br><br>
