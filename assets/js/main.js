@@ -201,42 +201,76 @@
   }
 
   /* ---------- CONTACT FORM ---------- */
+  // POST an die Supabase Edge Function (axion-mail → Strato SMTP). Solange
+  // CONTACT_ENDPOINT leer ist, greift der mailto-Fallback an info@axion-studio.de.
+  const CONTACT_ENDPOINT = "";  // ← Supabase-Function-URL eintragen, sobald deployed
   const form = $("#contactForm");
   const status = $("#formStatus");
   if (form) {
-    form.addEventListener("submit", (e) => {
+    const setStatus = (msg, kind) => {
+      status.textContent = msg;
+      status.classList.remove("is-ok", "is-err");
+      if (kind) status.classList.add(kind);
+    };
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const data = new FormData(form);
-      const name = data.get("name")?.toString().trim();
-      const email = data.get("email")?.toString().trim();
-      const msg = data.get("message")?.toString().trim();
+      const name = data.get("name")?.toString().trim() || "";
+      const email = data.get("email")?.toString().trim() || "";
+      const msg = data.get("message")?.toString().trim() || "";
       const consent = data.get("consent");
+      const company = data.get("company")?.toString().trim() || "";
+      const services = data.getAll("service").map(String);
+      const budget = data.get("budget")?.toString() || "";
+      const website = data.get("website")?.toString() || "";  // honeypot
 
       if (!name || !email || !msg || !consent) {
-        status.textContent = "// ERROR — Bitte fülle alle Pflichtfelder aus.";
-        status.classList.remove("is-ok"); status.classList.add("is-err");
+        setStatus("// ERROR — Bitte Name, E-Mail, Briefing und Zustimmung ausfüllen.", "is-err");
         return;
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        status.textContent = "// ERROR — E-Mail-Format ungültig.";
-        status.classList.remove("is-ok"); status.classList.add("is-err");
+        setStatus("// ERROR — E-Mail-Format ungültig.", "is-err");
         return;
       }
 
-      status.textContent = "// TRANSMITTING SIGNAL...";
-      status.classList.remove("is-err", "is-ok");
-      const subject = encodeURIComponent(`Neues Projekt — ${name}`);
+      const submit = form.querySelector('[type="submit"]');
+
+      if (CONTACT_ENDPOINT) {
+        setStatus("// SENDE SIGNAL …", null);
+        if (submit) submit.disabled = true;
+        try {
+          const res = await fetch(CONTACT_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, company, services, budget, message: msg, website }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (res.ok && json.ok) {
+            setStatus("// SIGNAL EMPFANGEN — wir melden uns innerhalb von 24 h.", "is-ok");
+            form.reset();
+          } else {
+            setStatus("// ERROR — " + (json.error || "Senden fehlgeschlagen. Schreib uns an info@axion-studio.de."), "is-err");
+          }
+        } catch (_) {
+          setStatus("// ERROR — Verbindung fehlgeschlagen. Schreib uns an info@axion-studio.de.", "is-err");
+        } finally {
+          if (submit) submit.disabled = false;
+        }
+        return;
+      }
+
+      // Fallback ohne Backend: mailto an info@axion-studio.de
+      setStatus("// ÖFFNE MAIL-CLIENT …", null);
+      const subject = encodeURIComponent(`Projekt-Anfrage — ${name}`);
       const body = encodeURIComponent(
-        `Name: ${name}\nE-Mail: ${email}\nUnternehmen: ${data.get("company") || "-"}\n` +
-        `Services: ${data.getAll("service").join(", ") || "-"}\nBudget: ${data.get("budget") || "-"}\n\n` +
-        `Briefing:\n${msg}`
+        `Name: ${name}\nE-Mail: ${email}\nUnternehmen: ${company || "-"}\n` +
+        `Services: ${services.join(", ") || "-"}\nBudget: ${budget || "-"}\n\nBriefing:\n${msg}`
       );
       setTimeout(() => {
-        window.location.href = `mailto:tolgay.u0@gmail.com?subject=${subject}&body=${body}`;
-        status.textContent = "// SIGNAL TRANSMITTED — Mail-Client geöffnet.";
-        status.classList.add("is-ok");
+        window.location.href = `mailto:info@axion-studio.de?subject=${subject}&body=${body}`;
+        setStatus("// MAIL-CLIENT GEÖFFNET.", "is-ok");
         form.reset();
-      }, 600);
+      }, 500);
     });
   }
 
