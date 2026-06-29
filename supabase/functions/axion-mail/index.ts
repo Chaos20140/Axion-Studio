@@ -168,10 +168,42 @@ async function sendEmail(opts: {
 // ---- branded email templates (Axion-Look, email-safe tables + inline CSS) --
 const BG = "#060305", CARD = "#0c0709", RED = "#ff1f3d", INK = "#f4ecec", MUTE = "#ab9fa0", LINE = "rgba(255,31,61,0.28)";
 const FONT = "Arial,Helvetica,sans-serif";
+const SITE = "https://axion-studio.de";
+const HEADER_IMG = `${SITE}/assets/images/og-cover.jpg`;
+
+// Gemeinsames Gerüst: gebrandeter Motorsport-Header (ein gehostetes Bild →
+// rendert überall identisch, auch in Outlook) + Marken-Fußleiste. "inner"
+// liefert die mittleren <tr>…</tr>-Zeilen, "note" die Footer-Kontextzeile.
+function wrap(inner: string, note: string): string {
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;padding:0;background:${BG};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};">
+   <tr><td align="center" style="padding:28px 14px;">
+    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${CARD};border:1px solid ${LINE};">
+      <tr><td style="height:4px;background:${RED};font-size:0;line-height:0;">&nbsp;</td></tr>
+      <tr><td style="padding:0;font-size:0;line-height:0;">
+        <img src="${HEADER_IMG}" width="600" alt="Axion Studio — Web-Design-Studio aus Meschede" style="display:block;width:100%;max-width:600px;height:auto;border:0;" />
+      </td></tr>
+      ${inner}
+      <tr><td style="padding:26px 32px;border-top:1px solid ${LINE};">
+        <div style="font:800 19px ${FONT};letter-spacing:.06em;text-transform:uppercase;color:${INK};">AXION STUDIO</div>
+        <div style="font:700 10px ${FONT};letter-spacing:.22em;text-transform:uppercase;color:${MUTE};margin-top:7px;">WEB DESIGN · DEVELOPMENT · MOTION · HOSTING</div>
+        <div style="font:400 13px/1.9 ${FONT};color:${INK};margin-top:16px;">
+          <a href="mailto:info@axion-studio.de" style="color:${RED};text-decoration:none;">info@axion-studio.de</a><br>
+          Meschede, DE &nbsp;·&nbsp; <a href="tel:+4917676668002" style="color:${INK};text-decoration:none;">+49 176 76668002</a> &nbsp;·&nbsp; <a href="${SITE}" style="color:${INK};text-decoration:none;">axion-studio.de</a>
+        </div>
+        <div style="font:400 11px/1.7 ${FONT};color:${MUTE};margin-top:18px;border-top:1px solid ${LINE};padding-top:14px;">
+          © 2026 Axion Studio · Alle Rechte vorbehalten.<br>${note}
+        </div>
+      </td></tr>
+    </table>
+   </td></tr>
+  </table></body></html>`;
+}
 
 function row(label: string, value: string): string {
   return `<tr>
-    <td style="padding:14px 0;border-top:1px solid ${LINE};font:700 11px ${FONT};letter-spacing:.22em;text-transform:uppercase;color:${RED};width:170px;vertical-align:top;">${esc(label)}</td>
+    <td style="padding:14px 0;border-top:1px solid ${LINE};font:700 11px ${FONT};letter-spacing:.22em;text-transform:uppercase;color:${RED};width:160px;vertical-align:top;">${esc(label)}</td>
     <td style="padding:14px 0;border-top:1px solid ${LINE};font:400 15px/1.6 ${FONT};color:${INK};vertical-align:top;">${value || `<span style="color:${MUTE};">—</span>`}</td>
   </tr>`;
 }
@@ -180,59 +212,41 @@ function notifyHtml(d: {
   name: string; email: string; company: string; services: string; budget: string; message: string;
 }): string {
   const msg = esc(d.message).replace(/\n/g, "<br>");
-  return `<!doctype html><html><body style="margin:0;padding:0;background:${BG};">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};">
-   <tr><td align="center" style="padding:32px 14px;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${CARD};border:1px solid ${LINE};">
-      <tr><td style="height:4px;background:${RED};font-size:0;line-height:0;">&nbsp;</td></tr>
-      <tr><td style="padding:30px 34px 4px;">
+  const inner = `
+      <tr><td style="padding:30px 32px 4px;">
         <div style="font:700 11px ${FONT};letter-spacing:.3em;text-transform:uppercase;color:${RED};">● NEUES SIGNAL — PROJEKT-ANFRAGE</div>
         <div style="font:800 30px/1.04 ${FONT};letter-spacing:.01em;text-transform:uppercase;color:${INK};margin-top:14px;">${esc(d.name)}</div>
         <div style="font:400 14px ${FONT};color:${MUTE};margin-top:6px;">
           <a href="mailto:${esc(d.email)}" style="color:${RED};text-decoration:none;">${esc(d.email)}</a>${d.company ? ` &nbsp;·&nbsp; ${esc(d.company)}` : ""}
         </div>
       </td></tr>
-      <tr><td style="padding:18px 34px 8px;">
+      <tr><td style="padding:16px 32px 8px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
           ${row("Services", esc(d.services))}
           ${row("Budget", esc(d.budget))}
           ${row("Briefing", msg)}
         </table>
       </td></tr>
-      <tr><td style="padding:8px 34px 30px;">
-        <a href="mailto:${esc(d.email)}" style="display:inline-block;background:${RED};color:#fff;font:700 12px ${FONT};letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:14px 24px;">Direkt antworten →</a>
-      </td></tr>
-      <tr><td style="padding:18px 34px;border-top:1px solid ${LINE};font:400 11px ${FONT};letter-spacing:.1em;color:${MUTE};">
-        AXION STUDIO · automatische Benachrichtigung vom Kontaktformular · axion-studio.de
-      </td></tr>
-    </table>
-   </td></tr>
-  </table></body></html>`;
+      <tr><td style="padding:8px 32px 30px;">
+        <a href="mailto:${esc(d.email)}" style="display:inline-block;background:${RED};color:#fff;font:700 12px ${FONT};letter-spacing:.18em;text-transform:uppercase;text-decoration:none;padding:14px 26px;">Direkt antworten →</a>
+      </td></tr>`;
+  return wrap(inner, "Automatische Benachrichtigung vom Kontaktformular auf axion-studio.de.");
 }
 
 function replyHtml(name: string): string {
-  return `<!doctype html><html><body style="margin:0;padding:0;background:${BG};">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${BG};">
-   <tr><td align="center" style="padding:32px 14px;">
-    <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:${CARD};border:1px solid ${LINE};">
-      <tr><td style="height:4px;background:${RED};font-size:0;line-height:0;">&nbsp;</td></tr>
-      <tr><td style="padding:34px 34px 10px;">
+  const inner = `
+      <tr><td style="padding:34px 32px 8px;">
         <div style="font:700 11px ${FONT};letter-spacing:.3em;text-transform:uppercase;color:${RED};">● SIGNAL EMPFANGEN</div>
         <div style="font:800 34px/1.02 ${FONT};text-transform:uppercase;color:${INK};margin-top:14px;">Danke, ${esc(name)}.</div>
       </td></tr>
-      <tr><td style="padding:6px 34px 26px;font:400 16px/1.65 ${FONT};color:${INK};">
+      <tr><td style="padding:6px 32px 30px;font:400 16px/1.65 ${FONT};color:${INK};">
         Deine Anfrage ist bei uns <strong style="color:${INK};">eingegangen</strong> und wird bereits bearbeitet. Einer von uns meldet sich in der Regel <strong style="color:${INK};">innerhalb von 24 Stunden</strong> persönlich bei dir — mit einer ehrlichen Einschätzung, ob wir der richtige Partner sind, was es kostet und wann wir starten können.
         <br><br>
         <span style="color:${MUTE};">Bis dahin: Vollgas. 🏁</span>
         <br><br>
         — Tolunay, Axion Studio
-      </td></tr>
-      <tr><td style="padding:18px 34px;border-top:1px solid ${LINE};font:400 11px ${FONT};letter-spacing:.1em;color:${MUTE};">
-        AXION STUDIO · Meschede · <a href="https://axion-studio.de" style="color:${RED};text-decoration:none;">axion-studio.de</a> · info@axion-studio.de
-      </td></tr>
-    </table>
-   </td></tr>
-  </table></body></html>`;
+      </td></tr>`;
+  return wrap(inner, "Du erhältst diese E-Mail, weil du eine Anfrage über axion-studio.de gestellt hast.");
 }
 
 // ---- request handler -------------------------------------------------------
