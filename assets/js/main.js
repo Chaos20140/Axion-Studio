@@ -203,7 +203,7 @@
   /* ---------- CONTACT FORM ---------- */
   // POST an die Supabase Edge Function (axion-mail → Strato SMTP). Solange
   // CONTACT_ENDPOINT leer ist, greift der mailto-Fallback an info@axion-studio.de.
-  const CONTACT_ENDPOINT = "";  // ← Supabase-Function-URL eintragen, sobald deployed
+  const CONTACT_ENDPOINT = "https://qcbarlmhsgupeqwehnwe.supabase.co/functions/v1/axion-mail";
   const form = $("#contactForm");
   const status = $("#formStatus");
   if (form) {
