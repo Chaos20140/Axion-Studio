@@ -314,6 +314,7 @@
     "METHODE": "METHOD",
     "NÄCHSTES": "NEXT",
     "Erreichbar": "Available",
+    "7 Tage / Woche · 24 Stunden": "7 days a week · 24 hours",
     "Telefon": "Phone",
     "HOSTING & WARTUNG": "HOSTING & MAINTENANCE",
     "— DAS CREDO": "— THE CREED",
