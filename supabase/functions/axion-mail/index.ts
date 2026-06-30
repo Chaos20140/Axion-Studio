@@ -16,6 +16,8 @@
 // Deploy mit "Verify JWT" = AUS (öffentliches Formular).
 // =============================================================================
 
+import postgres from "https://deno.land/x/postgresjs@v3.4.5/mod.js";
+
 const ALLOWED_ORIGINS = [
   "https://axion-studio.de",
   "https://www.axion-studio.de",
@@ -58,6 +60,59 @@ const rfc2822Date = (d: Date): string => {
   return `${days[d.getUTCDay()]}, ${p(d.getUTCDate())} ${months[d.getUTCMonth()]} ${d.getUTCFullYear()} ` +
     `${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())} +0000`;
 };
+
+// ---- Persistentes Rate-Limit pro IP (Postgres) -----------------------------
+// Supabase teilt keinen Speicher zwischen Edge-Instanzen → In-Memory wirkungslos.
+// Daher in Postgres (SUPABASE_DB_URL, in Edge Functions auto-injiziert).
+// FAIL-OPEN: schlägt die DB fehl, wird NICHT blockiert (Formular bleibt nutzbar).
+const RL_WINDOW_MIN = 15; // Fenster in Minuten
+const RL_MAX = 5;         // max. Anfragen pro IP / Fenster
+const RL_BURST_MAX = 2;   // max. pro Minute
+
+function clientIp(req: Request): string {
+  const xff = req.headers.get("x-forwarded-for") ?? "";
+  const first = xff.split(",")[0].trim();
+  return first || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
+}
+
+let _sql: ReturnType<typeof postgres> | null = null;
+let _ready: Promise<unknown> | null = null;
+function db() {
+  if (_sql) return _sql;
+  const url = Deno.env.get("SUPABASE_DB_URL");
+  if (!url) return null;
+  _sql = postgres(url, { prepare: false, idle_timeout: 20, max: 3 });
+  _ready = _sql`create table if not exists public.mail_rate_limits (
+    id bigint generated always as identity primary key,
+    ip text not null,
+    created_at timestamptz not null default now()
+  )`.then(() =>
+    _sql!`create index if not exists mail_rate_limits_ip_time on public.mail_rate_limits (ip, created_at)`
+  ).catch((e) => console.log("rate-limit DDL error:", e));
+  return _sql;
+}
+
+async function rateLimited(ip: string): Promise<boolean> {
+  const sql = db();
+  if (!sql) return false; // kein DB-URL → fail-open
+  try {
+    if (_ready) await _ready;
+    const rows = await sql`
+      select
+        count(*) filter (where created_at > now() - make_interval(mins => ${RL_WINDOW_MIN}))::int as window_n,
+        count(*) filter (where created_at > now() - interval '1 minute')::int as burst_n
+      from public.mail_rate_limits where ip = ${ip}
+    `;
+    const { window_n, burst_n } = rows[0] ?? { window_n: 0, burst_n: 0 };
+    if (window_n >= RL_MAX || burst_n >= RL_BURST_MAX) return true;
+    await sql`insert into public.mail_rate_limits (ip) values (${ip})`;
+    await sql`delete from public.mail_rate_limits where created_at < now() - interval '1 hour'`;
+    return false;
+  } catch (e) {
+    console.log("rate-limit DB error (fail-open):", e);
+    return false; // DB-Problem darf das Formular nicht lahmlegen
+  }
+}
 
 function buildRawMessage(
   fromHeader: string, toList: string[], replyTo: string, subject: string, html: string,
@@ -269,6 +324,17 @@ Deno.serve(async (req) => {
     if (headerSafe(String(body.website ?? "")) !== "") {
       return new Response(JSON.stringify({ ok: true }), {
         headers: { ...cors, "Content-Type": "application/json" },
+      });
+    }
+
+    // Rate-Limit: schützt vor Spam/Missbrauch des Auto-Reply-Versands.
+    if (await rateLimited(clientIp(req))) {
+      return new Response(JSON.stringify({
+        ok: false,
+        error: "Zu viele Anfragen in kurzer Zeit. Bitte versuch es in ein paar Minuten erneut – oder schreib direkt an info@axion-studio.de.",
+      }), {
+        status: 429,
+        headers: { ...cors, "Content-Type": "application/json", "Retry-After": "300" },
       });
     }
 
