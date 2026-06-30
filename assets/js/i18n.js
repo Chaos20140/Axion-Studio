@@ -367,7 +367,6 @@
 
     // ---- contact details / map (CMS) ----
     "Telefon: auf Anfrage": "Phone: on request",
-    "auf Anfrage / wird ggf. ergänzt": "on request / added if applicable",
     "Deutschland": "Germany",
     "NRW · Deutschland": "NRW · Germany",
     "Bahn: Bestwig · 8 min": "Rail: Bestwig · 8 min",
@@ -431,8 +430,6 @@
     "Axion Studio — Web Design Studio (Einzelunternehmen)": "Axion Studio — Web Design Studio (sole proprietorship)",
     "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV": "Responsible for content pursuant to § 18 (2) MStV",
     "Verantwortlicher": "Controller",
-    "Umsatzsteuer-ID": "VAT ID",
-    "Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:": "VAT identification number pursuant to § 27a German VAT Act:",
     "Tolunay Usul, Anschrift wie oben.": "Tolunay Usul, address as above.",
     "Tolunay Usul — Kontakt siehe Impressum.": "Tolunay Usul — contact see imprint.",
     "Haftung für Inhalte": "Liability for content",
