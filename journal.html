@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
-  <title>Team — Webdesign & Motion Crew | Axion Studio</title>
-  <meta name="description" content="Das Team hinter Axion Studio: eine kompakte Crew aus Design, Motion und Frontend in Meschede. Webdesign &amp; Webentwicklung für Sauerland und NRW." />
-  <link rel="canonical" href="https://axion-studio.de/team.html" />
+  <title>Journal — Webdesign & Performance | Axion Studio</title>
+  <meta name="description" content="Das Journal von Axion Studio: Klartext zu Webdesign, Performance und Entwicklung — aus Meschede. Keine Buzzwords, nur was wirklich zählt." />
+  <link rel="canonical" href="https://axion-studio.de/journal.html" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Tolunay Usul" />
   <meta name="theme-color" content="#060305" />
@@ -14,24 +14,36 @@
   <meta property="og:site_name" content="Axion Studio" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:locale:alternate" content="en_US" />
-  <meta property="og:title" content="Team — Webdesign &amp; Motion Crew | Axion Studio" />
-  <meta property="og:description" content="Das Team hinter Axion Studio: eine kompakte Crew aus Design, Motion und Frontend in Meschede. Webdesign &amp; Webentwicklung für Sauerland und NRW." />
-  <meta property="og:url" content="https://axion-studio.de/team.html" />
+  <meta property="og:title" content="Journal — Webdesign &amp; Performance | Axion Studio" />
+  <meta property="og:description" content="Das Journal von Axion Studio: Klartext zu Webdesign, Performance und Entwicklung — aus Meschede. Keine Buzzwords, nur was wirklich zählt." />
+  <meta property="og:url" content="https://axion-studio.de/journal.html" />
   <meta property="og:image" content="https://axion-studio.de/assets/images/og-cover.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Axion Studio — Webdesign &amp; Webentwicklung aus Meschede" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Team — Webdesign &amp; Motion Crew | Axion Studio" />
-  <meta name="twitter:description" content="Das Team hinter Axion Studio: eine kompakte Crew aus Design, Motion und Frontend in Meschede. Webdesign &amp; Webentwicklung für Sauerland und NRW." />
+  <meta name="twitter:title" content="Journal — Webdesign &amp; Performance | Axion Studio" />
+  <meta name="twitter:description" content="Das Journal von Axion Studio: Klartext zu Webdesign, Performance und Entwicklung — aus Meschede. Keine Buzzwords, nur was wirklich zählt." />
   <meta name="twitter:image" content="https://axion-studio.de/assets/images/og-cover.jpg" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://axion-studio.de/" },
-      { "@type": "ListItem", "position": 2, "name": "Team", "item": "https://axion-studio.de/team.html" }
+    "@graph": [
+      {
+        "@type": "Blog",
+        "@id": "https://axion-studio.de/journal.html#blog",
+        "name": "Axion Studio Journal",
+        "description": "Klartext zu Webdesign, Performance und Entwicklung aus Meschede.",
+        "publisher": { "@id": "https://axion-studio.de/#studio" },
+        "inLanguage": "de-DE"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Start", "item": "https://axion-studio.de/" },
+          { "@type": "ListItem", "position": 2, "name": "Journal", "item": "https://axion-studio.de/journal.html" }
+        ]
+      }
     ]
   }
   </script>
@@ -52,15 +64,6 @@
     <div class="cursor__ring"></div>
   </div>
 
-  <!-- FULL-PAGE scroll-scrub background video (hybrid proxy-scrub, CLAUDE.md §5A/§13).
-       Spans the whole team page; sections sit on top, the tint keeps text legible. -->
-  <div id="teamBg" class="bg-scroll bg-scroll--page">
-    <video id="teamBgVideo" class="bg-scroll__video" muted playsinline preload="auto" aria-hidden="true"></video>
-    <canvas id="teamBgCanvas" class="bg-scroll__canvas" aria-hidden="true"></canvas>
-  </div>
-  <div class="bg-scroll-tint" aria-hidden="true"></div>
-
-
   <header class="nav is-scrolled" id="nav">
     <a href="index.html" class="nav__logo" aria-label="Axion Studio — Startseite">
       <span class="nav__logo-mark" aria-hidden="true">
@@ -72,10 +75,10 @@
       <a href="about.html"     data-link>Über Uns</a>
       <a href="angebot.html"   data-link>Angebot</a>
       <a href="projekte.html"  data-link>Projekte</a>
-      <a href="team.html"      data-link class="is-active">Team</a>
+      <a href="team.html"      data-link>Team</a>
       <a href="partner.html"   data-link>Partner</a>
       <a href="kontakt.html"   data-link>Kontakt</a>
-      
+
       <a href="impressum.html" data-link class="nav__sub">Impressum</a>
     </nav>
     <a href="kontakt.html" class="nav__cta" data-magnetic>
@@ -109,144 +112,40 @@
 
   <main class="page">
     <header class="page-hero">
-      <span class="page-hero__kicker">02 — CREW</span>
-      <h1 class="page-hero__title">Das <em>Team.</em></h1>
+      <span class="page-hero__kicker">JOURNAL</span>
+      <h1 class="page-hero__title">Journal<em>.</em></h1>
       <p class="page-hero__lead">
-        Axion Studio ist bewusst klein und fokussiert. Kein anonymes Großraumbüro —
-        sondern ein <em>eingespieltes Team</em>, in dem klar ist, wer wofür Verantwortung trägt.
+        Gedanken zu Webdesign, Performance und Entwicklung — <em>Klartext</em>,
+        keine Buzzwords. Was wir bauen, warum wir's so bauen, und was deine Website
+        wirklich schneller, sichtbarer und stärker macht.
       </p>
     </header>
 
     <section class="page-section">
       <div class="page-section__head">
-        <span class="num">ROSTER</span>
-        <span>Das Team · 01</span>
+        <span class="num">AUSGABEN</span>
+        <span>Aktuell</span>
         <span class="line"></span>
       </div>
 
-      <div class="members" data-cms-list="team" data-cms-tpl="teamMember">
-      <article class="member">
-        <div class="member__photo">
-          <picture>
-            <source srcset="assets/images/tolunay-web.webp" type="image/webp" />
-            <img src="assets/images/tolunay-web.png" alt="Tolunay Usul — Gründer von Axion Studio" loading="lazy" decoding="async" />
-          </picture>
-        </div>
-        <div class="member__body">
-          <span class="member__role mono">Gründer · Web Design &amp; Entwicklung</span>
-          <h2 class="member__name">Tolunay Usul</h2>
-          <div class="member__bio">
-            <p>
-              Hi, ich bin Tolunay — Gründer von Axion Studio und studierter
-              Elektrotechniker. Technik hat mich schon immer fasziniert: Ich wollte nie
-              nur wissen, <em>dass</em> etwas funktioniert, sondern <em>warum</em>.
-            </p>
-            <p>
-              Aus dieser Begeisterung ist Axion Studio entstanden — ein Studio,
-              das moderne Webauftritte mit technischem Anspruch und einem Auge fürs
-              Detail baut. Webdesign und Entwicklung waren für mich lange mehr als ein
-              Hobby, bevor daraus ein Studio wurde.
-            </p>
-            <p>
-              Bei mir bekommst du keinen anonymen Dienstleister, sondern einen festen
-              Ansprechpartner, der dein Projekt persönlich begleitet — von der ersten
-              Idee bis zum Launch. Qualität ist mir dabei genauso wichtig wie dir.
-            </p>
+      <div class="journal-grid">
+        <a class="journal-card" href="journal-website-ladezeit.html">
+          <span class="journal-card__cat">Performance</span>
+          <h2 class="journal-card__title">Warum deine Website unter 1&nbsp;Sekunde laden muss</h2>
+          <p class="journal-card__excerpt">
+            Jede Sekunde Ladezeit kostet dich Kunden — und Google-Rankings. Warum Tempo
+            kein Nice-to-have ist, sondern die halbe Miete, und wie wir Seiten unter eine
+            Sekunde bringen.
+          </p>
+          <div class="journal-card__meta">
+            <span>01.07.2026</span>
+            <span>· 4 Min Lesezeit</span>
           </div>
-          <div class="member__skills">
-            <span>Art Direction</span>
-            <span>UX / UI</span>
-            <span>Frontend</span>
-            <span>Motion</span>
-          </div>
-        </div>
-      </article>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-section__head">
-        <span class="num">METHODE</span>
-        <span>Wie wir fahren</span>
-        <span class="line"></span>
-      </div>
-      <div class="page-grid">
-        <dl class="page-grid__meta">
-          <dt>Motivation</dt>
-          <dd>Aus echter Leidenschaft</dd>
-          <dt>Kontakt</dt>
-          <dd>Direkt zum Macher</dd>
-          <dt>Tempo</dt>
-          <dd>Erste Ergebnisse in Tagen</dd>
-          <dt>Limit</dt>
-          <dd>Max. vier Projekte gleichzeitig</dd>
-        </dl>
-        <div>
-          <h2>Ein Team. <em>Volle Kontrolle.</em></h2>
-          <p>
-            Keine Übergaben, keine Stille Post. Wer dein Projekt plant, baut es auch —
-            vom ersten Wireframe bis zur letzten Animation. Das hält die Linie sauber
-            und das Tempo hoch.
-          </p>
-          <p>
-            Wir arbeiten in kurzen, sichtbaren Etappen. Du siehst, woran wir schrauben,
-            bevor es lackiert ist — und kannst jederzeit nachsteuern.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-section__head">
-        <span class="num">KULTUR</span>
-        <span>Wie wir arbeiten</span>
-        <span class="line"></span>
-      </div>
-      <div class="page-grid">
-        <dl class="page-grid__meta">
-          <dt>Aufstellung</dt>
-          <dd>Remote-first</dd>
-          <dt>Werkzeuge</dt>
-          <dd>Figma · VSCode · GitHub</dd>
-          <dt>Rhythmus</dt>
-          <dd>Wöchentliche Review</dd>
-          <dt>Haltung</dt>
-          <dd>Eigenverantwortung statt Hierarchie</dd>
-        </dl>
-        <div>
-          <h2>Klein. <em>Aber wirkungsvoll.</em></h2>
-          <p>
-            Wir sind bewusst klein gehalten. Keine Account-Manager, keine Zwischeninstanzen:
-            Wenn du mit uns sprichst, sprichst du direkt mit der Person, die deine Website
-            auch baut.
-          </p>
-          <p>
-            Wir nehmen <strong>maximal vier aktive Projekte</strong> gleichzeitig an.
-            Wir sind überzeugt, dass Qualität eine Frage von Aufmerksamkeit ist —
-            nicht von Teamgröße.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="page-section">
-      <div class="page-section__head">
-        <span class="num">SIGNAL</span>
-        <span>Vom Schatten ins Licht</span>
-        <span class="line"></span>
-      </div>
-      <h2>Wir machen aus <em style="margin-left: -0.14em">Unscheinbar</em> Unübersehbar.</h2>
-      <p>
-        Dieselbe Maschine, zwei Gesichter: was eben noch im Dunkeln stand, fährt im
-        nächsten Moment ins Rampenlicht. Genau diesen Wechsel bauen wir für deine Marke —
-        sichtbar, schnell, kompromisslos.
-      </p>
-      <p style="margin-top: 28px;">
-        <a href="kontakt.html" class="nav__cta" data-magnetic style="display: inline-flex;">
-          <span>Briefing senden</span>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span class="journal-card__more">Lesen →</span>
         </a>
-      </p>
+      </div>
+
+      <p class="mono" style="margin-top: 40px; color: var(--ink-mute); letter-spacing: 0.12em;">— WEITERE AUSGABEN FOLGEN</p>
     </section>
   </main>
 
@@ -266,7 +165,6 @@
         <a href="projekte.html">Projekte</a>
         <a href="team.html">Team</a>
         <a href="partner.html">Partner</a>
-        <a href="index.html#services">Services</a>
         <a href="journal.html">Journal</a>
         <a href="kontakt.html">Kontakt</a>
       </div>
@@ -294,6 +192,7 @@
   <script src="assets/js/main.js?v=20260628o"></script>
   <script src="assets/js/content.js?v=20260628f"></script>
   <script src="assets/js/i18n.js?v=20260630b"></script>
+
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>
   <!-- End Cloudflare Web Analytics -->
