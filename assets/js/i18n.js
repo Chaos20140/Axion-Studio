@@ -368,6 +368,23 @@
     // ---- contact details / map (CMS) ----
     "Telefon: auf Anfrage": "Phone: on request",
     "Deutschland": "Germany",
+
+    // ---- FAQ (Startseite) ----
+    "— BEVOR DU FRAGST": "— BEFORE YOU ASK",
+    "Häufige": "Common",
+    "Fragen.": "Questions.",
+    "Was kostet eine Website bei euch?": "What does a website cost with you?",
+    "Das hängt vom Umfang ab — eine Landingpage ist etwas anderes als ein mehrseitiger Auftritt mit Animationen. Nach einem kurzen Erstgespräch bekommst du ein transparentes Festpreis-Angebot. Keine versteckten Kosten, keine Überraschungen.": "It depends on the scope — a landing page is different from a multi-page site with animations. After a short intro call you get a transparent fixed-price quote. No hidden costs, no surprises.",
+    "Wie lange dauert ein Projekt?": "How long does a project take?",
+    "Eine Landingpage ist oft in 1–2 Wochen live, ein größerer Auftritt in 3–6 Wochen. Den genauen Fahrplan legen wir gleich zu Beginn fest — und halten ihn.": "A landing page is often live in 1–2 weeks, a larger site in 3–6 weeks. We set the exact schedule right at the start — and we keep it.",
+    "Wem gehört die Website am Ende?": "Who owns the website in the end?",
+    "Dir. Du bekommst die vollständige Übergabe — Code, Inhalte, Zugänge. Kein Vendor-Lock-in, keine Abhängigkeit.": "Yours. You get the full handover — code, content, access. No vendor lock-in, no dependency.",
+    "Arbeitet ihr auch remote und deutschlandweit?": "Do you also work remotely and across Germany?",
+    "Ja. Wir sitzen in Meschede, arbeiten aber remote-first für Kunden in ganz Deutschland, Österreich und der Schweiz. Ein persönlicher Ansprechpartner ist immer dabei.": "Yes. We're based in Meschede but work remote-first for clients across Germany, Austria and Switzerland. A personal contact is always included.",
+    "Bietet ihr auch Hosting und Wartung?": "Do you also offer hosting and maintenance?",
+    "Ja. Auf Wunsch übernehmen wir schnelles, sicheres Hosting plus laufende Pflege — Updates, Backups und Monitoring laufen automatisch. Deine Seite bleibt erreichbar, aktuell und geschützt.": "Yes. On request we handle fast, secure hosting plus ongoing care — updates, backups and monitoring run automatically. Your site stays online, current and protected.",
+    "Was braucht ihr von mir zum Start?": "What do you need from me to get started?",
+    "Ein kurzes Briefing zu deinem Vorhaben — und Texte, Bilder oder Logo, falls vorhanden. Den Rest klären wir gemeinsam im Erstgespräch. Du musst nicht wissen, wie eine Website technisch funktioniert. Das ist unser Job.": "A short briefing on your project — plus texts, images or a logo if you have them. We'll sort out the rest together in the intro call. You don't need to know how a website works technically. That's our job.",
     "NRW · Deutschland": "NRW · Germany",
     "Bahn: Bestwig · 8 min": "Rail: Bestwig · 8 min",
     "Flughafen Dortmund (DTM): 80 min": "Dortmund Airport (DTM): 80 min",

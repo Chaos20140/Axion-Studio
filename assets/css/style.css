@@ -3411,6 +3411,68 @@ p { text-wrap: pretty; }
 }
 
 /* =========================================================
+   FAQ — native <details> accordion (kein JS)
+   ========================================================= */
+.faq {
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: clamp(70px, 11vh, 150px) 6vw clamp(50px, 8vh, 110px);
+}
+.faq__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
+  line-height: 0.94;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 26px 0 36px;
+  color: var(--ink);
+}
+.faq__title em { font-style: italic; font-family: var(--font-display-2); color: var(--red); }
+.faq__list { border-top: 1px solid var(--line); }
+.faq__item { border-bottom: 1px solid var(--line); }
+.faq__q {
+  list-style: none;
+  cursor: pointer;
+  position: relative;
+  padding: 26px 52px 26px 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(1.05rem, 2.3vw, 1.4rem);
+  color: var(--ink);
+  transition: color 0.25s var(--ease-out);
+}
+.faq__q::-webkit-details-marker { display: none; }
+.faq__q::after {
+  content: "+";
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: 1.6rem;
+  font-weight: 300;
+  color: var(--red);
+  transition: transform 0.3s var(--ease-out);
+}
+.faq__item[open] .faq__q::after { content: "–"; }
+.faq__q:hover { color: var(--red); }
+.faq__q:focus-visible { outline: 2px solid var(--red); outline-offset: 4px; }
+.faq__a {
+  padding: 0 52px 28px 0;
+  max-width: 780px;
+  font-family: var(--font-body);
+  font-size: clamp(0.98rem, 1.7vw, 1.1rem);
+  line-height: 1.75;
+  color: var(--ink-mute);
+}
+@media (max-width: 600px) {
+  .faq { padding-left: 22px; padding-right: 22px; }
+  .faq__q { padding-right: 40px; }
+  .faq__a { padding-right: 0; }
+}
+
+/* =========================================================
    WHATSAPP FLOATING BUTTON (JS-injected, all pages) + mobile-nav social
    ========================================================= */
 .wa-fab {
