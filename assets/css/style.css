@@ -47,7 +47,13 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 *::selection { background: var(--red); color: #fff; text-shadow: none; }
 
-html { scroll-behavior: smooth; }
+/* Native smooth-scroll is ONLY a fallback for when Lenis is off (no-JS or
+   reduced-motion). Lenis adds .lenis to <html> and MUST own scrolling: a
+   global scroll-behavior:smooth hijacks Lenis's own scrollTo()/settle calls
+   into browser-native animations that fight its rAF loop → intermittent
+   scroll stalls ("can't reach the top when scrolling up"). */
+html:not(.lenis) { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 html {
   /* Solid fallback before the video element loads. Painted FIRST in the stacking

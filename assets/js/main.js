@@ -39,6 +39,7 @@
     if (window.ScrollTrigger) {
       lenis.on("scroll", ScrollTrigger.update);
     }
+    window.lenisInstance = lenis;   // used by the Engineering scroll hook (§5.2)
   }
 
   /* ---------- LOADER ---------- */
@@ -282,7 +283,10 @@
       const el = document.querySelector(id);
       if (!el) return;
       e.preventDefault();
-      el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+      // Route through Lenis when present — a native scrollIntoView({behavior:
+      // 'smooth'}) would run its own animation that fights Lenis's rAF scroll.
+      if (lenis) lenis.scrollTo(el, { offset: -60, duration: 1.2 });
+      else el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     });
   });
 
