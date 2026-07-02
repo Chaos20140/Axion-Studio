@@ -84,6 +84,13 @@ function clientIp(req: Request): string {
   return candidates.find((c) => c && isIp(c)) ?? "unknown";
 }
 
+async function hashIp(ip: string): Promise<string> {
+  const data = new TextEncoder().encode("axion-rl:" + ip);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest)).slice(0, 16)
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
 let _sql: ReturnType<typeof postgres> | null = null;
 let _ready: Promise<unknown> | null = null;
 function db() {
@@ -337,7 +344,10 @@ Deno.serve(async (req) => {
     }
 
     // Rate-Limit: schützt vor Spam/Missbrauch des Auto-Reply-Versands.
-    if (await rateLimited(clientIp(req))) {
+    // IP wird VOR dem Speichern gehasht (Datenminimierung, Art. 5 DSGVO) —
+    // fürs Fenster-Zählen reicht ein stabiler Schlüssel, die rohe IP nicht nötig.
+    const ipHash = await hashIp(clientIp(req));
+    if (await rateLimited(ipHash)) {
       return new Response(JSON.stringify({
         ok: false,
         error: "Zu viele Anfragen in kurzer Zeit. Bitte versuch es in ein paar Minuten erneut – oder schreib direkt an info@axion-studio.de.",

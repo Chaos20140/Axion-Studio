@@ -173,6 +173,7 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 **Pflicht-Details, sonst bricht's:**
 - Extraktion läuft genau EINMAL; Aktivierung des Overlays währenddessen unterdrücken (sonst sieht man den 4×-Playthrough).
+- **Staging (Startup-Jank-Fix, gemessen 2026-07-03):** Quelle NICHT sofort anhängen (Download konkurriert sonst mit dem Hero-Video), sondern bei erstem Scroll oder ~5s nach `load` im Idle (`eagerSource: true` überspringt das, z. B. Team-BG). Extraktion erst starten, wenn der Clip **durchgepuffert** ist (`buffered.end ≥ duration−1`; Not-Start nach 45s bei readyState ≥ 3) — sonst kriecht der 4×-Playthrough am Netzwerk entlang und `extracting` blockiert den Scrub zig Sekunden („Hintergrund stockt"). Während der Extraktion deckt ein **Standbild auf dem Canvas** das Video ab (drawImage cover-fit, opacity 1, `frozen`-Flag), danach `currentTime`-Restore. Bis Proxy-Frames da sind, scrubbt das native Video seek-managed weiter.
 - Seek-Warteschleifen mit `settled`-Flag + Listener-Removal absichern (kein doppelt-auflösendes Promise, kein Listener-Leak).
 - `prefers-reduced-motion`: Proxy-Frames stark reduzieren, Auto-Animation aus.
 - Mobile: **gar kein Scrub** — schlichter `autoplay loop muted playsinline` mit einem 9:16-Clip (siehe §5.6). Frame-Extraktion ist auf Phones unzuverlässig.
@@ -326,6 +327,9 @@ Faustregel: Scrub-Clip = `keyint=1`. Loop-Clip = egal. Wird der Scrub-Clip ohne 
 | „Video holt noch auf" | `0.05` s | `|currentTime − targetT| > 0.05` → noch Proxy zeigen, bis das native Bild sitzt. |
 | `motionHold` | `14` Frames (~230 ms) | Nach letzter Bewegung bleibt der Proxy 14 Frames, dann Fade-out. Verhindert Flackern bei Mikro-Scrolls. |
 | Extraktion | `requestVideoFrameCallback` @ `playbackRate 4.0` | Einmaliger 4×-Durchlauf zieht die Proxy-Frames. Fallback: Seek-Stepping (`duration/FRAME_TARGET`, 400 ms Timeout). |
+| Source-Attach | erster Scroll (>40px) ODER load+5s im Idle | `eagerSource: true` = sofort nach load (nur wenn kein anderes Video konkurriert). |
+| Extraktions-Start | erst wenn durchgepuffert | `buffered.end(last) ≥ duration−1`; Not-Start nach 45 s bei `readyState ≥ 3`. Start via `requestIdleCallback` (Timeout 4 s). |
+| Freeze-Frame | Standbild auf Canvas während Extraktion | drawImage cover-fit + opacity 1 + `frozen`-Flag (tick darf Canvas dann nicht ausblenden, Endpoint-Snap nicht seeken); danach `currentTime`-Restore + Fade-out. |
 | Aktiv-Bereich | `#manifesto` → 70 % von `.contact` | Außerhalb ist das Video aus (`is-active` weg). |
 
 **Pflicht-Guard:** Während der Extraktion (`extracting === true`) das Canvas-Overlay **nie** aktivieren — sonst sieht man den 4×-Durchlauf.

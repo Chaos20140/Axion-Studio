@@ -322,6 +322,22 @@
     const endEl   = $(".contact") || $("#contact");
     if (!startEl || !endEl) return;
 
+    // Aktiv-Bereich EINMAL messen statt 2x getBoundingClientRect pro Frame/Event
+    // (Layout-Reads im Scroll-Hot-Path waren ein §7-Verstoß). Neu messen, wenn
+    // sich Layout real ändern kann: resize, CMS-Inhalte, Font-Swap, load.
+    let sTop = 0, eBottom = 1;
+    const measure = () => {
+      const sRect = startEl.getBoundingClientRect();
+      const eRect = endEl.getBoundingClientRect();
+      sTop = sRect.top + window.scrollY;
+      eBottom = eRect.top + window.scrollY + eRect.height * 0.7;
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    window.addEventListener("load", measure, { once: true });
+    document.addEventListener("content:loaded", () => setTimeout(measure, 60));
+    if (document.fonts?.ready) document.fonts.ready.then(measure);
+
     if (isMobile) {
       canvas?.remove();   // canvas only needed on desktop
       const src = document.createElement("source");
@@ -336,9 +352,6 @@
       video.addEventListener("loadeddata", tryPlay, { once: true });
       document.addEventListener("touchstart", tryPlay, { once: true });
       const onScroll = () => {
-        const sTop = startEl.getBoundingClientRect().top + window.scrollY;
-        const eBox = endEl.getBoundingClientRect();
-        const eBottom = eBox.top + window.scrollY + eBox.height * 0.7;
         const mid = window.scrollY + window.innerHeight * 0.5;
         wrap.classList.toggle("is-active", mid > sTop && mid < eBottom);
       };
@@ -351,11 +364,8 @@
       wrap, video, canvas,
       src: "assets/video/scroll.mp4?v=20260523g",
       computeProg: () => {
-        const sTop = startEl.getBoundingClientRect().top + window.scrollY;
-        const eBox = endEl.getBoundingClientRect();
-        const eBottom = eBox.top + window.scrollY + eBox.height * 0.7;
         const scrollMid = window.scrollY + window.innerHeight * 0.5;
-        return clamp((scrollMid - sTop) / (eBottom - sTop), 0, 1);
+        return clamp((scrollMid - sTop) / Math.max(1, eBottom - sTop), 0, 1);
       },
     });
   })();
@@ -407,6 +417,9 @@
     proxyScrub({
       wrap, video, canvas,
       src: "assets/video/team-reel.mp4?v=20260611a",
+      // eager: der Team-BG ist das immer sichtbare Fundament der Seite —
+      // hier gibt es kein Hero-Video, mit dem der Download konkurrieren könnte.
+      eagerSource: true,
       computeProg: () => {
         const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         return clamp(window.scrollY / max, 0, 1);
@@ -437,7 +450,7 @@
        is frame-blended on the canvas, then fades out at rest to
        reveal the crisp native frame underneath.
      ========================================================= */
-  function proxyScrub({ wrap, video, canvas, src: srcUrl, computeProg }) {
+  function proxyScrub({ wrap, video, canvas, src: srcUrl, computeProg, eagerSource = false }) {
     const FRAME_TARGET = reduce ? 10 : 96;
     const PROXY_W = 960;                       // proxy strip width (motion-only)
 
@@ -454,6 +467,8 @@
     let active       = false;
     let motionHold   = 0;                      // frames to keep proxy visible
     let proxyShown   = false;
+    let frozen       = false;                  // canvas shows a freeze-frame cover
+    let extractScheduled = false;
 
     /* ---- seek manager: one in-flight seek, latest target wins ---- */
     let pendingSeek = false;
@@ -515,14 +530,15 @@
         active = wantActive;
         wrap.classList.toggle("is-active", active);
         if (!active) {
-          if (proxyShown) {                    // clear any stale proxy frame
-            proxyShown = false;
-            canvas.style.opacity = "0";
+          if (proxyShown && !frozen) {         // clear any stale proxy frame
+            proxyShown = false;                // (never while the freeze-frame
+            canvas.style.opacity = "0";        //  covers a running extraction)
           }
           // snap the resting frame to the exact endpoint (first / last),
           // so an always-visible scrub (e.g. the team reel) shows the right
           // still at progress 0 and 1. Harmless on the hidden homepage bg.
-          if (duration && sourceLoaded) {
+          // NIE während der Extraktion — das würde den Playthrough zerreißen.
+          if (duration && sourceLoaded && !extracting) {
             try { video.currentTime = targetProg >= 1 ? duration - 0.05 : 0; } catch (_) {}
           }
         }
@@ -654,16 +670,102 @@
       }
     };
 
+    /* ---- Extraktions-Staging (Startup-Jank-Fix, gemessen 2026-07-03) ----
+       Vorher lief extract() sofort nach loadedmetadata: der 4x-Playthrough
+       kroch dann am DOWNLOAD-Tempo entlang (13-17 MB Clip) und hielt
+       `extracting` zig Sekunden auf true → Scrub in der Zeit KOMPLETT tot
+       ("Hintergrund stockt am Anfang"). Neu in drei Stufen:
+       1) Quelle erst bei erstem Scroll ODER ~5s nach load anhängen
+          (eagerSource überspringt das — z.B. Team-BG ohne Hero-Konkurrenz),
+       2) Extraktion erst starten, wenn der Clip DURCHGEPUFFERT ist
+          (dann ist sie ein ~7s-CPU-Fenster statt netzwerk-gebunden),
+       3) währenddessen deckt ein Standbild auf dem Canvas das Video ab —
+          der 4x-Durchlauf ist unsichtbar, danach currentTime-Restore.
+       Bis die Proxy-Frames da sind, scrubbt das native Video seek-managed
+       (funktional, etwas gröber). ---- */
+    const bufferedThrough = () => {
+      try {
+        const b = video.buffered;
+        return b.length > 0 && b.end(b.length - 1) >= duration - 1;
+      } catch (_) { return false; }
+    };
+
+    const drawVideoCover = () => {
+      const cw = canvas.width, ch = canvas.height;
+      const vw = video.videoWidth || 16, vh = video.videoHeight || 9;
+      const scale = Math.max(cw / vw, ch / vh);
+      const dw = vw * scale, dh = vh * scale;
+      try { ctx.drawImage(video, (cw - dw) / 2, (ch - dh) / 2, dw, dh); } catch (_) {}
+    };
+
+    const beginExtract = () => {
+      sizeCanvas();
+      drawVideoCover();
+      frozen = true;
+      canvas.style.opacity = "1";
+      const preT = video.currentTime;
+      extract().catch(() => {}).finally(() => {
+        try { video.currentTime = preT; } catch (_) {}
+        frozen = false;
+        proxyShown = false;
+        canvas.style.opacity = "0";
+      });
+    };
+
+    const scheduleExtract = () => {
+      if (extractScheduled) return;
+      const armedAt = performance.now();
+      let pollTimer = 0;
+      const tryStart = () => {
+        if (extractScheduled) return;
+        // voll gepuffert ODER Not-Start nach 45s (falls der Browser nie
+        // fertig puffert, reicht readyState >= 3 zum 4x-Abspielen)
+        const forced = performance.now() - armedAt > 45000 && video.readyState >= 3;
+        if (!bufferedThrough() && !forced) return;
+        extractScheduled = true;
+        video.removeEventListener("progress", tryStart);
+        clearInterval(pollTimer);
+        if ("requestIdleCallback" in window) requestIdleCallback(beginExtract, { timeout: 4000 });
+        else beginExtract();
+      };
+      video.addEventListener("progress", tryStart);
+      pollTimer = setInterval(tryStart, 1000);
+      tryStart();
+    };
+
     /* ---- bootstrap ---- */
     video.addEventListener("loadedmetadata", () => {
       sourceLoaded = true;
-      // Even if extraction fails entirely, the seek-managed native
-      // video still scrubs (slightly chunkier, but functional).
-      extract().catch(() => {});
+      duration = video.duration || 0;   // ab jetzt scrubbt das native Video seek-managed
+      scheduleExtract();
     }, { once: true });
 
-    if (document.readyState === "complete") attachSource();
-    else window.addEventListener("load", attachSource, { once: true });
+    const deferAttach = () => {
+      let attached = false;
+      const go = () => {
+        if (attached) return;
+        attached = true;
+        window.removeEventListener("scroll", onFirstScroll);
+        attachSource();
+      };
+      // erster echter Scroll = Nutzer bewegt sich Richtung Aktiv-Bereich
+      const onFirstScroll = () => { if (window.scrollY > 40) go(); };
+      window.addEventListener("scroll", onFirstScroll, { passive: true });
+      // Fallback: ~5s nach load im Idle anhängen (Hero hat dann gepuffert)
+      const arm = () => setTimeout(() => {
+        if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 3000 });
+        else go();
+      }, 5000);
+      if (document.readyState === "complete") arm();
+      else window.addEventListener("load", arm, { once: true });
+    };
+
+    if (eagerSource) {
+      if (document.readyState === "complete") attachSource();
+      else window.addEventListener("load", attachSource, { once: true });
+    } else {
+      deferAttach();
+    }
   }
 
   /* =========================================================
@@ -681,6 +783,10 @@
     const splitChars = () => {
       $$(".word[data-text]", section).forEach((w) => {
         const text = w.dataset.text || w.textContent;
+        // Screenreader lesen Char-Spans als Einzelbuchstaben ("C-R-A-F-T") —
+        // aria-label + role="text" lässt AT das ganze Wort lesen.
+        w.setAttribute("role", "text");
+        w.setAttribute("aria-label", text);
         w.innerHTML = "";
         [...text].forEach((c, i) => {
           const s = document.createElement("span");
