@@ -16,7 +16,7 @@
 
 ## 1. Projekt-Identität
 
-- **Studio**: Axion Studio (Inhaber: `Tolunay Usul`, Dresden). Logo-Lockup: `Axion Studio`.
+- **Studio**: Axion Studio (Inhaber: `Tolunay Usul`, Meschede/Sauerland — NICHT Dresden; Impressum, JSON-LD und alle Meta-Texte sagen Meschede). Logo-Lockup: `Axion Studio`.
 - **Positionierung**: aggressives Web-Design-Studio, F1-/Karbon-/Cyberpunk-Sprache.
 - **Name-Bedeutung**:
   - „Apex" = Scheitelpunkt einer Rennlinie / höchster Punkt / typografisch Spitze eines Buchstabens — Präzision.
@@ -36,6 +36,8 @@
 | Typo Headlines | **Anton** (Display) + **Big Shoulders Display Italic** (Akzent-Italic). Niemals Inter/Roboto/Arial. |
 | Typo Code/Labels | **JetBrains Mono**, immer `letter-spacing` ≥ 0.12em, immer UPPERCASE. |
 | Typo Body | **Manrope**, max-width ~560px. |
+| Fonts-Hosting | Alle 4 Familien liegen **selbst gehostet** als WOFF2 in `assets/fonts/` (@font-face oben in style.css, latin-Subset). NIE zurück aufs Google-CDN — DSGVO (LG-München-Thema) + die Datenschutzerklärung sagt ausdrücklich „lokal gehostet". |
+| CSP | Jede Seite trägt einen `Content-Security-Policy`-Meta-Tag im `<head>`. Neue externe Quelle (Script/Fetch/Frame) ⇒ CSP auf ALLEN Seiten erweitern. **Importmap-Falle**: die inline `<script type="importmap">` (about/angebot) sind per sha256-Hash freigegeben — wer die Importmap auch nur um ein Zeichen ändert, MUSS den Hash im CSP-Tag aller Seiten neu berechnen (`node`-Snippet: sha256 über den Tag-Inhalt, base64), sonst stirbt three.js. Google-Maps-Embed käme als `frame-src https://www.google.com` dazu (aktuell `frame-src 'none'`). |
 | Layout | Asymmetrie, Eck-Marker (4-Corner-Brackets), Mono-Telemetrie in Ecken, große Negativräume. |
 | Effekte-Layer | Noise-Overlay + Scanlines + Vignette sind fix — niemals entfernen. |
 | Cursor | Custom-Cursor mit Dot+Ring, `mix-blend-mode: difference`. |
@@ -54,7 +56,8 @@
 ├── partner.html           # Partner – Ping-Pong-Video-Hintergrund (.bg-loop), kein Solar
 ├── kontakt.html           # Kontakt + Google Maps – Ping-Pong-Video-Hintergrund (.bg-loop)
 ├── impressum.html         # Impressum, Datenschutz, AGB (DDG + DSGVO konform)
-├── CLAUDE.md              # ← diese Datei
+├── CLAUDE.md              # ← diese Datei (wird im Deploy GESTRIPPT — deploy.yml `rm -rf supabase CLAUDE.md`, sonst läge sie öffentlich unter /CLAUDE.md)
+├── site.webmanifest       # Web-App-Manifest (Name/Icons/Farben)
 └── assets/
     ├── css/style.css      # Komplettes Stylesheet (Single-File-Strategie)
     ├── js/main.js         # IIFE; enthält proxyScrub() — wiederverwendbare Scrub-Engine
@@ -200,14 +203,18 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 ## 6. Performance-Budget
 
-| Asset | Limit | Status |
+| Asset | Limit | Status (Stand 2026-07-02, nachgemessen) |
 |---|---|---|
-| Hero-Video | ≤ 12 MB, ≤ 15s | aktuell ~11 MB ✓ |
-| Scroll-Video | ≤ 18 MB, ≤ 30s | aktuell ~13 MB ✓ |
-| JS (ohne CDNs) | ≤ 25 KB | aktuell ~12 KB ✓ |
-| CSS | ≤ 50 KB | aktuell ~40 KB ✓ |
+| Hero-Video | ≤ 12 MB, ≤ 15s | ~11 MB ✓ |
+| Scroll-Video Desktop | ≤ 18 MB, ≤ 30s | scroll.mp4 ~13 MB ✓, team-reel.mp4 ~17 MB ✓ (knapp) |
+| Mobile-Loop-Videos | ≤ 4 MB | scroll-mobile.mp4 ~2 MB ✓ (720p/CRF26 — NIE wieder 1080p/11 MB auf Phones) |
+| JS (ohne CDNs, unminifiziert auf Platte) | ≤ 60 KB main.js / ≤ 200 KB gesamt | main.js ~41 KB, gesamt ~156 KB ✓ (gzip drückt das über die Leitung auf ~¼) |
+| CSS (unminifiziert auf Platte) | ≤ 140 KB | ~123 KB ✓ |
+| Fonts (selbst gehostet) | ≤ 200 KB gesamt | 4 WOFF2 ~117 KB ✓ |
 | Three.js | aus CDN, blockt nicht Hero | ✓ |
 | First Contentful Paint | < 1.6s | nur prüfen, wenn man Real-Server hat |
+
+> Die alten Limits (JS ≤ 25 KB, CSS ≤ 50 KB) waren seit Monaten überschritten, während die Tabelle „✓" behauptete — Limits jetzt ehrlich auf den gewachsenen Funktionsumfang gesetzt. Wer sie reißt: erst Code hinterfragen, dann Limit anfassen.
 
 **Wenn ein neues Video > 20 MB ist** → erst re-encoden (H.264, CRF 23, max-keyint=1 für Scrub-Videos).
 

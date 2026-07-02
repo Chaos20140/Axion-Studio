@@ -69,10 +69,19 @@ const RL_WINDOW_MIN = 15; // Fenster in Minuten
 const RL_MAX = 5;         // max. Anfragen pro IP / Fenster
 const RL_BURST_MAX = 2;   // max. pro Minute
 
+// Nur formal valide IPs als Rate-Limit-Key akzeptieren — X-Forwarded-For ist
+// client-beeinflussbar; Garbage-Werte würden sonst als "frische" Keys das
+// Limit aushebeln und die Tabelle zumüllen.
+const isIp = (s: string): boolean =>
+  /^(\d{1,3}\.){3}\d{1,3}$/.test(s) || /^[0-9a-fA-F:]{2,45}$/.test(s);
+
 function clientIp(req: Request): string {
-  const xff = req.headers.get("x-forwarded-for") ?? "";
-  const first = xff.split(",")[0].trim();
-  return first || req.headers.get("cf-connecting-ip") || req.headers.get("x-real-ip") || "unknown";
+  const candidates = [
+    ...(req.headers.get("x-forwarded-for") ?? "").split(",").map((s) => s.trim()),
+    req.headers.get("cf-connecting-ip") ?? "",
+    req.headers.get("x-real-ip") ?? "",
+  ];
+  return candidates.find((c) => c && isIp(c)) ?? "unknown";
 }
 
 let _sql: ReturnType<typeof postgres> | null = null;
@@ -368,7 +377,9 @@ Deno.serve(async (req) => {
       reply_to: `${name} <${email}>`,
     });
     if (!notify.ok) {
-      return new Response(JSON.stringify({ ok: false, error: notify.error }), {
+      // Detail nur ins Log — SMTP-Wortlaut (Hosts, Codes, Konfig) gehört nicht an den Client.
+      console.log("notify send failed:", notify.error);
+      return new Response(JSON.stringify({ ok: false, error: "Senden fehlgeschlagen. Schreib uns direkt an info@axion-studio.de." }), {
         status: 502, headers: { ...cors, "Content-Type": "application/json" },
       });
     }
@@ -386,7 +397,8 @@ Deno.serve(async (req) => {
       headers: { ...cors, "Content-Type": "application/json" },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: `Serverfehler: ${(err as Error)?.message ?? err}` }), {
+    console.log("handler error:", err);
+    return new Response(JSON.stringify({ ok: false, error: "Serverfehler. Schreib uns direkt an info@axion-studio.de." }), {
       status: 500, headers: { ...cors, "Content-Type": "application/json" },
     });
   }

@@ -19,27 +19,31 @@
      ========================================================= */
   let lenis = null;
   if (window.Lenis && !reduce) {
-    lenis = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      smoothTouch: false,
-      wheelMultiplier: 1.0,
-      lerp: 0.085,
-    });
-    // Use GSAP ticker as the single rAF source — no double scheduling.
-    if (window.gsap) {
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-    } else {
-      const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
-      requestAnimationFrame(raf);
-    }
-    // Connect Lenis to ScrollTrigger so pinning + scrub stay aligned.
-    if (window.ScrollTrigger) {
-      lenis.on("scroll", ScrollTrigger.update);
-    }
-    window.lenisInstance = lenis;   // used by the Engineering scroll hook (§5.2)
+    // try/catch: ein Fehler hier (z.B. CDN liefert inkompatible Version)
+    // darf NIE die IIFE killen — sonst bleibt der Loader für immer stehen.
+    try {
+      lenis = new Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        smoothTouch: false,
+        wheelMultiplier: 1.0,
+        lerp: 0.085,
+      });
+      // Use GSAP ticker as the single rAF source — no double scheduling.
+      if (window.gsap) {
+        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+      } else {
+        const raf = (t) => { lenis.raf(t); requestAnimationFrame(raf); };
+        requestAnimationFrame(raf);
+      }
+      // Connect Lenis to ScrollTrigger so pinning + scrub stay aligned.
+      if (window.ScrollTrigger) {
+        lenis.on("scroll", ScrollTrigger.update);
+      }
+      window.lenisInstance = lenis;   // used by the Engineering scroll hook (§5.2)
+    } catch (_) { lenis = null; }
   }
 
   /* ---------- LOADER ---------- */
@@ -152,6 +156,17 @@
     });
   }, { threshold: 0.4 });
   counters.forEach((el) => countIO.observe(el));
+
+  // Race-Fix: content.js setzt die Counter nach dem site.json-Fetch auf "0"
+  // zurück und aktualisiert data-count — war der Observer da schon durch
+  // (unobserve nach Animation), blieben die Stats für immer "0". Auf
+  // content:loaded alle zurückgesetzten Counter erneut beobachten.
+  document.addEventListener("content:loaded", () => {
+    counters.forEach((el) => {
+      const target = parseInt(el.dataset.count, 10);
+      if (el.textContent.trim() === "0" && target > 0) countIO.observe(el);
+    });
+  });
 
   /* ---------- HERO VIDEO PAUSE WHEN OFF-SCREEN ---------- */
   const heroVideo = $(".hero__video");
@@ -310,7 +325,7 @@
     if (isMobile) {
       canvas?.remove();   // canvas only needed on desktop
       const src = document.createElement("source");
-      src.src = "assets/video/scroll-mobile.mp4?v=20260523g";
+      src.src = "assets/video/scroll-mobile.mp4?v=20260702a";
       src.type = "video/mp4";
       video.appendChild(src);
       video.loop = true; video.autoplay = true; video.muted = true;
@@ -831,6 +846,26 @@
       y: 200, ease: "power3.out", duration: 1.4,
       scrollTrigger: { trigger: ".footer", start: "top 80%" },
     });
+  }
+
+  /* Fallback ohne GSAP/ScrollTrigger oder bei prefers-reduced-motion:
+     die Process-Slots stehen per CSS auf opacity 0 und werden NUR über
+     .is-set/.is-parked sichtbar — ohne diesen Pfad wären Steps + F1-Cars
+     Content-Verlust (leere Grid-Boxen), kein Animations-Downgrade. */
+  if (!(window.gsap && window.ScrollTrigger) || reduce) {
+    const slots = $$(".grid__slot[data-step]");
+    if (slots.length && "IntersectionObserver" in window) {
+      const slotIO = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          en.target.classList.add("is-set", "is-parked");
+          slotIO.unobserve(en.target);
+        });
+      }, { threshold: 0.25 });
+      slots.forEach((s) => slotIO.observe(s));
+    } else {
+      slots.forEach((s) => s.classList.add("is-set", "is-parked"));
+    }
   }
 
   /* =========================================================

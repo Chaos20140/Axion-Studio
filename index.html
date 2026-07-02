@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
   <meta name="description" content="Performance-starke Websites aus Meschede: Web Design, Development, Motion &amp; 3D und Hosting. Wir bauen Auftritte für Marken, die sichtbar werden wollen." />
   <title>Axion Studio — Web-Design-Studio aus Meschede</title>
@@ -13,7 +14,6 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Axion Studio" />
   <meta property="og:locale" content="de_DE" />
-  <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:title" content="Axion Studio — Web-Design-Studio aus Meschede" />
   <meta property="og:description" content="Performance-starke Websites aus Meschede: Web Design, Development, Motion &amp; 3D und Hosting. Wir bauen Auftritte für Marken, die sichtbar werden wollen." />
   <meta property="og:url" content="https://axion-studio.de/" />
@@ -48,12 +48,12 @@
         "knowsLanguage": ["de", "en"],
         "address": {
           "@type": "PostalAddress",
+          "streetAddress": "Hudeweg 2",
           "addressLocality": "Meschede",
           "postalCode": "59872",
           "addressRegion": "NRW",
           "addressCountry": "DE"
         },
-        "openingHours": "Mo-Su 00:00-24:00",
         "priceRange": "€€"
       },
       {
@@ -69,10 +69,9 @@
   </script>
   <link rel="icon" type="image/png" sizes="any" href="assets/images/favicon.png?v=20260616a" />
   <link rel="apple-touch-icon" href="assets/images/favicon.png?v=20260616a" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260701a" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="preload" href="assets/fonts/anton-v27-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260702a" />
 </head>
 <body>
 
@@ -109,7 +108,7 @@
   <header class="nav" id="nav">
     <a href="#top" class="nav__logo" aria-label="Axion Studio — Startseite">
       <span class="nav__logo-mark" aria-hidden="true">
-        <img src="assets/images/logo.png?v=2" alt="" onerror="this.onerror=null;this.src='assets/images/logo.svg'" />
+        <img src="assets/images/logo.png?v=2" alt="" />
       </span>
       <span class="nav__logo-text">Axion<span> Studio</span></span>
     </a>
@@ -136,7 +135,7 @@
   <!-- MOBILE NAV OVERLAY -->
   <div class="mobile-nav" id="mobileNav" aria-hidden="true">
     <div class="mobile-nav__brand" aria-hidden="true">
-      <img src="assets/images/logo.png?v=2" alt="" onerror="this.onerror=null;this.src='assets/images/logo.svg'" />
+      <img src="assets/images/logo.png?v=2" alt="" />
     </div>
     <nav class="mobile-nav__links">
       <a href="about.html"     data-mobile-link><em>Über Uns</em></a>
@@ -154,7 +153,7 @@
 
   <!-- HERO -->
   <section class="hero" id="top">
-    <video class="hero__video" autoplay muted loop playsinline poster="">
+    <video class="hero__video" autoplay muted loop playsinline poster="assets/images/hero-poster.jpg">
       <source src="assets/video/hero.mp4" type="video/mp4" />
     </video>
     <div class="hero__overlay"></div>
@@ -651,14 +650,14 @@
             <span class="mono">MAIL</span>
             <span>info@axion-studio.de</span>
           </a>
-          <a href="#" class="contact__line" data-magnetic>
+          <a href="tel:+4917676668002" class="contact__line" data-magnetic>
             <span class="mono">CALL</span>
-            <span>+4917676668002</span>
+            <span>+49 176 76668002</span>
           </a>
-          <a href="#" class="contact__line" data-magnetic>
+          <div class="contact__line">
             <span class="mono">STUDIO</span>
             <span>Meschede, DE — worldwide</span>
-          </a>
+          </div>
         </div>
       </div>
 
@@ -771,8 +770,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260701a"></script>
-  <script src="assets/js/content.js?v=20260628f"></script>
+  <script src="assets/js/main.js?v=20260702a"></script>
+  <script src="assets/js/content.js?v=20260702a"></script>
   <script src="assets/js/i18n.js?v=20260630c"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>

@@ -47,6 +47,42 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 *::selection { background: var(--red); color: #fff; text-shadow: none; }
 
+/* =========================================================
+   FONTS — selbst gehostet (DSGVO: kein Google-CDN, LG-München-
+   Thema) + ein Dritt-Origin weniger im Rendering-Pfad.
+   Latin-Subset deckt DE (Umlaute/ß/„") und EN ab. JetBrains
+   Mono / Manrope / Big Shoulders sind Variable Fonts (eine
+   Datei je Familie, font-weight als Bereich).
+   ========================================================= */
+@font-face {
+  font-family: "Anton";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/anton-v27-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../fonts/big-shoulders-display-v24-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-v24-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url("../fonts/manrope-v20-latin.woff2") format("woff2");
+}
+
 /* Native smooth-scroll is ONLY a fallback for when Lenis is off (no-JS or
    reduced-motion). Lenis adds .lenis to <html> and MUST own scrolling: a
    global scroll-behavior:smooth hijacks Lenis's own scrollTo()/settle calls
@@ -89,6 +125,10 @@ body { cursor: none; }
 
 img, svg, video { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
+
+/* Tastatur-Fokus im Marken-Look: gilt global (nur bei :focus-visible, nie
+   bei Maus-Klick); Komponenten mit eigenem Focus-Style überschreiben das. */
+:focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 button { font: inherit; cursor: none; background: none; border: 0; color: inherit; }
 input, textarea, select { font: inherit; color: inherit; }
 
@@ -433,6 +473,12 @@ input, textarea, select { font: inherit; color: inherit; }
   transition: transform 1.2s var(--ease-power), opacity 0.6s 0.6s linear;
 }
 .loader.is-done { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+/* Fail-safe: stirbt das JS vor dem .is-done-Pfad (Exception, blockiertes CDN),
+   blendet CSS den Loader nach 6s selbst aus — sonst bleibt die Seite für
+   immer hinter dem schwarzen Overlay. Im Normalfall (is-done nach ~1.7s)
+   feuert das ins bereits Unsichtbare. */
+@keyframes loaderFailsafe { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+.loader { animation: loaderFailsafe 0.4s ease 6s forwards; }
 .loader__bar {
   align-self: end;
   width: 100%; height: 2px;
@@ -3311,6 +3357,13 @@ p { text-wrap: pretty; }
     transition-duration: 0.001ms !important;
   }
   .marquee__track { animation: none; }
+  /* Process-Inhalte sind Reveal-gehidet (opacity 0) und würden ohne den
+     GSAP-Pfad nie erscheinen — reduced motion heißt Bewegung reduzieren,
+     nicht Inhalt entfernen. (Doppelt abgesichert: main.js hat denselben
+     Fallback per IntersectionObserver.) */
+  .grid__slot .f1-car,
+  .grid__slot .step__content,
+  .grid__slot .grid__pos { opacity: 1 !important; transform: none !important; }
 }
 
 /* =========================================================

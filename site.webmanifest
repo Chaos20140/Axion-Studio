@@ -1,0 +1,16 @@
+{
+  "name": "Axion Studio",
+  "short_name": "Axion",
+  "description": "Web-Design-Studio aus Meschede — Web Design, Development, Motion & 3D, Hosting.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#060305",
+  "theme_color": "#060305",
+  "icons": [
+    {
+      "src": "/assets/images/favicon.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }
+  ]
+}

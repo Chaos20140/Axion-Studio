@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
   <title>Impressum & Datenschutz — Axion Studio</title>
   <meta name="description" content="Impressum, Datenschutzerklärung und AGB von Axion Studio — Webdesign-Studio aus Meschede (Sauerland), Inhaber Tolunay Usul." />
@@ -17,12 +18,11 @@
   <meta property="og:description" content="Impressum, Datenschutzerklärung und AGB von Axion Studio — Webdesign-Studio aus Meschede (Sauerland), Inhaber Tolunay Usul." />
   <meta property="og:url" content="https://axion-studio.de/impressum.html" />
   <meta property="og:image" content="https://axion-studio.de/assets/images/og-cover.jpg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@300;400;700&family=Manrope:wght@300;400;500;700&family=Big+Shoulders+Display:wght@700;900&display=swap" rel="stylesheet" />
+  <link rel="preload" href="assets/fonts/anton-v27-latin.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="icon" type="image/png" sizes="any" href="assets/images/favicon.png?v=20260616a" />
   <link rel="apple-touch-icon" href="assets/images/favicon.png?v=20260616a" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260701a" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260702a" />
 </head>
 <body class="theme-cool">
   <div class="noise" aria-hidden="true"></div>
@@ -37,7 +37,7 @@
   <header class="nav is-scrolled" id="nav">
     <a href="index.html" class="nav__logo" aria-label="Axion Studio — Startseite">
       <span class="nav__logo-mark" aria-hidden="true">
-        <img src="assets/images/logo.png?v=2" alt="" onerror="this.onerror=null;this.src='assets/images/logo.svg'" />
+        <img src="assets/images/logo.png?v=2" alt="" />
       </span>
       <span class="nav__logo-text">Axion<span> Studio</span></span>
     </a>
@@ -77,7 +77,7 @@
 
       <h3>Kontakt</h3>
       <p>
-        Telefon: auf Anfrage<br/>
+        Telefon: <a href="tel:+4917676668002">+49 176 76668002</a><br/>
         E-Mail: <a href="mailto:info@axion-studio.de">info@axion-studio.de</a><br/>
         Web: <a href="/">axion-studio.de</a>
       </p>
@@ -161,11 +161,19 @@
         <li>Beschwerderecht bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
       </ul>
 
-      <h3>Schriftarten von Google Fonts</h3>
+      <h3>Schriftarten (lokal gehostet)</h3>
       <p>
-        Diese Website lädt Schriftarten von Google Fonts. Beim Aufruf einer Seite werden die benötigten Schriftarten geladen.
-        Hierzu muss dein Browser eine Verbindung zu Servern von Google LLC herstellen, wodurch deine IP-Adresse an Google übertragen wird.
-        Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer einheitlichen Darstellung des Studio-Auftritts).
+        Diese Website verwendet Schriftarten, die <strong>lokal auf unserem Server</strong> gehostet werden.
+        Beim Aufruf der Seite wird <strong>keine</strong> Verbindung zu Servern von Google oder anderen Schriftanbietern hergestellt; es werden dabei keine personenbezogenen Daten an Dritte übertragen.
+      </p>
+
+      <h3>Cloudflare Web Analytics</h3>
+      <p>
+        Zur Reichweitenmessung nutzen wir <strong>Cloudflare Web Analytics</strong> der Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA.
+        Der Dienst arbeitet <strong>ohne Cookies</strong> und ohne geräteübergreifendes Tracking; es werden keine persistenten Identifier gespeichert und keine Nutzerprofile gebildet.
+        Verarbeitet werden technische Zugriffsdaten (z.&nbsp;B. aufgerufene Seite, Browsertyp, Land) in aggregierter Form.
+        Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer datensparsamen Analyse der Website-Nutzung).
+        Weitere Informationen: <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Datenschutzerklärung von Cloudflare</a>.
       </p>
 
       <h3>Cookies</h3>
@@ -229,8 +237,8 @@
     </div>
   </footer>
 
-  <script src="assets/js/main.js?v=20260701a"></script>
-  <script src="assets/js/content.js?v=20260628f"></script>
+  <script src="assets/js/main.js?v=20260702a"></script>
+  <script src="assets/js/content.js?v=20260702a"></script>
   <script src="assets/js/i18n.js?v=20260630c"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>
