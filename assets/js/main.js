@@ -416,10 +416,12 @@
 
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/team-reel.mp4?v=20260611a",
+      src: "assets/video/team-reel.mp4?v=20260704a",
       // eager: der Team-BG ist das immer sichtbare Fundament der Seite —
       // hier gibt es kein Hero-Video, mit dem der Download konkurrieren könnte.
       eagerSource: true,
+      // beim Öffnen spielt das Reel einmal komplett durch, dann Scroll-Scrub.
+      introPlaythrough: true,
       computeProg: () => {
         const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         return clamp(window.scrollY / max, 0, 1);
@@ -450,7 +452,7 @@
        is frame-blended on the canvas, then fades out at rest to
        reveal the crisp native frame underneath.
      ========================================================= */
-  function proxyScrub({ wrap, video, canvas, src: srcUrl, computeProg, eagerSource = false }) {
+  function proxyScrub({ wrap, video, canvas, src: srcUrl, computeProg, eagerSource = false, introPlaythrough = false }) {
     const FRAME_TARGET = reduce ? 10 : 96;
     const PROXY_W = 960;                       // proxy strip width (motion-only)
 
@@ -469,6 +471,11 @@
     let proxyShown   = false;
     let frozen       = false;                  // canvas shows a freeze-frame cover
     let extractScheduled = false;
+    // Intro-Playthrough (team.html): das Video spielt beim Öffnen EINMAL
+    // komplett durch (0→Ende), erst danach übernimmt der Scroll-Scrub. Bei
+    // reduced-motion kein Auto-Playthrough (Bewegung ohne Nutzer-Aktion).
+    let introActive   = introPlaythrough && !reduce;
+    let postIntroUntil = 0;                     // kurze Rewind/Settle-Phase nach dem Intro
 
     /* ---- seek manager: one in-flight seek, latest target wins ---- */
     let pendingSeek = false;
@@ -520,12 +527,16 @@
     /* ---- main loop ---- */
     const tick = () => {
       requestAnimationFrame(tick);
+      if (introActive) return;   // während des Intros gehört das Video dem play()-Durchlauf
       targetProg = computeProg();
       smoothedProg = lerp(smoothedProg, targetProg, 0.11);
 
       // Activation: never while the extraction playback is running
-      // (the racing video must not be seen).
-      const wantActive = targetProg > 0 && targetProg < 1 && !extracting;
+      // (the racing video must not be seen). Der postIntro-Settle hält den
+      // Scrub kurz aktiv, damit das Video vom Intro-Endframe sanft auf die
+      // Scroll-Position lerpt (statt hart zu springen).
+      const settle = performance.now() < postIntroUntil;
+      const wantActive = settle || (targetProg > 0 && targetProg < 1 && !extracting);
       if (wantActive !== active) {
         active = wantActive;
         wrap.classList.toggle("is-active", active);
@@ -733,11 +744,44 @@
       tryStart();
     };
 
+    /* ---- intro playthrough (team.html): einmal 0→Ende, dann Scrub ---- */
+    let introStarted = false, introDone = false;
+    const endIntro = () => {
+      if (introDone) return;
+      introDone = true;
+      introActive = false;
+      try { video.pause(); } catch (_) {}
+      // Scrub startet dort, wo das Intro steht (i.d.R. am Ende) und lerpt in
+      // ~1.4s sanft zur aktuellen Scroll-Position (postIntro-Settle in tick()).
+      smoothedProg = duration ? clamp(video.currentTime / duration, 0, 1) : 0;
+      postIntroUntil = performance.now() + 1400;
+    };
+    const startIntro = () => {
+      if (introStarted || introDone) return;
+      introStarted = true;
+      try { video.currentTime = 0; } catch (_) {}
+      const p = video.play();
+      if (p && p.catch) p.catch(() => endIntro());   // Autoplay geblockt → direkt Scrub
+    };
+    if (introActive) {
+      video.addEventListener("canplaythrough", startIntro, { once: true });
+      video.addEventListener("ended", endIntro, { once: true });
+      // scrollt der Nutzer schon während des Intros → sofort ans Scrubben übergeben
+      const onIntroScroll = () => {
+        if (window.scrollY > 40) { window.removeEventListener("scroll", onIntroScroll); endIntro(); }
+      };
+      window.addEventListener("scroll", onIntroScroll, { passive: true });
+      // Not-Start, falls canplaythrough (langsame Leitung) nie feuert; und
+      // absoluter Backstop, falls 'ended' ausbleibt — nie den Scrub blockieren.
+      setTimeout(() => { if (!introStarted) startIntro(); }, 6000);
+      setTimeout(endIntro, 32000);
+    }
+
     /* ---- bootstrap ---- */
     video.addEventListener("loadedmetadata", () => {
       sourceLoaded = true;
       duration = video.duration || 0;   // ab jetzt scrubbt das native Video seek-managed
-      scheduleExtract();
+      if (!introPlaythrough) scheduleExtract();   // Intro-Modus: nativer keyint=1-Seek statt Proxy
     }, { once: true });
 
     const deferAttach = () => {
