@@ -765,12 +765,10 @@
     };
     if (introActive) {
       video.addEventListener("canplaythrough", startIntro, { once: true });
+      // Übergabe an den Scroll-Scrub NUR nach dem KOMPLETTEN ersten Durchlauf.
+      // Scrollen während des Intros lässt das Reel bewusst ungestört weiterlaufen
+      // (kein früher Hand-off) — die Seite scrollt, das Video spielt zu Ende.
       video.addEventListener("ended", endIntro, { once: true });
-      // scrollt der Nutzer schon während des Intros → sofort ans Scrubben übergeben
-      const onIntroScroll = () => {
-        if (window.scrollY > 40) { window.removeEventListener("scroll", onIntroScroll); endIntro(); }
-      };
-      window.addEventListener("scroll", onIntroScroll, { passive: true });
       // Not-Start, falls canplaythrough (langsame Leitung) nie feuert; und
       // absoluter Backstop, falls 'ended' ausbleibt — nie den Scrub blockieren.
       setTimeout(() => { if (!introStarted) startIntro(); }, 6000);
