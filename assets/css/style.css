@@ -893,10 +893,12 @@ body.nav-open { overflow: hidden; }
   display: block;
   overflow: hidden;
 }
-/* Tidy the hero: DESIGN + AT APEX same SIZE (same letter height); AT APEX is
-   condensed horizontally so it matches DESIGN's width — no overhang. THRUST
-   MEDIA. stays the smaller tagline (.small below). */
-.hero__title .line:nth-child(2) { transform: scaleX(0.81); transform-origin: left center; }  /* "BY AXION" endet bündig unter DESIGN */
+/* DESIGN + AXION gleiche GRÖSSE (gleiche Buchstabenhöhe); "BY AXION" ist
+   horizontal kondensiert, sodass AXION rechts BÜNDIG unter DESIGN endet.
+   Faktor gemessen: DESIGN-Breite / "BY AXION"-Naturbreite = 407/482 ≈ 0.843
+   (viewport-invariant, da beide Zeilen mit derselben font-size skalieren).
+   "Studio." bleibt die kleinere Tagline (.small unten). */
+.hero__title .line:nth-child(2) { transform: scaleX(0.843); transform-origin: left center; }  /* AXION.right == DESIGN.right */
 .hero__title .word {
   display: inline-block;
   position: relative;
