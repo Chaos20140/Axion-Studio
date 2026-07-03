@@ -206,8 +206,8 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 
 | Asset | Limit | Status (Stand 2026-07-02, nachgemessen) |
 |---|---|---|
-| Hero-Video | ≤ 12 MB, ≤ 15s | ~11 MB ✓ |
-| Scroll-Video Desktop | ≤ 18 MB, ≤ 30s | scroll.mp4 ~13 MB ✓, team-reel.mp4 ~17 MB ✓ (knapp) |
+| Hero-Video | ≤ 12 MB, ≤ 15s | ~2.9 MB ✓ (2026-07-04: 1600×900, Ton entfernt, 11 MB → 2.9 MB) |
+| Scroll-Video Desktop | ≤ 18 MB, ≤ 30s | scroll.mp4 ~3.7 MB ✓ (2026-07-04: 1280p keyint=1, 13 MB → 3.7 MB), team-reel.mp4 ~17 MB (knapp — noch alt-encodet) |
 | Mobile-Loop-Videos | ≤ 4 MB | scroll-mobile.mp4 ~2 MB ✓ (720p/CRF26 — NIE wieder 1080p/11 MB auf Phones) |
 | JS (ohne CDNs, unminifiziert auf Platte) | ≤ 60 KB main.js / ≤ 200 KB gesamt | main.js ~41 KB, gesamt ~156 KB ✓ (gzip drückt das über die Leitung auf ~¼) |
 | CSS (unminifiziert auf Platte) | ≤ 140 KB | ~123 KB ✓ |
@@ -299,20 +299,27 @@ Nav-Nummerierung passt sich an: `00 · Manifest · 01 · Services · …`. Wer e
 ### 13.1 Encoding der Quell-Videos (ffmpeg)
 Zwei Clips: Desktop 16:9 (`scroll.mp4`) + Mobile 9:16 (`scroll-mobile.mp4`).
 ```bash
-# Desktop-Scrub-Clip — DICHTE Keyframes sind Pflicht (jeder Frame seekbar):
-ffmpeg -i src.mp4 -an -vf "scale=1920:-2,fps=30" \
-  -c:v libx264 -preset slow -crf 23 \
-  -x264opts keyint=1:min-keyint=1:no-scenecut -movflags +faststart scroll.mp4
-#  keyint=1  → jeder Frame ist ein I-Frame → currentTime-Seek landet sofort, kein Ruckeln.
+# Desktop-Scrub-Clip — DICHTE Keyframes + KEINE B-Frames sind Pflicht (jeder Frame seekbar):
+ffmpeg -i src.mp4 -an -vf "scale=1280:-2,fps=24" \
+  -c:v libx264 -preset slow -crf 28 \
+  -x264opts keyint=1:min-keyint=1:no-scenecut -bf 0 -pix_fmt yuv420p \
+  -movflags +faststart scroll.mp4
+#  keyint=1  → jeder Frame ist ein I-Frame → currentTime-Seek landet sofort (gemessen
+#             2026-07-04: avg 10 ms/Seek statt zäh). -bf 0 → keine B-Frames (die sind der
+#             Worst Case fürs Seeking, weil bidirektional dekodiert).
+#  scale=1280 statt 1920 + CRF 28: liegt hinter Tint + Text + Noise, 720p reicht satt und
+#             hält den All-Keyframe-Clip SCHLANK (13 MB@1920 → 3.7 MB@1280). Klein = puffert
+#             schnell durch = Scrub sofort flüssig, statt zig Sekunden am Netz zu kriechen.
 #  -an       → Tonspur weg (Background-Video, spart Größe).
 #  +faststart→ moov-Atom nach vorn → startet ohne Full-Download.
-#  CRF 23    → sichtbar verlustfrei bei vertretbarer Größe. Budget: ≤ 18 MB / ≤ 30s (§6).
 
 # Mobile-Loop-Clip — KEIN Scrub, normaler Loop, normale Keyframes reichen:
 ffmpeg -i src.mp4 -an -vf "scale=1080:-2,fps=30" \
   -c:v libx264 -preset slow -crf 24 -movflags +faststart scroll-mobile.mp4
 ```
-Faustregel: Scrub-Clip = `keyint=1`. Loop-Clip = egal. Wird der Scrub-Clip ohne dichte Keyframes encoded, ruckelt's trotz korrektem JS — **immer zuerst das Encoding prüfen.**
+Faustregel: Scrub-Clip = `keyint=1` + `-bf 0` + klein (≤ ~4 MB). Loop-Clip = egal.
+**Immer am AUSGELIEFERTEN File verifizieren** (nicht der Doku/dem Dateinamen glauben — 2026-07-04 war `scroll.mp4` trotz „keyint=1"-Doku mit sparse Keyframes + B-Frames encodet und ruckelte):
+`ffprobe -v error -select_streams v:0 -show_entries frame=pict_type -of csv=p=0 -read_intervals "%+#20" scroll.mp4` → muss lauter `I` zeigen, kein `P`/`B`.
 
 ### 13.2 Die JS-Konstanten (main.js, Desktop-Branch)
 | Konstante | Wert | Bedeutung / warum genau so |

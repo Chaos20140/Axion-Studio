@@ -362,7 +362,7 @@
     if (!canvas) return;
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/scroll.mp4?v=20260523g",
+      src: "assets/video/scroll.mp4?v=20260704a",
       computeProg: () => {
         const scrollMid = window.scrollY + window.innerHeight * 0.5;
         return clamp((scrollMid - sTop) / Math.max(1, eBottom - sTop), 0, 1);
@@ -751,11 +751,13 @@
       // erster echter Scroll = Nutzer bewegt sich Richtung Aktiv-Bereich
       const onFirstScroll = () => { if (window.scrollY > 40) go(); };
       window.addEventListener("scroll", onFirstScroll, { passive: true });
-      // Fallback: ~5s nach load im Idle anhängen (Hero hat dann gepuffert)
+      // Fallback: ~2s nach load im Idle anhängen — der Clip ist jetzt schlank
+      // (keyint=1, ~3.7 MB), lädt also im Hintergrund vor UND puffert schnell
+      // durch, ohne dem Hero-Video den Start wegzunehmen ("von Anfang an da").
       const arm = () => setTimeout(() => {
         if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 3000 });
         else go();
-      }, 5000);
+      }, 2000);
       if (document.readyState === "complete") arm();
       else window.addEventListener("load", arm, { once: true });
     };
