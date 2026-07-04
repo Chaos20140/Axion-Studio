@@ -784,22 +784,24 @@
 
     const deferAttach = () => {
       let attached = false;
+      // Wheel/Touch feuern VOR der Scroll-Position — so beginnt das Video schon
+      // beim ersten Scroll-Impuls zu laden ("direkt sobald ich runterscrolle").
+      const intent = ["wheel", "touchstart", "scroll"];
       const go = () => {
         if (attached) return;
         attached = true;
-        window.removeEventListener("scroll", onFirstScroll);
+        intent.forEach((ev) => window.removeEventListener(ev, go));
         attachSource();
       };
-      // erster echter Scroll = Nutzer bewegt sich Richtung Aktiv-Bereich
-      const onFirstScroll = () => { if (window.scrollY > 40) go(); };
-      window.addEventListener("scroll", onFirstScroll, { passive: true });
-      // Fallback: ~2s nach load im Idle anhängen — der Clip ist jetzt schlank
+      intent.forEach((ev) => window.addEventListener(ev, go, { passive: true }));
+      // Fallback: ~1.2s nach load im Idle anhängen — der Clip ist schlank
       // (keyint=1, ~3.7 MB), lädt also im Hintergrund vor UND puffert schnell
-      // durch, ohne dem Hero-Video den Start wegzunehmen ("von Anfang an da").
+      // durch, ohne dem Hero den Start wegzunehmen; ist so schon bereit, falls
+      // jemand erst nach ein paar Sekunden scrollt.
       const arm = () => setTimeout(() => {
         if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 3000 });
         else go();
-      }, 2000);
+      }, 1200);
       if (document.readyState === "complete") arm();
       else window.addEventListener("load", arm, { once: true });
     };
