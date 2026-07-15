@@ -21,3 +21,11 @@ dist/
 Fairy-Tail-logo.png
 a4b28278-2fdd-4a30-9325-e60a0ece97d1.png
 assets/images/Tolunay.png
+
+# KI-Assistenz-Notizen: nur lokal, nie ins Repo und nie deployen
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.cursorrules
+.cursor/
+.github/copilot-instructions.md
