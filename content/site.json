@@ -27,11 +27,20 @@
         "url": "https://curadoma.de/",
         "image": "assets/images/curadoma.jpg",
         "description": "Ambulanter Betreuungsdienst mit Herz — „Sie können nicht immer da sein. Wir können es.\" Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause: klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an."
+      },
+      {
+        "name": "de Vries Betreuung",
+        "category": "Seniorenbetreuung · Haushaltshilfe",
+        "year": "2026",
+        "url": "https://andreasdevries.de/",
+        "image": "assets/images/andreasdevries.jpg",
+        "description": "Familienbetrieb seit über 25 Jahren: liebevolle Seniorenbetreuung und Haushaltshilfe in Salzhemmendorf — anerkannt nach §§ 45a/45b SGB XI, direkt mit der Pflegekasse abgerechnet. Wir haben den Webauftritt umgesetzt: warm, vertrauensvoll und klar auf Angehörige zugeschnitten. Schau es dir live an."
       }
     ],
     "index": [
       { "name": "Puron Media Agency", "category": "Social Media · Creative Agency", "year": "2026", "url": "https://puron-media.de/" },
-      { "name": "Cura Doma", "category": "Pflege · Betreuung", "year": "2026", "url": "https://curadoma.de/" }
+      { "name": "Cura Doma", "category": "Pflege · Betreuung", "year": "2026", "url": "https://curadoma.de/" },
+      { "name": "de Vries Betreuung", "category": "Seniorenbetreuung · Haushaltshilfe", "year": "2026", "url": "https://andreasdevries.de/" }
     ]
   },
   "team": [
