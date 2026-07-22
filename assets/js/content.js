@@ -118,7 +118,7 @@
   // Fester Versions-Stempel statt Date.now(): mit ?ts= war JEDE URL einzigartig
   // → garantierter Cache-Miss (Browser UND Edge) auf jedem Seitenaufruf.
   // Beim CMS-Publish/Commit denselben Stempel bumpen wie bei den Scripts.
-  fetch("content/site.json?v=20260704a")
+  fetch("content/site.json?v=20260704b")
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error("no content"))))
     .then((data) => {
       const get = (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), data);
