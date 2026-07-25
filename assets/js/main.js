@@ -406,7 +406,7 @@
     if (!canvas) return;
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/scroll.mp4?v=20260704a",
+      src: "assets/video/scroll.mp4?v=20260726a",
       computeProg: () => {
         const scrollMid = window.scrollY + window.innerHeight * 0.5;
         return clamp((scrollMid - sTop) / Math.max(1, eBottom - sTop), 0, 1);
@@ -460,7 +460,7 @@
 
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/team-reel.mp4?v=20260704a",
+      src: "assets/video/team-reel.mp4?v=20260726a",
       // eager: der Team-BG ist das immer sichtbare Fundament der Seite —
       // hier gibt es kein Hero-Video, mit dem der Download konkurrieren könnte.
       eagerSource: true,
@@ -761,18 +761,63 @@
       try { ctx.drawImage(video, (cw - dw) / 2, (ch - dh) / 2, dw, dh); } catch (_) {}
     };
 
+    /* ---- Braucht diese Maschine den Proxy überhaupt? (gemessen, nicht geraten)
+       Der Bewegungs-Proxy war die Antwort auf LANGSAME Seeks. Seit die
+       Scrub-Clips all-I-frame encodet sind, seekt der Decoder auf normaler
+       Hardware in wenigen Millisekunden — dann ist der Proxy nicht nur
+       überflüssig, er KOSTET: er zeigt während der Bewegung 96 Frames bei
+       960 px statt aller Quell-Frames in voller Auflösung, hält ~200 MB
+       Bitmaps und blockiert den Scrub für die Dauer der Extraktion.
+       Deshalb wird vor der Extraktion die echte Seek-Latenz gemessen. Ist sie
+       gut, bleibt der Proxy dauerhaft aus (framesReady bleibt false ⇒ das
+       Canvas wird nie eingeblendet). Ist sie schlecht — schwache GPU, zäher
+       Decoder —, läuft die Extraktion wie bisher. Messwerte 2026-07-26 auf
+       einem normalen Laptop: Median 3.9 ms, p99 7.5 ms bei 1080p all-intra. ---- */
+    const SEEK_BUDGET_MS = 8;   // ~halbes 60fps-Frame
+    const measureSeekCost = async (n = 8) => {
+      const times = [];
+      for (let i = 1; i <= n; i++) {
+        const t = duration * (i / (n + 1));
+        const t0 = performance.now();
+        await new Promise((res) => {
+          let settled = false;
+          const done = () => {
+            if (settled) return;
+            settled = true;
+            video.removeEventListener("seeked", done);
+            clearTimeout(bail);
+            res();
+          };
+          const bail = setTimeout(done, 400);   // kein hängendes Promise
+          video.addEventListener("seeked", done);
+          try { video.currentTime = t; } catch (_) { done(); }
+        });
+        times.push(performance.now() - t0);
+      }
+      times.sort((a, b) => a - b);
+      return times[Math.floor(times.length / 2)];
+    };
+
     const beginExtract = () => {
       sizeCanvas();
       drawVideoCover();
       frozen = true;
       canvas.style.opacity = "1";
       const preT = video.currentTime;
-      extract().catch(() => {}).finally(() => {
+      const finish = () => {
         try { video.currentTime = preT; } catch (_) {}
         frozen = false;
         proxyShown = false;
         canvas.style.opacity = "0";
-      });
+      };
+      measureSeekCost()
+        .then((median) => {
+          // Schnell genug: nativ scrubben, in voller Auflösung und mit jedem
+          // Quell-Frame statt mit 96 Proxy-Stufen.
+          if (median <= SEEK_BUDGET_MS) return finish();
+          return extract().catch(() => {}).finally(finish);
+        })
+        .catch(finish);
     };
 
     const scheduleExtract = () => {
