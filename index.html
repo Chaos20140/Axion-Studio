@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
   <meta name="description" content="Performance-starke Websites aus Meschede: Web Design, Development, Motion &amp; 3D und Hosting. Wir bauen Auftritte für Marken, die sichtbar werden wollen." />
   <title>Axion Studio — Web-Design-Studio aus Meschede</title>
@@ -78,9 +78,10 @@
        Hintergrund beim Runterscrollen sichtbar wird, steht sofort ein echtes
        Bild statt Schwarz (das Video decodiert dahinter). Konkurriert nicht mit dem Hero. -->
   <link rel="preload" href="assets/images/scroll-poster.jpg" as="image" fetchpriority="low" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260704c" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260725a" />
 </head>
 <body>
+  <a class="skip-link" href="#content">Zum Inhalt springen</a>
 
   <!-- BACKGROUND SCROLL VIDEO (manifest → contact) -->
   <div class="bg-scroll" id="bgScroll" aria-hidden="true">
@@ -158,6 +159,7 @@
     </div>
   </div>
 
+  <main id="content">
   <!-- HERO -->
   <section class="hero" id="top">
     <video class="hero__video" autoplay muted loop playsinline preload="auto" poster="assets/images/hero-poster.jpg">
@@ -668,7 +670,10 @@
         </div>
       </div>
 
-      <form class="contact__form" id="contactForm" novalidate>
+      <form class="contact__form" id="contactForm" method="post" novalidate>
+        <noscript>
+          <p class="form-status is-err">Für das Formular wird JavaScript benötigt. Schreib uns stattdessen direkt an <a href="mailto:info@axion-studio.de">info@axion-studio.de</a> oder ruf an: <a href="tel:+4917676668002">+49 176 76668002</a>.</p>
+        </noscript>
         <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
         <div class="form-row">
           <label class="field">
@@ -690,7 +695,7 @@
         </label>
 
         <fieldset class="field field--chips">
-          <span class="field__label mono">04 SERVICES</span>
+          <legend class="field__label mono">04 SERVICES</legend>
           <div class="chips">
             <label class="chip"><input type="checkbox" name="service" value="web-design"/><span>Web Design</span></label>
             <label class="chip"><input type="checkbox" name="service" value="development"/><span>Development</span></label>
@@ -700,7 +705,7 @@
         </fieldset>
 
         <fieldset class="field field--chips">
-          <span class="field__label mono">05 BUDGET</span>
+          <legend class="field__label mono">05 BUDGET</legend>
           <div class="chips chips--radio">
             <label class="chip"><input type="radio" name="budget" value="<1"/><span data-cms="budget.0">&lt; 1K €</span></label>
             <label class="chip"><input type="radio" name="budget" value="1-3"/><span data-cms="budget.1">1–3K €</span></label>
@@ -717,7 +722,7 @@
 
         <label class="consent">
           <input type="checkbox" name="consent" required />
-          <span>Ich stimme zu, dass meine Angaben gemäß <a href="impressum.html#datenschutz">Datenschutzerklärung</a> verarbeitet werden.</span>
+          <span>Ich habe die <a href="impressum.html#datenschutz">Datenschutzerklärung</a> zur Kenntnis genommen.</span>
         </label>
 
         <button type="submit" class="btn btn--primary btn--block" data-magnetic>
@@ -731,6 +736,7 @@
       </form>
     </div>
   </section>
+  </main>
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -777,9 +783,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260704d"></script>
-  <script src="assets/js/content.js?v=20260704b"></script>
-  <script src="assets/js/i18n.js?v=20260630c"></script>
+  <script src="assets/js/main.js?v=20260725b"></script>
+  <script src="assets/js/content.js?v=20260725a"></script>
+  <script src="assets/js/i18n.js?v=20260725a"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>
   <!-- End Cloudflare Web Analytics -->

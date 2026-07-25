@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <title>404 — Spur verlassen | Axion Studio</title>
   <meta name="description" content="Diese Seite existiert nicht. Zurück zur Startseite von Axion Studio — Web-Design-Studio aus Meschede." />
   <meta name="robots" content="noindex, follow" />
@@ -12,9 +12,10 @@
   <link rel="apple-touch-icon" href="/assets/images/favicon.png?v=20260616a" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preload" href="/assets/fonts/anton-v27-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/assets/css/style.css?v=20260704c" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=20260725a" />
 </head>
 <body class="theme-cool">
+  <a class="skip-link" href="#content">Zum Inhalt springen</a>
   <div class="noise" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
@@ -25,7 +26,7 @@
   </div>
 
   <header class="nav is-scrolled" id="nav">
-    <a href="/index.html" class="nav__logo" aria-label="Axion Studio — Startseite">
+    <a href="/" class="nav__logo" aria-label="Axion Studio — Startseite">
       <span class="nav__logo-mark" aria-hidden="true">
         <img src="/assets/images/logo.png?v=2" alt="" />
       </span>
@@ -69,7 +70,7 @@
     </div>
   </div>
 
-  <main class="page">
+  <main class="page" id="content">
     <header class="page-hero">
       <span class="page-hero__kicker">FEHLER · 404</span>
       <h1 class="page-hero__title">Spur <em>verlassen.</em></h1>
@@ -78,7 +79,7 @@
         Zurück auf die <em>Strecke</em>:
       </p>
       <p style="margin-top: 30px; display: flex; gap: 26px; flex-wrap: wrap; align-items: center;">
-        <a href="/index.html" class="btn btn--primary" style="text-decoration: none;" data-magnetic>
+        <a href="/" class="btn btn--primary" style="text-decoration: none;" data-magnetic>
           <span>Zur Startseite</span>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 13L13 1M13 1H3M13 1V11" stroke="currentColor" stroke-width="1.5"/></svg>
         </a>
@@ -103,7 +104,7 @@
         <a href="/projekte.html">Projekte</a>
         <a href="/team.html">Team</a>
         <a href="/partner.html">Partner</a>
-        <a href="/index.html#services">Services</a>
+        <a href="/#services">Services</a>
         <a href="/kontakt.html">Kontakt</a>
       </div>
       <div class="footer__col">
@@ -121,15 +122,15 @@
     <div class="footer__bottom">
       <span class="mono" data-cms="footer.copyright">© 2026 Axion Studio — ALL RIGHTS RESERVED</span>
       <span class="mono" id="clock">— : — : —</span>
-      <a href="/index.html#top" class="footer__top-btn">BACK TO PIT LANE ↑</a>
+      <a href="/#top" class="footer__top-btn">BACK TO PIT LANE ↑</a>
     </div>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="/assets/js/main.js?v=20260704d"></script>
-  <script src="/assets/js/content.js?v=20260704b"></script>
-  <script src="/assets/js/i18n.js?v=20260630c"></script>
+  <script src="/assets/js/main.js?v=20260725b"></script>
+  <script src="/assets/js/content.js?v=20260725a"></script>
+  <script src="/assets/js/i18n.js?v=20260725a"></script>
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>

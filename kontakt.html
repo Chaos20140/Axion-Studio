@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
   <title>Kontakt — Webdesign & Entwicklung | Axion Studio</title>
   <meta name="description" content="Projekt-Anfrage an Axion Studio: Webdesign &amp; Webentwicklung aus Meschede. Wir antworten innerhalb von 24 Stunden — remote-first für DACH und NRW." />
@@ -49,12 +49,13 @@
   <link rel="apple-touch-icon" href="assets/images/favicon.png?v=20260616a" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preload" href="assets/fonts/anton-v27-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260704c" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260725a" />
 </head>
 <body class="theme-cool">
+  <a class="skip-link" href="#content">Zum Inhalt springen</a>
   <!-- FULL-PAGE ping-pong background (forward → reverse → …), pre-rendered boomerang + native loop -->
   <div class="bg-loop" aria-hidden="true">
-    <video class="bg-loop__video bg-loop__video--front" autoplay loop muted playsinline preload="auto">
+    <video class="bg-loop__video bg-loop__video--front" poster="assets/images/kontakt-poster.jpg" autoplay loop muted playsinline preload="auto">
       <source src="assets/video/kontakt-boomerang.mp4?v=20260611c" type="video/mp4" />
     </video>
   </div>
@@ -114,7 +115,7 @@
     </div>
   </div>
 
-  <main class="page">
+  <main class="page" id="content">
     <header class="page-hero">
       <span class="page-hero__kicker">04 — KANAL ÖFFNEN</span>
       <h1 class="page-hero__title">Lust auf eine <em>schnelle Runde?</em></h1>
@@ -136,6 +137,8 @@
           <dd><a data-cms="kontakt.email" data-cms-href="kontakt.emailHref" href="mailto:info@axion-studio.de" style="color: var(--ink); border-bottom: 1px solid var(--red);">info@axion-studio.de</a></dd>
           <dt>Telefon</dt>
           <dd><a data-cms="kontakt.phone" data-cms-href="kontakt.phoneHref" href="tel:+4917676668002" style="color: var(--ink); border-bottom: 1px solid var(--red);">+49 176 76668002</a></dd>
+          <dt>Adresse</dt>
+          <dd>Hudeweg 2 · 59872 Meschede · Deutschland</dd>
           <dt>Erreichbar</dt>
           <dd data-cms="kontakt.hours">7 Tage / Woche · 24 Stunden</dd>
           <dt>Response</dt>
@@ -184,7 +187,10 @@
       <h2>Schick uns ein <em>Briefing.</em></h2>
       <p style="margin-bottom: 28px;">Je präziser dein Briefing, desto schneller unsere Antwort.</p>
 
-      <form class="contact__form" id="contactForm" novalidate>
+      <form class="contact__form" id="contactForm" method="post" novalidate>
+        <noscript>
+          <p class="form-status is-err">Für das Formular wird JavaScript benötigt. Schreib uns stattdessen direkt an <a href="mailto:info@axion-studio.de">info@axion-studio.de</a> oder ruf an: <a href="tel:+4917676668002">+49 176 76668002</a>.</p>
+        </noscript>
         <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" />
         <div class="form-row">
           <label class="field">
@@ -204,7 +210,7 @@
           <span class="field__bar"></span>
         </label>
         <fieldset class="field field--chips">
-          <span class="field__label mono">04 SERVICES</span>
+          <legend class="field__label mono">04 SERVICES</legend>
           <div class="chips">
             <label class="chip"><input type="checkbox" name="service" value="web-design"/><span>Web Design</span></label>
             <label class="chip"><input type="checkbox" name="service" value="development"/><span>Development</span></label>
@@ -213,7 +219,7 @@
           </div>
         </fieldset>
         <fieldset class="field field--chips">
-          <span class="field__label mono">05 BUDGET</span>
+          <legend class="field__label mono">05 BUDGET</legend>
           <div class="chips chips--radio">
             <label class="chip"><input type="radio" name="budget" value="<1"/><span data-cms="budget.0">&lt; 1K €</span></label>
             <label class="chip"><input type="radio" name="budget" value="1-3"/><span data-cms="budget.1">1–3K €</span></label>
@@ -228,7 +234,7 @@
         </label>
         <label class="consent">
           <input type="checkbox" name="consent" required />
-          <span>Ich stimme zu, dass meine Angaben gemäß <a href="impressum.html#datenschutz">Datenschutzerklärung</a> verarbeitet werden.</span>
+          <span>Ich habe die <a href="impressum.html#datenschutz">Datenschutzerklärung</a> zur Kenntnis genommen.</span>
         </label>
         <button type="submit" class="btn btn--primary btn--block" data-magnetic>
           <span class="btn__label">LAUNCH SIGNAL</span>
@@ -281,9 +287,9 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260704d"></script>
-  <script src="assets/js/content.js?v=20260704b"></script>
-  <script src="assets/js/i18n.js?v=20260630c"></script>
+  <script src="assets/js/main.js?v=20260725b"></script>
+  <script src="assets/js/content.js?v=20260725a"></script>
+  <script src="assets/js/i18n.js?v=20260725a"></script>
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>

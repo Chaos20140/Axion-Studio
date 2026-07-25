@@ -27,6 +27,7 @@
     "Sprache / Language": "Sprache / Language",
     "Menü öffnen": "Open menu",
     "Startseite": "Home",
+    "Zum Inhalt springen": "Skip to content",
 
     // ---- hero ----
     "Wir gestalten und entwickeln Websites für Marken, die sichtbar werden wollen — strategisch durchdacht, technisch sauber, spürbar schnell. Keine Vorlagen von der Stange.":
@@ -257,8 +258,8 @@
     "Dein vollständiger Name": "Your full name",
     "Optional — Brand / Firma": "Optional — brand / company",
     "Erzähl uns von deinem Projekt — Ziele, Timeline, Konkurrenz, alles.": "Tell us about your project — goals, timeline, competition, everything.",
-    "Ich stimme zu, dass meine Angaben gemäß": "I agree that my details are processed according to the",
-    "verarbeitet werden.": ".",
+    "Ich habe die": "I have read the",
+    "zur Kenntnis genommen.": "and understood it.",
     "Datenschutzerklärung": "privacy policy",
 
     // ---- angebot body ----
@@ -555,16 +556,6 @@
     "Vorschau der Website von Puron Media — Social Media & Creative Agency": "Preview of the Puron Media website — social media & creative agency",
     "Vorschau der Website von Cura Doma — Ambulanter Betreuungsdienst": "Preview of the Cura Doma website — outpatient care service",
 
-    // ---- cookie banner ----
-    "Wir verwenden nur technisch notwendige Mittel. Externe Inhalte (Google Maps) werden erst nach deiner Zustimmung geladen.":
-      "We only use technically necessary means. External content (Google Maps) loads only after your consent.",
-    "Akzeptieren": "Accept",
-    "Ablehnen": "Decline",
-    "Mehr": "More",
-    "Wir verwenden nur technisch notwendige Cookies. Mehr dazu in der": "We only use technically necessary cookies. More in the",
-    "Nur notwendige": "Only necessary",
-    "Alle akzeptieren": "Accept all",
-    "Cookie-Hinweis": "Cookie notice",
   };
 
   // Normalized lookup key: collapse internal whitespace and drop soft-hyphens /

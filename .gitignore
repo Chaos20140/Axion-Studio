@@ -29,3 +29,8 @@ GEMINI.md
 .cursorrules
 .cursor/
 .github/copilot-instructions.md
+
+# Lokale Dev-Server-Konfiguration. Der Deploy lädt das komplette Repo-Verzeichnis
+# hoch (nur .git und .github sind ausgenommen) — was hier liegt, läge sonst
+# öffentlich unter /.claude/.
+.claude/

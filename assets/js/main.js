@@ -205,6 +205,10 @@
   }
 
   /* ---------- FOOTER CLOCK ---------- */
+  // Sekundentakt nur, solange die Uhr wirklich sichtbar ist (§7: kein
+  // setInterval ohne Off-Screen-Gate). Der Footer steht auf jeder Seite ganz
+  // unten — ungegated lief hier auf jeder Seite dauerhaft ein Timer plus
+  // Layout-Schreibzugriff, auch während der gesamten Scroll-Animationen.
   const clock = $("#clock");
   if (clock) {
     const fmt = (n) => String(n).padStart(2, "0");
@@ -212,8 +216,31 @@
       const d = new Date();
       clock.textContent = `${fmt(d.getHours())} : ${fmt(d.getMinutes())} : ${fmt(d.getSeconds())} — BERLIN`;
     };
+    let clockTimer = null;
+    const startClock = () => {
+      if (clockTimer) return;
+      tickClock();
+      clockTimer = setInterval(tickClock, 1000);
+    };
+    const stopClock = () => {
+      if (!clockTimer) return;
+      clearInterval(clockTimer);
+      clockTimer = null;
+    };
     tickClock();
-    setInterval(tickClock, 1000);
+    if ("IntersectionObserver" in window) {
+      let onScreen = false;
+      new IntersectionObserver((entries) => {
+        onScreen = entries.some((e) => e.isIntersecting);
+        if (onScreen && !document.hidden) startClock(); else stopClock();
+      }, { threshold: 0 }).observe(clock);
+      // Hintergrund-Tabs drosseln Timer zwar, halten sie aber am Leben.
+      document.addEventListener("visibilitychange", () => {
+        if (onScreen && !document.hidden) startClock(); else stopClock();
+      });
+    } else {
+      startClock();
+    }
   }
 
   /* ---------- CONTACT FORM ---------- */
@@ -241,10 +268,13 @@
       const website = data.get("website")?.toString() || "";  // honeypot
 
       if (!name || !email || !msg || !consent) {
-        setStatus("// ERROR — Bitte Name, E-Mail, Briefing und Zustimmung ausfüllen.", "is-err");
+        setStatus("// ERROR — Bitte Name, E-Mail, Briefing und die Bestätigung ausfüllen.", "is-err");
         return;
       }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      // Muss deckungsgleich mit isEmail() in supabase/functions/axion-mail/index.ts
+      // sein — sonst kommt der Nutzer durch die Client-Prüfung und kassiert erst
+      // vom Server ein "Ungültige E-Mail-Adresse".
+      if (email.length > 254 || !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/.test(email)) {
         setStatus("// ERROR — E-Mail-Format ungültig.", "is-err");
         return;
       }
@@ -254,22 +284,36 @@
       if (CONTACT_ENDPOINT) {
         setStatus("// SENDE SIGNAL …", null);
         if (submit) submit.disabled = true;
+        // Ohne Abbruch hängt das Formular bei einem stillen Netzwerk-Stall
+        // unbegrenzt im Zustand "SENDE SIGNAL …" — Button gesperrt, ohne dass
+        // der Nutzer je eine Rückmeldung bekommt.
+        const ctrl = new AbortController();
+        const killer = setTimeout(() => ctrl.abort(), 20000);
         try {
           const res = await fetch(CONTACT_ENDPOINT, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name, email, company, services, budget, message: msg, website }),
+            signal: ctrl.signal,
           });
           const json = await res.json().catch(() => ({}));
           if (res.ok && json.ok) {
             setStatus("// SIGNAL EMPFANGEN — wir melden uns innerhalb von 24 h.", "is-ok");
             form.reset();
+          } else if (res.status === 429) {
+            setStatus("// ERROR — Zu viele Anfragen in kurzer Zeit. Bitte in ein paar Minuten erneut versuchen oder direkt an info@axion-studio.de schreiben.", "is-err");
           } else {
             setStatus("// ERROR — " + (json.error || "Senden fehlgeschlagen. Schreib uns an info@axion-studio.de."), "is-err");
           }
-        } catch (_) {
-          setStatus("// ERROR — Verbindung fehlgeschlagen. Schreib uns an info@axion-studio.de.", "is-err");
+        } catch (err) {
+          setStatus(
+            err && err.name === "AbortError"
+              ? "// ERROR — Zeitüberschreitung. Schreib uns an info@axion-studio.de."
+              : "// ERROR — Verbindung fehlgeschlagen. Schreib uns an info@axion-studio.de.",
+            "is-err",
+          );
         } finally {
+          clearTimeout(killer);
           if (submit) submit.disabled = false;
         }
         return;
@@ -434,6 +478,14 @@
   (() => {
     const v = $(".bg-loop__video");
     if (!v) return;
+    // WCAG 2.2.2: bildschirmfüllende Endlosbewegung darf sich niemandem
+    // aufzwingen. Bei prefers-reduced-motion bleibt das erste Bild stehen
+    // (poster-Attribut), das Video wird gar nicht erst gestartet.
+    if (reduce) {
+      v.removeAttribute("autoplay");
+      v.pause();
+      return;
+    }
     const play = () => v.play().catch(() => {});
     v.addEventListener("loadeddata", play, { once: true });
     document.addEventListener("touchstart", play, { once: true });
@@ -948,10 +1000,9 @@
       y: 60, opacity: 0, duration: 1, ease: "power3.out",
       scrollTrigger: { trigger: ".process", start: "top 75%" },
     });
-    gsap.from(".work__title", {
-      y: 60, opacity: 0, duration: 1, ease: "power3.out",
-      scrollTrigger: { trigger: ".work", start: "top 75%" },
-    });
+    // (Die frühere .work-Section gibt es nicht mehr — die Referenzen leben auf
+    //  projekte.html. Der Reveal dafür stand hier noch und hat bei jedem
+    //  Seitenaufruf zwei GSAP-Warnungen in die Konsole geschrieben.)
     gsap.from(".contact__title", {
       y: 80, opacity: 0, duration: 1.2, ease: "power3.out",
       scrollTrigger: { trigger: ".contact", start: "top 70%" },
@@ -1030,17 +1081,49 @@
     const links = $$("[data-mobile-link]", overlay);
     links.forEach((a, i) => a.style.setProperty("--i", i));
 
+    // Alles, was beim geöffneten Overlay HINTER dem Overlay liegt und sonst
+    // weiter fokussierbar bliebe. inert nimmt es zusätzlich aus dem
+    // Accessibility-Tree — sonst tabbt man aus dem Menü heraus in eine Seite,
+    // die man gar nicht sieht.
+    const behind = [$("#nav"), $("main"), $("footer"), $(".wa-fab")].filter(Boolean);
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
     const setOpen = (open) => {
       burger.setAttribute("aria-expanded", open ? "true" : "false");
       overlay.classList.toggle("is-open", open);
       overlay.setAttribute("aria-hidden", open ? "false" : "true");
       document.body.classList.toggle("nav-open", open);
       if (lenis) open ? lenis.stop() : lenis.start();
+      // Der Burger sitzt IM #nav — er muss bedienbar bleiben, damit man das
+      // Menü auch wieder schließen kann.
+      behind.forEach((el) => {
+        if (el.contains(burger)) return;
+        if (open) el.setAttribute("inert", ""); else el.removeAttribute("inert");
+      });
+      if (open) {
+        (overlay.querySelector(FOCUSABLE) || overlay).focus({ preventScroll: true });
+      } else {
+        burger.focus({ preventScroll: true });
+      }
     };
 
     burger.addEventListener("click", () => {
       const isOpen = burger.getAttribute("aria-expanded") === "true";
       setOpen(!isOpen);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (burger.getAttribute("aria-expanded") !== "true") return;
+      if (e.key === "Escape") { setOpen(false); return; }
+      if (e.key !== "Tab") return;
+      // Fokus im Overlay halten: Tab am Ende springt an den Anfang und umgekehrt.
+      const items = [...overlay.querySelectorAll(FOCUSABLE), burger].filter(
+        (el) => el.offsetParent !== null || el === burger,
+      );
+      if (!items.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     });
 
     links.forEach((a) => {
@@ -1071,63 +1154,16 @@
 })();
 
 /* =========================================================
-   COOKIE CONSENT — shown on first visit (all pages). The choice
-   is stored in localStorage. Any third-party embed carrying a
-   data-consent-src is only loaded after "accept" (generic gate).
+   Kein Consent-Banner: die Seite setzt keine Cookies und lädt
+   keine Einbettung, die auf dem Endgerät speichert oder liest
+   (Cloudflare Web Analytics arbeitet cookielos, § 25 TDDDG greift
+   damit nicht). Der frühere Banner war folgenlos — er hat nichts
+   freigeschaltet und nichts blockiert — und stand damit im
+   Widerspruch zur eigenen Datenschutzerklärung. Kommt später ein
+   echtes Drittanbieter-Embed dazu (z. B. Google Maps), MUSS hier
+   ein echtes Gate wieder rein: Embed erst nach Zustimmung laden,
+   Ablehnung dauerhaft respektieren, Widerruf ermöglichen.
    ========================================================= */
-(() => {
-  const KEY = "atm-consent";
-  let stored = null;
-  try { stored = localStorage.getItem(KEY); } catch (_) {}
-
-  const loadGated = () => {
-    document.querySelectorAll("[data-consent-src]").forEach((el) => {
-      if (!el.getAttribute("src")) el.setAttribute("src", el.getAttribute("data-consent-src"));
-    });
-    document.querySelectorAll(".map-consent").forEach((el) => el.remove());
-  };
-
-  const setConsent = (choice) => {
-    try { localStorage.setItem(KEY, choice); } catch (_) {}
-    if (choice === "accepted") loadGated();
-    document.body.classList.remove("cookie-open");
-    const bar = document.querySelector(".cookie-bar");
-    if (bar) { bar.classList.remove("is-in"); setTimeout(() => bar.remove(), 450); }
-  };
-
-  // Delegated handler — works for the banner buttons AND a "Karte laden" button.
-  document.addEventListener("click", (e) => {
-    const btn = e.target instanceof Element && e.target.closest("[data-consent]");
-    if (!btn) return;
-    e.preventDefault();
-    setConsent(btn.getAttribute("data-consent"));
-  });
-
-  if (stored === "accepted") { loadGated(); return; }
-  if (stored === "declined") { return; }  // already chose — no banner
-
-  const bar = document.createElement("div");
-  bar.className = "cookie-bar";
-  bar.setAttribute("role", "dialog");
-  bar.setAttribute("aria-label", "Cookie-Hinweis");
-  bar.innerHTML =
-    '<div class="cookie-bar__inner">' +
-      '<p class="cookie-bar__text">Wir verwenden nur technisch notwendige Cookies. Mehr dazu in der <a href="impressum.html#datenschutz">Datenschutzerklärung</a>.</p>' +
-      '<div class="cookie-bar__actions">' +
-        '<button type="button" class="cookie-bar__btn cookie-bar__btn--ghost" data-consent="declined">Nur notwendige</button>' +
-        '<button type="button" class="cookie-bar__btn cookie-bar__btn--solid" data-consent="accepted">Alle akzeptieren</button>' +
-      '</div>' +
-    '</div>';
-
-  const mount = () => {
-    document.body.appendChild(bar);
-    document.body.classList.add("cookie-open");
-    requestAnimationFrame(() => bar.classList.add("is-in"));
-    document.dispatchEvent(new Event("content:loaded"));  // let i18n translate the banner
-  };
-  if (document.body) mount();
-  else document.addEventListener("DOMContentLoaded", mount, { once: true });
-})();
 
 /* =========================================================
    CONTACT SHORTCUTS — floating WhatsApp button (all pages) +

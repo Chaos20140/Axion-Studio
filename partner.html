@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
   <title>Partner & Allianzen — Webdesign | Axion Studio</title>
   <meta name="description" content="Partner und strategische Allianzen von Axion Studio: Studios und Agenturen, mit denen wir in Meschede &amp; Sauerland an Web Design und Entwicklung bauen." />
@@ -39,12 +39,13 @@
   <link rel="apple-touch-icon" href="assets/images/favicon.png?v=20260616a" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preload" href="assets/fonts/anton-v27-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260704c" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260725a" />
 </head>
 <body class="theme-cool">
+  <a class="skip-link" href="#content">Zum Inhalt springen</a>
   <!-- FULL-PAGE ping-pong background (forward → reverse → …), pre-rendered boomerang + native loop -->
   <div class="bg-loop" aria-hidden="true">
-    <video class="bg-loop__video" autoplay loop muted playsinline preload="auto">
+    <video class="bg-loop__video" poster="assets/images/partner-poster.jpg" autoplay loop muted playsinline preload="auto">
       <source src="assets/video/partner-boomerang.mp4?v=20260611c" type="video/mp4" />
     </video>
   </div>
@@ -104,7 +105,7 @@
     </div>
   </div>
 
-  <main class="page">
+  <main class="page" id="content">
     <header class="page-hero">
       <span class="page-hero__kicker">03 — ALLIANCES</span>
       <h1 class="page-hero__title">Partner &amp; <em>Allianzen.</em></h1>
@@ -197,9 +198,9 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260704d"></script>
-  <script src="assets/js/content.js?v=20260704b"></script>
-  <script src="assets/js/i18n.js?v=20260630c"></script>
+  <script src="assets/js/main.js?v=20260725b"></script>
+  <script src="assets/js/content.js?v=20260725a"></script>
+  <script src="assets/js/i18n.js?v=20260725a"></script>
 
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>

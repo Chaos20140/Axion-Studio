@@ -34,13 +34,24 @@ function corsHeaders(origin: string | null): Record<string, string> {
   };
 }
 
+// Grenzen für den rohen SMTP-Dialog: pro Lese-/Schreibvorgang und für die
+// Gesamtgröße einer Serverantwort.
+const SMTP_IO_TIMEOUT_MS = 15_000;
+const SMTP_MAX_RESPONSE = 64 * 1024;
+
 // ---- helpers ---------------------------------------------------------------
 const headerSafe = (s: string): string => String(s ?? "").replace(/[\r\n\0]/g, " ").trim();
 const esc = (s: string): string =>
   String(s ?? "")
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-const isEmail = (s: string): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+// Bewusst enger als RFC 5322: keine Zeichen, die in Header-, mailto- oder
+// SMTP-Kontexten Sonderbedeutung haben (< > " ' ? & ; : , Backslash Klammern),
+// kein Nicht-ASCII, Gesamtlänge nach RFC 5321 höchstens 254 Zeichen. Das kostet
+// eine Handvoll exotischer, praktisch nie vergebener Adressen und schließt dafür
+// die mailto-Parameter-Injektion in den Mail-Templates und 501er-RCPT-Fehler aus.
+const isEmail = (s: string): boolean =>
+  s.length <= 254 && /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/.test(s);
 
 const base64Utf8 = (s: string): string => {
   const bytes = new TextEncoder().encode(s);
@@ -65,9 +76,14 @@ const rfc2822Date = (d: Date): string => {
 // Supabase teilt keinen Speicher zwischen Edge-Instanzen → In-Memory wirkungslos.
 // Daher in Postgres (SUPABASE_DB_URL, in Edge Functions auto-injiziert).
 // FAIL-OPEN: schlägt die DB fehl, wird NICHT blockiert (Formular bleibt nutzbar).
-const RL_WINDOW_MIN = 15; // Fenster in Minuten
-const RL_MAX = 5;         // max. Anfragen pro IP / Fenster
-const RL_BURST_MAX = 2;   // max. pro Minute
+const RL_WINDOW_MIN = 15;     // Fenster in Minuten
+const RL_MAX = 5;             // max. Anfragen pro IP / Fenster
+const RL_BURST_MAX = 2;       // max. pro Minute
+// Requests ohne verwertbare IP laufen alle gegen EINEN gemeinsamen Zähler.
+// Nicht hart blocken (sonst legt ein fehlender Header das Formular lahm),
+// aber deutlich strenger als ein identifizierbarer Absender.
+const RL_UNKNOWN_MAX = 2;
+const RL_UNKNOWN_BURST = 1;
 
 // Nur formal valide IPs als Rate-Limit-Key akzeptieren — X-Forwarded-For ist
 // client-beeinflussbar; Garbage-Werte würden sonst als "frische" Keys das
@@ -75,13 +91,15 @@ const RL_BURST_MAX = 2;   // max. pro Minute
 const isIp = (s: string): boolean =>
   /^(\d{1,3}\.){3}\d{1,3}$/.test(s) || /^[0-9a-fA-F:]{2,45}$/.test(s);
 
+// X-Forwarded-For wird von jedem Proxy ANGEHÄNGT — ein vom Client selbst
+// gesetzter Wert steht deshalb VORNE in der Liste. Nur der LETZTE Eintrag stammt
+// vom Proxy direkt vor uns und ist nicht fälschbar. Wer den ersten passenden
+// Eintrag nimmt, kann sein Rate-Limit mit einem beliebigen Header aushebeln.
 function clientIp(req: Request): string {
-  const candidates = [
-    ...(req.headers.get("x-forwarded-for") ?? "").split(",").map((s) => s.trim()),
-    req.headers.get("cf-connecting-ip") ?? "",
-    req.headers.get("x-real-ip") ?? "",
-  ];
-  return candidates.find((c) => c && isIp(c)) ?? "unknown";
+  const xff = (req.headers.get("x-forwarded-for") ?? "")
+    .split(",").map((s) => s.trim()).filter(Boolean);
+  const candidate = xff.at(-1) ?? req.headers.get("x-real-ip") ?? "";
+  return isIp(candidate) ? candidate : "unknown";
 }
 
 async function hashIp(ip: string): Promise<string> {
@@ -104,26 +122,47 @@ function db() {
     created_at timestamptz not null default now()
   )`.then(() =>
     _sql!`create index if not exists mail_rate_limits_ip_time on public.mail_rate_limits (ip, created_at)`
+  ).then(() =>
+    // Supabase vergibt im public-Schema per Default-Privileges Rechte an anon und
+    // authenticated — ohne diese beiden Zeilen wäre die Tabelle über PostgREST
+    // les- und schreibbar und stünde im öffentlichen OpenAPI-Schema. Die Function
+    // selbst verbindet als Eigentümer und wird von RLS nicht eingeschränkt.
+    _sql!`alter table public.mail_rate_limits enable row level security`
+  ).then(() =>
+    _sql!`revoke all on public.mail_rate_limits from anon, authenticated`
   ).catch((e) => console.log("rate-limit DDL error:", e));
   return _sql;
 }
 
-async function rateLimited(ip: string): Promise<boolean> {
+async function rateLimited(ip: string, max: number, burstMax: number): Promise<boolean> {
   const sql = db();
   if (!sql) return false; // kein DB-URL → fail-open
   try {
     if (_ready) await _ready;
-    const rows = await sql`
-      select
-        count(*) filter (where created_at > now() - make_interval(mins => ${RL_WINDOW_MIN}))::int as window_n,
-        count(*) filter (where created_at > now() - interval '1 minute')::int as burst_n
-      from public.mail_rate_limits where ip = ${ip}
-    `;
-    const { window_n, burst_n } = rows[0] ?? { window_n: 0, burst_n: 0 };
-    if (window_n >= RL_MAX || burst_n >= RL_BURST_MAX) return true;
-    await sql`insert into public.mail_rate_limits (ip) values (${ip})`;
-    await sql`delete from public.mail_rate_limits where created_at < now() - interval '1 hour'`;
-    return false;
+    // Zählen und Buchen MÜSSEN in einer Transaktion mit Advisory-Lock laufen.
+    // Ohne den Lock lesen gleichzeitig eintreffende Requests denselben Zähler-
+    // stand, bestehen alle die Prüfung und buchen erst danach — das Limit
+    // greift dann nur gegen sequentielle Angreifer, nicht gegen parallele.
+    // Der Lock gilt pro IP-Hash und wird am Transaktionsende automatisch frei.
+    const blocked = await sql.begin(async (tx: typeof sql) => {
+      await tx`select pg_advisory_xact_lock(hashtext(${ip}))`;
+      const rows = await tx`
+        select
+          count(*) filter (where created_at > now() - make_interval(mins => ${RL_WINDOW_MIN}))::int as window_n,
+          count(*) filter (where created_at > now() - interval '1 minute')::int as burst_n
+        from public.mail_rate_limits where ip = ${ip}
+      `;
+      const { window_n, burst_n } = rows[0] ?? { window_n: 0, burst_n: 0 };
+      if (window_n >= max || burst_n >= burstMax) return true;
+      await tx`insert into public.mail_rate_limits (ip) values (${ip})`;
+      return false;
+    });
+    // Aufräumen bewusst außerhalb der Transaktion und ohne await — ein Fehler
+    // beim Housekeeping darf weder das Ergebnis verfälschen noch den Versand
+    // verzögern.
+    sql`delete from public.mail_rate_limits where created_at < now() - interval '1 hour'`
+      .catch((e: unknown) => console.log("rate-limit cleanup error:", e));
+    return blocked;
   } catch (e) {
     console.log("rate-limit DB error (fail-open):", e);
     return false; // DB-Problem darf das Formular nicht lahmlegen
@@ -167,27 +206,62 @@ async function sendEmail(opts: {
   const port = Number(Deno.env.get("SMTP_PORT") ?? "465");
   const fromHeader = headerSafe(Deno.env.get("MAIL_FROM") ?? `Axion Studio <${user}>`);
   const fromEmail = extractEmail(fromHeader);
-  const replyTo = opts.reply_to ? extractEmail(headerSafe(opts.reply_to)) : "";
+  // Nur eine formal gültige Adresse darf als Reply-To in den Header — sonst
+  // landet Freitext in einem Adressfeld und der Header wird unbrauchbar.
+  const replyToRaw = opts.reply_to ? extractEmail(headerSafe(opts.reply_to)) : "";
+  const replyTo = isEmail(replyToRaw) ? replyToRaw : "";
 
   let conn: Deno.Conn | null = null;
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   const readBuf = new Uint8Array(8192);
 
+  // Ohne Zeit- und Größengrenze kann ein hängender oder bösartiger SMTP-Server
+  // die Function bis zum Plattform-Timeout blockieren bzw. den Speicher fluten.
+  const withTimeout = async <T>(p: Promise<T>, ms: number, msg: string): Promise<T> => {
+    let t: number | undefined;
+    try {
+      return await Promise.race([
+        p,
+        new Promise<never>((_, rej) => { t = setTimeout(() => rej(new Error(msg)), ms); }),
+      ]);
+    } finally {
+      if (t !== undefined) clearTimeout(t);
+    }
+  };
+
   const readResponse = async (): Promise<{ code: number; text: string }> => {
     let data = "";
     while (true) {
-      const n = await conn!.read(readBuf);
+      const n = await withTimeout(conn!.read(readBuf), SMTP_IO_TIMEOUT_MS, "SMTP-Zeitüberschreitung beim Lesen.");
       if (n === null) break;
       data += decoder.decode(readBuf.subarray(0, n));
+      if (data.length > SMTP_MAX_RESPONSE) throw new Error("SMTP-Antwort überschreitet das Größenlimit.");
       const lines = data.split("\n").map((l) => l.replace(/\r$/, "")).filter((l) => l.length > 0);
       const last = lines[lines.length - 1] ?? "";
-      if (/^\d{3} /.test(last)) break;
+      // "250 OK" schließt die Antwort ab, "250-..." ist eine Fortsetzungszeile.
+      // Der Code muss aus DIESER Schlusszeile kommen — ein Match irgendwo im
+      // gesamten Puffer träfe sonst auch dreistellige Zahlen aus dem Banner-Text.
+      if (/^\d{3} /.test(last)) return { code: Number(last.slice(0, 3)), text: data.trim() };
     }
-    const m = data.match(/(\d{3})/);
+    const m = data.match(/^(\d{3})/m);
     return { code: m ? Number(m[1]) : 0, text: data.trim() };
   };
-  const write = (line: string) => conn!.write(encoder.encode(line + "\r\n"));
+
+  // conn.write() darf laut Deno-API weniger Bytes schreiben als übergeben —
+  // ungeprüft würde der DATA-Block stillschweigend abgeschnitten und die Mail
+  // käme unvollständig oder gar nicht an.
+  const writeAll = async (bytes: Uint8Array): Promise<void> => {
+    let off = 0;
+    while (off < bytes.length) {
+      const n = await withTimeout(
+        conn!.write(bytes.subarray(off)), SMTP_IO_TIMEOUT_MS, "SMTP-Zeitüberschreitung beim Senden.",
+      );
+      if (n <= 0) throw new Error("SMTP-Verbindung hat das Schreiben abgebrochen.");
+      off += n;
+    }
+  };
+  const write = (line: string) => writeAll(encoder.encode(line + "\r\n"));
   const expect = (res: { code: number; text: string }, ok: number[]) => {
     if (!ok.includes(res.code)) throw new Error(`SMTP ${res.code}: ${res.text.slice(0, 200)}`);
   };
@@ -223,7 +297,7 @@ async function sendEmail(opts: {
     }
     await write("DATA");
     expect(await readResponse(), [354]);
-    await conn.write(encoder.encode(buildRawMessage(fromHeader, toList, replyTo, opts.subject, opts.html)));
+    await writeAll(encoder.encode(buildRawMessage(fromHeader, toList, replyTo, opts.subject, opts.html)));
     expect(await readResponse(), [250]);
     await write("QUIT");
     try { await readResponse(); } catch (_) { /* ignore */ }
@@ -346,8 +420,11 @@ Deno.serve(async (req) => {
     // Rate-Limit: schützt vor Spam/Missbrauch des Auto-Reply-Versands.
     // IP wird VOR dem Speichern gehasht (Datenminimierung, Art. 5 DSGVO) —
     // fürs Fenster-Zählen reicht ein stabiler Schlüssel, die rohe IP nicht nötig.
-    const ipHash = await hashIp(clientIp(req));
-    if (await rateLimited(ipHash)) {
+    const ip = clientIp(req);
+    const ipKey = ip === "unknown" ? "__unknown__" : await hashIp(ip);
+    const rlMax = ip === "unknown" ? RL_UNKNOWN_MAX : RL_MAX;
+    const rlBurst = ip === "unknown" ? RL_UNKNOWN_BURST : RL_BURST_MAX;
+    if (await rateLimited(ipKey, rlMax, rlBurst)) {
       return new Response(JSON.stringify({
         ok: false,
         error: "Zu viele Anfragen in kurzer Zeit. Bitte versuch es in ein paar Minuten erneut – oder schreib direkt an info@axion-studio.de.",
@@ -384,7 +461,10 @@ Deno.serve(async (req) => {
       to,
       subject: `🏁 Projekt-Anfrage von ${name}${company ? " · " + company : ""}`,
       html: notifyHtml({ name, email, company, services, budget, message }),
-      reply_to: `${name} <${email}>`,
+      // NUR die validierte Adresse, kein Display-Name: der Name ist Freitext und
+      // hätte über eingeschmuggelte spitze Klammern die Reply-To-Adresse ersetzen
+      // können ("Max <angreifer@example.com>" ⇒ Antwort geht an den Angreifer).
+      reply_to: email,
     });
     if (!notify.ok) {
       // Detail nur ins Log — SMTP-Wortlaut (Hosts, Codes, Konfig) gehört nicht an den Client.

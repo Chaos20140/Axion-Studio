@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o=' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://static.cloudflareinsights.com 'sha256-WOYowOojMdZeqM/iMbND+Ob0Yv3EooamEKCaJxHsw0o='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; connect-src 'self' https://qcbarlmhsgupeqwehnwe.supabase.co https://cloudflareinsights.com https://static.cloudflareinsights.com; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="google-site-verification" content="KVWagdKwjMBX_V4pYuZyJR6mR2KfFpNBnR5O7Z0sQBQ" />
   <title>Leistungen — Webdesign & Entwicklung | Axion Studio</title>
   <meta name="description" content="Web Design, Webentwicklung, Motion &amp; 3D und Hosting aus Meschede. Vier Disziplinen, ein kompromissloser Standard — als interaktives Solarsystem erlebbar." />
@@ -59,9 +59,10 @@
   <link rel="apple-touch-icon" href="assets/images/favicon.png?v=20260616a" />
   <link rel="manifest" href="/site.webmanifest" />
   <link rel="preload" href="assets/fonts/anton-v27-latin.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260704c" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260725a" />
 </head>
 <body class="theme-cool">
+  <a class="skip-link" href="#content">Zum Inhalt springen</a>
   <div class="noise" aria-hidden="true"></div>
   <div class="scanlines" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
@@ -117,7 +118,7 @@
   </div>
 
   <!-- SOLAR OFFER EXPLORER — 4 planets = the four disciplines, sun = the standard -->
-  <main>
+  <main id="content">
     <section class="services services--solar services--solar-page" id="services" aria-label="Was wir anbieten">
       <canvas class="solar-section-canvas" id="solarCanvas" aria-hidden="true"></canvas>
       <svg class="solar-link" id="solarLink" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -299,6 +300,7 @@
         <a href="projekte.html">Projekte</a>
         <a href="team.html">Team</a>
         <a href="partner.html">Partner</a>
+        <a href="/#services">Services</a>
         <a href="kontakt.html">Kontakt</a>
       </div>
       <div class="footer__col">
@@ -322,9 +324,9 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" integrity="sha384-B2WBjDzEjJpYvhmi2UyEn7rektqkf5suS6sNoyyrf0EBAwBHdkiXxIlU0V5Ru2ed" crossorigin="anonymous"></script>
-  <script src="assets/js/main.js?v=20260704d"></script>
-  <script src="assets/js/content.js?v=20260704b"></script>
-  <script src="assets/js/i18n.js?v=20260630c"></script>
+  <script src="assets/js/main.js?v=20260725b"></script>
+  <script src="assets/js/content.js?v=20260725a"></script>
+  <script src="assets/js/i18n.js?v=20260725a"></script>
 
   <!-- Solar offer-explorer (ESM). three.module locked via modulepreload + SRI;
        addons chain off the same versioned prefix. Only active importmap here. -->
