@@ -29,6 +29,26 @@
         wheelMultiplier: 1.0,
         lerp: 0.085,
       });
+      /* Firefox-Scrollgeschwindigkeit angleichen.
+         Firefox liefert für eine Mausrad-Raste `deltaY: 3` mit `deltaMode: 1`
+         (DOM_DELTA_LINE), Chrome und Edge liefern `deltaY: 100` mit
+         `deltaMode: 0` (PIXEL). Lenis rechnet Zeilen mit 100/6 ≈ 16.67 um und
+         kommt damit auf 50 px statt 100 — Firefox scrollt also halb so schnell.
+         Auf einer Seite mit 320vh Sticky-Pin und Video-Scrub fühlt sich das
+         zäh und doppelt so lang an.
+         Der Multiplikator wird pro Event nachgeführt statt einmalig gesetzt:
+         wer zwischen Maus und Präzisions-Touchpad wechselt (Touchpad meldet
+         deltaMode 0), bekommt sonst die doppelte Geschwindigkeit ab.
+         Capture-Phase, damit es VOR Lenis' eigenem Handler greift.
+         Achtung: der Wert sitzt an der VirtualScroll-Instanz, nicht an
+         `lenis.options` — Lenis reicht ihn beim Konstruieren als eigenes
+         Objektliteral weiter. */
+      window.addEventListener("wheel", (e) => {
+        const vs = lenis && lenis.virtualScroll;
+        if (!vs || !vs.options) return;
+        vs.options.wheelMultiplier = e.deltaMode === 1 ? 2 : 1;
+      }, { capture: true, passive: true });
+
       // Use GSAP ticker as the single rAF source — no double scheduling.
       if (window.gsap) {
         gsap.ticker.add((time) => lenis.raf(time * 1000));
@@ -690,6 +710,41 @@
       video.playbackRate = 4.0;
       video.currentTime = 0;
 
+      /* Dieses Promise MUSS settlen. Es hing bisher an genau zwei Auswegen —
+         dem `ended`-Event und einem abgelehnten `play()`. Bricht das Video
+         mittendrin ab (Netzwerk weg, Decode-Fehler), feuert `ended` nie und
+         `play()` ist längst aufgelöst: das Promise hängt für immer, das
+         `finally` in extract() läuft nie, `extracting` bleibt dauerhaft true
+         und `wantActive` ist ab da in JEDEM Frame false. Folge: für den Rest
+         der Sitzung überhaupt kein Hintergrundvideo — kein Standbild, kein
+         Scrub. Selten, aber ein Totalausfall.
+         Bewusst NICHT auf `stalled` reagieren — das feuert regulär bei jeder
+         zähen Leitung und würde gesunde Verbindungen abwürgen. */
+      let fertig = false;
+      let wachhund = 0;
+      const onFehler = () => abbruch("Video-Fehler während der Extraktion");
+      const aufraeumen = () => {
+        clearTimeout(wachhund);
+        video.removeEventListener("error", onFehler);
+        video.removeEventListener("emptied", onFehler);
+      };
+      const abbruch = (grund) => {
+        if (fertig) return;
+        fertig = true;
+        aufraeumen();
+        reject(new Error(grund));
+      };
+      const fertigMit = (fn) => {
+        if (fertig) return;
+        fertig = true;
+        aufraeumen();
+        fn();
+      };
+      // Notbremse: doppelte Spieldauer bei 4× Tempo, plus 10s Puffer.
+      wachhund = setTimeout(() => abbruch("Extraktion überfällig"), (duration / 4.0) * 2000 + 10000);
+      video.addEventListener("error", onFehler);
+      video.addEventListener("emptied", onFehler);
+
       const onFrame = async (_now, meta) => {
         try {
           offCtx.drawImage(video, 0, 0, off.width, off.height);
@@ -700,23 +755,25 @@
       video.requestVideoFrameCallback(onFrame);
 
       video.addEventListener("ended", () => {
-        if (raw.length < 2) { reject(new Error("no frames")); return; }
-        // resample to evenly spaced buckets
-        frames = new Array(targetCount);
-        for (let i = 0; i < targetCount; i++) {
-          const want = (i / (targetCount - 1)) * raw[raw.length - 1].t;
-          let best = raw[0], bestD = Math.abs(raw[0].t - want);
-          for (let j = 1; j < raw.length; j++) {
-            const d = Math.abs(raw[j].t - want);
-            if (d < bestD) { best = raw[j]; bestD = d; }
+        if (raw.length < 2) { abbruch("no frames"); return; }
+        fertigMit(() => {
+          // resample to evenly spaced buckets
+          frames = new Array(targetCount);
+          for (let i = 0; i < targetCount; i++) {
+            const want = (i / (targetCount - 1)) * raw[raw.length - 1].t;
+            let best = raw[0], bestD = Math.abs(raw[0].t - want);
+            for (let j = 1; j < raw.length; j++) {
+              const d = Math.abs(raw[j].t - want);
+              if (d < bestD) { best = raw[j]; bestD = d; }
+            }
+            frames[i] = best;
           }
-          frames[i] = best;
-        }
-        for (const r of raw) if (!frames.includes(r)) r.bmp.close?.();
-        resolve();
+          for (const r of raw) if (!frames.includes(r)) r.bmp.close?.();
+          resolve();
+        });
       }, { once: true });
 
-      video.play().catch(reject);
+      video.play().catch((e) => abbruch("play() abgelehnt: " + (e && e.name)));
     });
 
     const extractViaSeek = async (targetCount, step) => {

@@ -679,6 +679,7 @@ input, textarea, select { font: inherit; color: inherit; }
   position: fixed; inset: 0;
   z-index: 99;
   background: rgba(6, 3, 5, 0.96);
+  -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   padding: 84px clamp(22px, 6vw, 44px) calc(env(safe-area-inset-bottom, 0px) + 28px);
   display: flex; flex-direction: column;
@@ -972,6 +973,7 @@ body.nav-open { overflow: hidden; }
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: rgba(0,0,0,0.5);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   z-index: 3;
 }
@@ -1282,7 +1284,12 @@ body.nav-open { overflow: hidden; }
 }
 .engineering__inner {
   position: sticky; top: 0;
+  /* svh = Viewport OHNE eingeblendete Browserleiste. Mit 100vh (= lvh) ragt
+     der gepinnte Block auf Mobilgeraeten unter den sichtbaren Bereich und das
+     Grid schneidet seine dritte Zeile (die Legende) ab. .hero und
+     .team-reel__sticky machen es bereits so; hier war es vergessen. */
   height: 100vh;
+  height: 100svh;
   display: grid;
   grid-template-rows: auto 1fr auto;
   padding: clamp(60px, 8vh, 120px) clamp(20px, 4vw, 48px) clamp(40px, 6vh, 80px);
@@ -1295,7 +1302,10 @@ body.nav-open { overflow: hidden; }
   position: absolute; inset: 0;
   pointer-events: none;
   z-index: 0;
-  will-change: opacity, transform, filter;
+  /* NUR opacity wird animiert (main.js setzt style.opacity). transform und
+     filter waren angemeldet, ohne je gesetzt zu werden — das kostet in Firefox
+     unnoetig Layer-Budget, das die Seite ohnehin ueberschreitet. */
+  will-change: opacity;
 }
 .treatment--burn {
   background: radial-gradient(ellipse 80% 60% at 50% 60%,
@@ -1687,6 +1697,7 @@ body.nav-open { overflow: hidden; }
   border: 1px solid var(--line);
   padding: 24px 28px;
   background: rgba(0,0,0,0.45);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   max-width: 440px;
   opacity: 0;
@@ -1835,6 +1846,7 @@ body.nav-open { overflow: hidden; }
     padding: 0;
     border: 0;
     background: none;
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
   .grid__slot.is-parked .step__content { transform: translateY(0); }
@@ -2115,6 +2127,7 @@ body.nav-open { overflow: hidden; }
   padding: 36px;
   border: 1px solid var(--line);
   background: rgba(0,0,0,0.4);
+  -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   position: relative;
 }
@@ -2613,6 +2626,7 @@ body.nav-open { overflow: hidden; }
     linear-gradient(180deg, rgba(10, 4, 7, 0.92), rgba(8, 3, 6, 0.96));
   border: 1px solid rgba(var(--red-glow), 0.45);
   border-left: 2px solid var(--red);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
   backdrop-filter: blur(16px) saturate(1.2);
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.4),
@@ -2864,6 +2878,7 @@ body.nav-open { overflow: hidden; }
   position: absolute; inset: 0;
   display: grid; place-items: center;
   background: rgba(6, 3, 5, 0.85);
+  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   z-index: 3;
   opacity: 1;
