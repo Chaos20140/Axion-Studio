@@ -49,6 +49,11 @@
        reliable on iOS (negative playbackRate isn't supported cross-browser). -->
   <div class="bg-loop" aria-hidden="true">
     <video class="bg-loop__video" poster="assets/images/about-poster.jpg" autoplay loop muted playsinline preload="auto">
+      <!-- Desktop-Quelle ZUERST: ein Browser der media ignoriert nimmt die erste
+           passende Quelle und verhaelt sich wie bisher. Der Mobile-Clip ist der
+           Ausschnitt, den object-fit:cover auf dem Handy ohnehin zeigt. -->
+      <source src="assets/video/about-boomerang.mp4?v=20260611c" type="video/mp4" media="(min-width: 901px)" />
+      <source src="assets/video/about-boomerang-mobile.mp4?v=20260726a" type="video/mp4" media="(max-width: 900px)" />
       <source src="assets/video/about-boomerang.mp4?v=20260611c" type="video/mp4" />
     </video>
   </div>
