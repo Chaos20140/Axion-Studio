@@ -127,9 +127,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-body { cursor: none; }
-@media (hover: none) { body { cursor: auto; } .cursor { display: none; } }
-
 img, svg, video { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 
@@ -150,7 +147,7 @@ a { color: inherit; text-decoration: none; }
   transition: transform 0.2s var(--ease-out);
 }
 .skip-link:focus { transform: translateY(0); }
-button { font: inherit; cursor: none; background: none; border: 0; color: inherit; }
+button { font: inherit; cursor: pointer; background: none; border: 0; color: inherit; }
 input, textarea, select { font: inherit; color: inherit; }
 
 /* =========================================================
@@ -448,39 +445,6 @@ input, textarea, select { font: inherit; color: inherit; }
     radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(0,0,0,0.55) 100%),
     radial-gradient(ellipse at 50% 0%, rgba(var(--red-glow), 0.08) 0%, transparent 60%);
 }
-
-/* =========================================================
-   CUSTOM CURSOR
-   ========================================================= */
-.cursor {
-  position: fixed; top: 0; left: 0; z-index: 9999;
-  pointer-events: none;
-  mix-blend-mode: difference;
-}
-.cursor__dot {
-  position: fixed; top: 0; left: 0;
-  width: 6px; height: 6px;
-  background: var(--red);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.25s var(--ease), height 0.25s var(--ease), background 0.25s;
-  will-change: transform;
-}
-.cursor__ring {
-  position: fixed; top: 0; left: 0;
-  width: 38px; height: 38px;
-  border: 1.5px solid var(--ink);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.35s var(--ease-out), height 0.35s var(--ease-out), border-color 0.25s, background 0.25s;
-  will-change: transform;
-}
-.cursor.is-hover .cursor__ring {
-  width: 64px; height: 64px;
-  background: rgba(255, 31, 61, 0.15);
-  border-color: var(--red);
-}
-.cursor.is-hover .cursor__dot { width: 0; height: 0; }
 
 /* =========================================================
    LOADER
@@ -1225,7 +1189,7 @@ body.nav-open { overflow: hidden; }
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   overflow: hidden;
-  cursor: none;
+  cursor: pointer;
   transition: background 0.35s var(--ease);
   isolation: isolate;
 }
@@ -1909,7 +1873,7 @@ body.nav-open { overflow: hidden; }
 .case {
   grid-column: span 6;
   position: relative;
-  cursor: none;
+  cursor: pointer;
 }
 .case--large { grid-column: span 7; }
 .case--large + .case { grid-column: span 5; }
@@ -2204,7 +2168,7 @@ body.nav-open { overflow: hidden; }
 .chip {
   position: relative;
   display: inline-flex;
-  cursor: none;
+  cursor: pointer;
 }
 .chip input {
   position: absolute; opacity: 0;
@@ -2237,7 +2201,7 @@ body.nav-open { overflow: hidden; }
   align-items: start;
   font-size: 13px;
   color: var(--ink-dim);
-  cursor: none;
+  cursor: pointer;
 }
 .consent input { accent-color: var(--red); margin-top: 2px; }
 .consent a { color: var(--red); border-bottom: 1px dashed currentColor; }
@@ -2683,7 +2647,7 @@ body.nav-open { overflow: hidden; }
   width: 30px; height: 30px;
   font-size: 19px; line-height: 1;
   color: var(--ink-dim);
-  cursor: none; z-index: 2;
+  cursor: pointer; z-index: 2;
   transition: color 0.25s, transform 0.3s;
 }
 .solar-panel__close:hover { color: var(--red); transform: rotate(90deg); }
@@ -2693,7 +2657,7 @@ body.nav-open { overflow: hidden; }
   background: none; border: 0;
   font-family: var(--font-mono);
   font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--red); cursor: none;
+  color: var(--red); cursor: pointer;
 }
 .solar-panel__lockbar {
   display: flex; align-items: center; gap: 8px;

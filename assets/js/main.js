@@ -5,7 +5,6 @@
    ========================================================= */
 (() => {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const isTouch = window.matchMedia("(hover: none)").matches;
   const isMobile = window.matchMedia("(max-width: 900px)").matches;
   const $  = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
@@ -73,37 +72,12 @@
     document.body.classList.add("is-loaded");
   }
 
-  /* ---------- CUSTOM CURSOR ---------- */
-  const cursor = $(".cursor");
-  const cdot = $(".cursor__dot");
-  const cring = $(".cursor__ring");
-  let pointerX = window.innerWidth / 2, pointerY = window.innerHeight / 2;
-
-  window.addEventListener("mousemove", (e) => {
-    pointerX = e.clientX; pointerY = e.clientY;
-  });
-
-  if (cursor && !isTouch) {
-    let dx = pointerX, dy = pointerY, rx = pointerX, ry = pointerY;
-    const tickCursor = () => {
-      dx = lerp(dx, pointerX, 0.55);
-      dy = lerp(dy, pointerY, 0.55);
-      rx = lerp(rx, pointerX, 0.18);
-      ry = lerp(ry, pointerY, 0.18);
-      if (cdot) cdot.style.transform = `translate3d(${dx}px, ${dy}px, 0) translate(-50%, -50%)`;
-      if (cring) cring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
-      requestAnimationFrame(tickCursor);
-    };
-    tickCursor();
-
-    const hoverables = "a, button, .chip, .service, .case, .nav__cta, .footer__top-btn, input, textarea, [data-magnetic]";
-    document.addEventListener("mouseover", (e) => {
-      if (e.target.closest(hoverables)) cursor.classList.add("is-hover");
-    });
-    document.addEventListener("mouseout", (e) => {
-      if (e.target.closest(hoverables)) cursor.classList.remove("is-hover");
-    });
-  }
+  /* Kein Custom-Cursor mehr (entfernt am 26.07.2026, siehe CLAUDE.md §2).
+     Damit entfallen: eine dauerhaft laufende rAF-Lerp-Schleife, ein globaler
+     mousemove-Listener, zwei mouseover/mouseout-Delegates und — der teuerste
+     Posten — eine bildschirmfüllende Ebene mit `mix-blend-mode: difference`,
+     die den Browser zwang, alles darunter neu zu rastern und zu blenden.
+     Der Systemzeiger ist zurück; `cursor: none` steht nirgends mehr. */
 
   /* ---------- NAV SCROLLED ---------- */
   const nav = $("#nav");

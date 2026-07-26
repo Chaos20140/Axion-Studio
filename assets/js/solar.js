@@ -41,7 +41,9 @@ import * as THREE from "three";
   const pClass = document.getElementById("solarMetaClass");
   const hint   = document.getElementById("solarHint");
   const hintText = document.getElementById("solarHintText");
-  const cursorEl = document.querySelector(".cursor");
+  // Der frühere Custom-Cursor ist entfernt (CLAUDE.md §2). Die Hover-Rückmeldung
+  // auf den Planeten läuft jetzt über den echten Zeiger: greifbare Fläche = grab,
+  // treffbarer Planet = pointer.
 
   // Leader-line SVG overlay (JARVIS targeting)
   const linkSvg  = document.getElementById("solarLink");
@@ -715,7 +717,7 @@ import * as THREE from "three";
           ? `${hovered.userData.cfg.label} — KLICKEN`
           : HINT_DEFAULT;
       }
-      cursorEl?.classList.toggle("is-hover", !!hovered);
+      if (canvas) canvas.style.cursor = hovered ? "pointer" : "grab";
     }
 
     // Hover/select feedback: scale + shader uActive
