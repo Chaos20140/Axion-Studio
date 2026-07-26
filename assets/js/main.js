@@ -406,7 +406,7 @@
     if (!canvas) return;
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/scroll.mp4?v=20260726a",
+      src: "assets/video/scroll.mp4?v=20260726b",
       computeProg: () => {
         const scrollMid = window.scrollY + window.innerHeight * 0.5;
         return clamp((scrollMid - sTop) / Math.max(1, eBottom - sTop), 0, 1);
@@ -460,7 +460,7 @@
 
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/team-reel.mp4?v=20260726a",
+      src: "assets/video/team-reel.mp4?v=20260726b",
       // eager: der Team-BG ist das immer sichtbare Fundament der Seite —
       // hier gibt es kein Hero-Video, mit dem der Download konkurrieren könnte.
       eagerSource: true,
@@ -533,11 +533,29 @@
     let pendingSeek = false;
     let seekStamp   = 0;
     video.addEventListener("seeked", () => { pendingSeek = false; });
+    /* Liegt dieser Zeitpunkt schon im Puffer?
+       DAS ist der Unterschied zwischen flüssig und ruckelig. Ein Seek in einen
+       gepufferten Bereich kostet wenige Millisekunden; ein Seek in einen NOCH
+       NICHT geladenen Bereich wartet auf eine Netzwerk-Range-Anfrage und kostet
+       gemessen 32–782 ms — das Zwanzig- bis Fünfzigfache des 60fps-Budgets.
+       Genau dieser Fall tritt beim echten Nutzer immer ein: er scrollt los,
+       während die Datei noch lädt. Statt zu seeken halten wir dann lieber das
+       zuletzt gezeigte Bild — ein stehendes Bild fällt nicht auf, ein
+       hängender Scrub schon. */
+    const bufferedAt = (t) => {
+      const b = video.buffered;
+      for (let i = 0; i < b.length; i++) {
+        if (t >= b.start(i) - 0.1 && t <= b.end(i)) return true;
+      }
+      return false;
+    };
+
     const requestSeek = (t) => {
       if (extracting || !sourceLoaded || !duration) return;
       // safety: a seek that never fires 'seeked' unblocks after 300ms
       if (pendingSeek && performance.now() - seekStamp < 300) return;
       if (Math.abs(video.currentTime - t) < 0.033) return;
+      if (!bufferedAt(t)) return;          // lieber Standbild als Netz-Stall
       pendingSeek = true;
       seekStamp = performance.now();
       try { video.currentTime = t; } catch (_) { pendingSeek = false; }
@@ -577,6 +595,26 @@
     };
 
     /* ---- main loop ---- */
+    /* Erst einblenden, wenn der Scrub auch wirklich scrubben kann.
+       Der Layer fadet ohnehin über 1.2s ein — ihn eine Sekunde später zu
+       zeigen fällt niemandem auf. Ihn zu zeigen, während jeder Seek am Netz
+       hängt, fällt sofort auf. Einmal scharf geschaltet bleibt es dabei
+       (kein Flackern); ab da fängt requestSeek() einzelne Lücken ab.
+       Not-Freigabe nach 8s, damit eine langsame Leitung den Hintergrund
+       nicht dauerhaft unterschlägt — dann greift eben der Seek-Filter. */
+    const ARM_RATIO = 0.9;
+    const ARM_TIMEOUT_MS = 8000;
+    let armed = false, armClock = 0;
+    const scrubArmed = () => {
+      if (armed) return true;
+      if (!duration || !sourceLoaded) return false;
+      if (!armClock) armClock = performance.now();
+      let s = 0;
+      for (let i = 0; i < video.buffered.length; i++) s += video.buffered.end(i) - video.buffered.start(i);
+      if (s / duration >= ARM_RATIO || performance.now() - armClock > ARM_TIMEOUT_MS) armed = true;
+      return armed;
+    };
+
     const tick = () => {
       requestAnimationFrame(tick);
       if (introActive) return;   // während des Intros gehört das Video dem play()-Durchlauf
@@ -588,7 +626,7 @@
       // Scrub kurz aktiv, damit das Video vom Intro-Endframe sanft auf die
       // Scroll-Position lerpt (statt hart zu springen).
       const settle = performance.now() < postIntroUntil;
-      const wantActive = settle || (targetProg > 0 && targetProg < 1 && !extracting);
+      const wantActive = settle || (targetProg > 0 && targetProg < 1 && !extracting && scrubArmed());
       if (wantActive !== active) {
         active = wantActive;
         wrap.classList.toggle("is-active", active);
