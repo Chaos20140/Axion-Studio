@@ -473,8 +473,9 @@
     const v = $(".bg-loop__video");
     if (!v) return;
     // WCAG 2.2.2: bildschirmfüllende Endlosbewegung darf sich niemandem
-    // aufzwingen. Bei prefers-reduced-motion bleibt das erste Bild stehen
-    // (poster-Attribut), das Video wird gar nicht erst gestartet.
+    // aufzwingen. Bei prefers-reduced-motion bleibt das Standbild stehen
+    // (Poster über --poster/--poster-mobile), das Video wird gar nicht
+    // erst gestartet.
     if (reduce) {
       v.removeAttribute("autoplay");
       v.pause();
@@ -484,6 +485,42 @@
     v.addEventListener("loadeddata", play, { once: true });
     document.addEventListener("touchstart", play, { once: true });
     play();
+  })();
+
+  /* ---- Quellenwechsel bei Größenänderung ----
+     `media` an <source> wird NUR beim Laden ausgewertet, nicht bei einem
+     Resize. Wer die Seite in einem schmalen Fenster öffnet (Windows-Snap,
+     angedockte DevTools) und danach maximiert, behält sonst den Mobile-Clip:
+     720 px Hochformat auf voller Breite, um Faktor ~3.6 hochskaliert. Nur ein
+     Reload half.
+     Gilt bewusst NUR für die dekorativen Loop-Videos. Die Scrub-Videos
+     (#bgScrollVideo, #teamBgVideo) hängen an der Proxy-Engine, deren
+     Mobile-Zweig den Canvas bereits entfernt hat — ein load() dort würde die
+     laufende Engine unter sich wegziehen. Dort bleibt die Entscheidung vom
+     Seitenaufruf stehen. */
+  (() => {
+    const loops = $$(".hero__video, .bg-loop__video");
+    if (!loops.length || !window.matchMedia) return;
+    const mq = window.matchMedia("(max-width: 900px)");
+    let t = 0;
+    const pruefen = () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        for (const v of loops) {
+          const passend = $$("source", v).find(
+            (s) => !s.media || window.matchMedia(s.media).matches,
+          );
+          if (!passend) continue;
+          const soll = new URL(passend.getAttribute("src"), location.href).href;
+          if (v.currentSrc === soll) continue;
+          const liefVorher = !v.paused;
+          v.load();
+          if (liefVorher) v.play().catch(() => {});
+        }
+      }, 250);   // Debounce: beim Ziehen des Fensterrands nicht pro Pixel neu laden
+    };
+    if (mq.addEventListener) mq.addEventListener("change", pruefen);
+    else mq.addListener(pruefen);   // Fallback für ältere Safari-Versionen
   })();
 
   /* =========================================================

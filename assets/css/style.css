@@ -416,6 +416,34 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 
 /* =========================================================
+   VIDEO-POSTER ueber background-image statt poster-Attribut
+   Das poster-Attribut laesst sich NICHT per Media-Query umschalten. Die
+   Desktop-Clips sind quer (1600x900 / 1920x1080), die Mobile-Clips hoch
+   (720x1280) — ein gemeinsames Poster passt also nie zu beiden. Auf dem
+   Handy sah man vorher ein stark hochskaliertes Querformat-Standbild, das
+   beim Videostart auf einen anderen Ausschnitt sprang.
+   Loesung: jedes Video traegt seine Poster als CSS-Variablen, die Auswahl
+   macht die Media-Query. Ein <video> ohne dekodierten Frame ist transparent,
+   der Hintergrund scheint also durch (im Browser gegengeprueft).
+   ========================================================= */
+.hero__video,
+.bg-loop__video,
+#bgScrollVideo {
+  background-image: var(--poster);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+@media (max-width: 900px) {
+  .hero__video,
+  .bg-loop__video,
+  #bgScrollVideo { background-image: var(--poster-mobile, var(--poster)); }
+  /* muss dem object-position der Videoflaeche folgen, sonst springt der
+     Ausschnitt beim Uebergang Poster -> Wiedergabe (kontakt: Fahrzeugfront) */
+  .bg-loop__video--front { background-position: 12% 50%; }
+}
+
+/* =========================================================
    OVERLAYS
    ========================================================= */
 .noise {
