@@ -1069,10 +1069,51 @@
 
     let currentPhase = -1;
 
-    const onScroll = () => {
+    /* Kanten EINMAL messen statt bei jedem Scroll-Event.
+       `getBoundingClientRect()` im Scroll-Pfad ist ein erzwungener Layout-Read
+       pro Event — genau das, was §7 verbietet. Der Scroll-Hintergrund macht es
+       schon richtig (measure()), hier fehlte es. */
+    let secTop = 0, secSpanne = 1;
+    const messen = () => {
       const r = section.getBoundingClientRect();
-      const total = r.height - window.innerHeight;
-      const prog = clamp(-r.top / Math.max(1, total), 0, 1);
+      secTop = r.top + window.scrollY;
+      secSpanne = Math.max(1, r.height - window.innerHeight);
+    };
+    messen();
+    window.addEventListener("resize", messen);
+    document.addEventListener("content:loaded", messen);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(messen).catch(() => {});
+
+    // Nur schreiben, wenn sich der Wert wirklich geändert hat. Jede Zuweisung
+    // an style.filter invalidiert eine bildschirmfüllende Ebene.
+    const bgWrap = $("#bgScroll");
+    let letzterFilter = null;
+    const opacCache = { burn: null, cool: null, strobe: null };
+    const setzeOpac = (el, key, wert) => {
+      if (!el || opacCache[key] === wert) return;
+      opacCache[key] = wert;
+      el.style.opacity = wert;
+    };
+
+    const onScroll = () => {
+      const y = window.scrollY;
+
+      /* Ist die Section überhaupt im Bild?
+         Der Handler hing an JEDEM Scroll-Event der ganzen Seite. Vor allem aber
+         wurde der Vollbild-`filter` auf #bgScroll gesetzt und NIE wieder
+         entfernt: wer einmal durch die Engineering-Section gescrollt war,
+         schleppte ihn für den Rest der Sitzung mit. Da #bgScroll das
+         Scroll-Video enthält, dessen Inhalt sich beim Scrubben in JEDEM Frame
+         ändert, zahlte danach jeder einzelne Frame einen Filterdurchgang über
+         den ganzen Bildschirm — zusätzlich zu den beiden Blend-Ebenen darüber.
+         Firefox trifft das deutlich härter als Chromium. */
+      const sichtbar = y + window.innerHeight > secTop && y < secTop + secSpanne + window.innerHeight;
+      if (!sichtbar) {
+        if (bgWrap && letzterFilter !== "") { bgWrap.style.filter = ""; letzterFilter = ""; }
+        return;
+      }
+
+      const prog = clamp((y - secTop) / secSpanne, 0, 1);
 
       // Phase derivation — 3 even buckets
       const idx = Math.min(2, Math.floor(prog * 3));
@@ -1089,16 +1130,18 @@
       const pp2 = clamp((prog - 0.25) * 2.4,   0, 1);  // cool slide
       const pp3 = clamp((prog - 0.6)  * 2.8,   0, 1);  // strobe + chroma
 
-      if (burn)   burn.style.opacity   = (0.35 + pp1 * 0.55).toFixed(3);
-      if (cool)   cool.style.opacity   = (pp2 * 0.85).toFixed(3);
-      if (strobe) strobe.style.opacity = (pp3 * 0.6).toFixed(3);
+      setzeOpac(burn,   "burn",   (0.35 + pp1 * 0.55).toFixed(2));
+      setzeOpac(cool,   "cool",   (pp2 * 0.85).toFixed(2));
+      setzeOpac(strobe, "strobe", (pp3 * 0.6).toFixed(2));
 
-      // Hue rotation on the bg-scroll video for a chromatic sweep
-      const wrap = $("#bgScroll");
-      if (wrap) {
-        const hue = -10 + prog * 35;          // -10° at start → +25° at end
-        const sat = 1.25 + pp3 * 0.6;
-        wrap.style.filter = `hue-rotate(${hue.toFixed(2)}deg) saturate(${sat.toFixed(2)})`;
+      // Hue rotation on the bg-scroll video for a chromatic sweep.
+      // Auf ganze Grad bzw. 0.05-Schritte gerundet: optisch identisch, aber
+      // statt hunderter Filterwechsel pro Durchlauf nur noch ein paar Dutzend.
+      if (bgWrap) {
+        const hue = Math.round(-10 + prog * 35);            // -10° → +25°
+        const sat = (Math.round((1.25 + pp3 * 0.6) * 20) / 20).toFixed(2);
+        const neu = `hue-rotate(${hue}deg) saturate(${sat})`;
+        if (neu !== letzterFilter) { bgWrap.style.filter = neu; letzterFilter = neu; }
       }
 
       if (chromaMeter) chromaMeter.textContent = Math.round(80 + pp3 * 40);
