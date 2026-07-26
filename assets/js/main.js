@@ -380,7 +380,7 @@
     if (!canvas) return;
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/scroll.mp4?v=20260726b",
+      src: "assets/video/scroll.mp4?v=20260726f",
       computeProg: () => {
         const scrollMid = window.scrollY + window.innerHeight * 0.5;
         return clamp((scrollMid - sTop) / Math.max(1, eBottom - sTop), 0, 1);
