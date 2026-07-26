@@ -182,11 +182,14 @@ input, textarea, select { font: inherit; color: inherit; }
   z-index: -3;
   pointer-events: none;
 }
+/* Der frueher hier gesetzte `filter: contrast(1.1) saturate(1.25)` ist seit
+   26.07.2026 IN DEN VIDEOS eingebacken (CLAUDE.md 13.7) - in allen vier
+   Desktop-Clips, allen vier Mobile-Varianten UND allen vier poster-Bildern.
+   Wer ihn hier wieder ergaenzt, wendet ihn ein ZWEITES Mal an. */
 .bg-loop__video {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   object-fit: cover;
-  filter: contrast(1.1) saturate(1.25);
   transform: scale(1.04);
 }
 /* Kontakt mobile: the car front sits on the left of the frame — shift the
