@@ -20,7 +20,13 @@
      fall inside the section, then raycast — so planets are
      clickable "through" the heading text without stealing UI input.
    ========================================================= */
-import * as THREE from "three";
+// Selbst gehostet und mit vollem Pfad importiert — bewusst KEINE Importmap.
+// Firefox verwirft jede Importmap, die nach einem gestarteten <link
+// rel=modulepreload> im Dokument steht (Mozilla Bug 1815180). Genau das war
+// hier der Fall: der nackte Specifier "three" liess sich in Firefox nicht
+// aufloesen, solar.js lief dort nie an — der Solar-Explorer blieb schwarz,
+// waehrend three.js per Preload trotzdem geladen wurde (1.2 MB umsonst).
+import * as THREE from "./vendor/three.module.js";
 
 (() => {
   const reduce   = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

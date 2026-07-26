@@ -323,22 +323,13 @@
   <script src="assets/js/content.js?v=20260725a"></script>
   <script src="assets/js/i18n.js?v=20260725a"></script>
 
-  <!-- Solar offer-explorer (ESM). three.module locked via modulepreload + SRI;
-       addons chain off the same versioned prefix. Only active importmap here. -->
-  <link
-    rel="modulepreload"
-    href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
-    integrity="sha384-61S/Nu32S3E5+n+KpCOTb2eRYps6fVKm+9Gz1QBvSePFthb46f063Aa/qe/lykFZ"
-    crossorigin="anonymous" />
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
-  <script type="module" src="assets/js/solar.js?v=20260726d"></script>
+  <!-- Solar offer-explorer (ESM). three.js liegt SELBST GEHOSTET unter
+       assets/js/vendor/ und wird in solar.js mit vollem Pfad importiert.
+       Bewusst KEINE Importmap mehr: Firefox verwirft eine Importmap, die
+       nach einem gestarteten modulepreload steht (Mozilla Bug 1815180) -
+       der Explorer blieb dort schwarz. Ohne Importmap gibt es auch kein
+       Inline-Script mehr, das per CSP-Hash freigegeben werden muesste. -->
+  <script type="module" src="assets/js/solar.js?v=20260726o"></script>
   <!-- Cloudflare Web Analytics -->
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "d8266d7c9e09431c88ea4d6ecccccbe1"}'></script>
   <!-- End Cloudflare Web Analytics -->
