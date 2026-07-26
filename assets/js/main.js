@@ -359,7 +359,7 @@
     if (isMobile) {
       canvas?.remove();   // canvas only needed on desktop
       const src = document.createElement("source");
-      src.src = "assets/video/scroll-mobile.mp4?v=20260702a";
+      src.src = "assets/video/scroll-mobile.mp4?v=20260726g";
       src.type = "video/mp4";
       video.appendChild(src);
       video.loop = true; video.autoplay = true; video.muted = true;
@@ -400,7 +400,7 @@
     if (isMobile) {
       canvas?.remove();
       const src = document.createElement("source");
-      src.src = "assets/video/team-reel-mobile.mp4?v=20260611a";
+      src.src = "assets/video/team-reel-mobile.mp4?v=20260726g";
       src.type = "video/mp4";
       video.appendChild(src);
       video.loop = true; video.autoplay = true; video.muted = true;
@@ -434,7 +434,7 @@
 
     proxyScrub({
       wrap, video, canvas,
-      src: "assets/video/team-reel.mp4?v=20260726b",
+      src: "assets/video/team-reel.mp4?v=20260726g",
       // eager: der Team-BG ist das immer sichtbare Fundament der Seite —
       // hier gibt es kein Hero-Video, mit dem der Download konkurrieren könnte.
       eagerSource: true,
