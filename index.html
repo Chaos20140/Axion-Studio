@@ -162,7 +162,15 @@
   <main id="content">
   <!-- HERO -->
   <section class="hero" id="top">
+    <!-- Desktop-Quelle steht bewusst ZUERST: ein Browser, der das media-Attribut
+         ignorieren würde, nimmt dann die erste passende Quelle und verhält sich
+         wie bisher. Kein Regress, nur ein Gewinn wo media ausgewertet wird.
+         Der Mobile-Clip ist der mittige 9:16-Ausschnitt — exakt das, was
+         object-fit:cover auf dem Handy ohnehin zeigt, nur ohne die ~60 %
+         unsichtbare Breite mitzuladen (5.25 MB -> 1.58 MB). -->
     <video class="hero__video" autoplay muted loop playsinline preload="auto" poster="assets/images/hero-poster.jpg">
+      <source src="assets/video/hero.mp4?v=20260726a" type="video/mp4" media="(min-width: 901px)" />
+      <source src="assets/video/hero-mobile.mp4?v=20260726a" type="video/mp4" media="(max-width: 900px)" />
       <source src="assets/video/hero.mp4?v=20260726a" type="video/mp4" />
     </video>
     <div class="hero__overlay"></div>
