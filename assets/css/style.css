@@ -665,7 +665,6 @@ input, textarea, select { font: inherit; color: inherit; }
 .lang-toggle__opt + .lang-toggle__opt { border-left: 1px solid var(--line); }
 .lang-toggle__opt.is-active { background: var(--red); color: var(--on-accent); }
 .lang-toggle__opt:not(.is-active):hover { color: var(--ink); }
-@media (hover: none) { .lang-toggle__opt { cursor: default; } }
 
 /* =========================================================
    MOBILE NAV OVERLAY
