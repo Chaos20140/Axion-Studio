@@ -515,7 +515,11 @@
           if (v.currentSrc === soll) continue;
           const liefVorher = !v.paused;
           v.load();
-          if (liefVorher) v.play().catch(() => {});
+          // Nicht nur neu starten, wenn es VORHER lief: bei blockiertem Autoplay
+          // (Datensparmodus, Energiesparen) wäre das Video sonst nach dem Wechsel
+          // dauerhaft eingefroren. Diese Clips sollen laufen — außer bei
+          // reduced-motion, wo autoplay oben bewusst entfernt wurde.
+          if (!reduce && (liefVorher || v.hasAttribute("autoplay"))) v.play().catch(() => {});
         }
       }, 250);   // Debounce: beim Ziehen des Fensterrands nicht pro Pixel neu laden
     };
