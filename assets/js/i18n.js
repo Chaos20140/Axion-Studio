@@ -444,6 +444,8 @@
       "All legally required information pursuant to § 5 DDG (formerly TMG) and on data processing under the GDPR. As of: 2026.",
     "Angaben gemäß § 5 DDG": "Information pursuant to § 5 DDG",
     "Axion Studio — Web Design Studio (Einzelunternehmen)": "Axion Studio — Web Design Studio (sole proprietorship)",
+    "Umsatzsteuer-Identifikationsnummer": "VAT identification number",
+    "Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:": "VAT identification number pursuant to § 27a of the German VAT Act:",
     "Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV": "Responsible for content pursuant to § 18 (2) MStV",
     "Verantwortlicher": "Controller",
     "Tolunay Usul, Anschrift wie oben.": "Tolunay Usul, address as above.",
