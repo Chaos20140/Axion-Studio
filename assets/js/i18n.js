@@ -420,7 +420,13 @@
 
     // ---- projekte / partner cards (CMS) ----
     "In Vorbereitung": "In preparation",
+    "Seniorenbetreuung · Haushaltshilfe": "Senior Support · Household Help",
+    "Seniorenbetreuung · Haushaltshilfe ↗": "Senior Support · Household Help ↗",
+    "Familienbetrieb seit über 25 Jahren: liebevolle Seniorenbetreuung und Haushaltshilfe in Salzhemmendorf — anerkannt nach §§ 45a/45b SGB XI, direkt mit der Pflegekasse abgerechnet. Wir haben den Webauftritt umgesetzt: warm, vertrauensvoll und klar auf Angehörige zugeschnitten. Schau es dir live an.":
+      "A family business for over 25 years: caring senior support and household help in Salzhemmendorf — certified under §§ 45a/45b SGB XI (German long-term care act), billed directly with the care insurance fund. We built the web presence: warm, trustworthy and clearly aimed at relatives. Take a live look.",
     "andreasdevries.de ansehen ↗": "view andreasdevries.de ↗",
+    "Werbeagentur für Textildruck, Leuchtreklame und Printprodukte. Unser Partner, wenn deine Marke auch offline sichtbar werden soll — von der Visitenkarte bis zum Banner —":
+      "Advertising agency for textile printing, illuminated signage and print products. Our partner when your brand needs to be visible offline too — from business card to banner —",
     "PRINT & WERBUNG": "PRINT & ADVERTISING",
     "Garten- & Landschaftsbau": "Garden & Landscaping",
     "Garten- & Landschaftsbau ↗": "Garden & Landscaping ↗",
@@ -432,7 +438,7 @@
     "Pflege · Betreuung ↗": "Care · Support ↗",
     "curadoma.de ansehen ↗": "View curadoma.de ↗",
     "puron-media.de ansehen ↗": "View puron-media.de ↗",
-    "Ambulanter Betreuungsdienst mit Herz — „Sie können nicht immer da sein. Wir können es.“ Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause: klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an.":
+    "Ambulanter Betreuungsdienst mit Herz — „Sie können nicht immer da sein. Wir können es.\" Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause: klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an.":
       "Outpatient care service with heart — “You can't always be there. We can.” A warm, trustworthy presence for care and support at home: clearly structured, welcoming and tailored to relatives. Take a live look.",
     "Ambulanter Betreuungsdienst mit Herz:": "Outpatient care service with heart:",
     "„Sie können nicht immer da sein. Wir können es.“": "“You can't always be there. We can.”",
