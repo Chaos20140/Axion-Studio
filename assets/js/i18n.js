@@ -420,6 +420,8 @@
 
     // ---- projekte / partner cards (CMS) ----
     "In Vorbereitung": "In preparation",
+    "andreasdevries.de ansehen ↗": "view andreasdevries.de ↗",
+    "PRINT & WERBUNG": "PRINT & ADVERTISING",
     "Garten- & Landschaftsbau": "Garden & Landscaping",
     "Garten- & Landschaftsbau ↗": "Garden & Landscaping ↗",
     "de Vries Galabau": "de Vries Galabau",

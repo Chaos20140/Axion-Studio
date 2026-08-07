@@ -45,7 +45,7 @@
         h("span", { class: "case-feature__badge", text: "Live ↗" }),
       ]);
       const body = h("div", { class: "case-feature__body" }, [
-        h("span", { class: "case-feature__kicker mono", text: "/ AUSGEWÄHLTES PROJEKT" }),
+        h("span", { class: "case-feature__kicker mono", text: "AUSGEWÄHLTES PROJEKT" }),
         h("h2", { class: "case-feature__name", text: item.name || "" }),
         h("p", { class: "case-feature__desc", text: item.description || "" }),
         h("div", { class: "case-feature__meta" }, [
@@ -104,7 +104,7 @@
         }));
       }
       return h("article", { class: "partner-card" }, [
-        h("span", { class: "partner-card__cat", text: "/ " + (item.category || "") }),
+        h("span", { class: "partner-card__cat", text: (item.category || "") }),
         h("span", { class: "partner-card__name", text: item.name || "" }),
         desc,
       ]);
@@ -118,7 +118,7 @@
   // Fester Versions-Stempel statt Date.now(): mit ?ts= war JEDE URL einzigartig
   // → garantierter Cache-Miss (Browser UND Edge) auf jedem Seitenaufruf.
   // Beim CMS-Publish/Commit denselben Stempel bumpen wie bei den Scripts.
-  fetch("content/site.json?v=20260726r")
+  fetch("content/site.json?v=20260726s")
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error("no content"))))
     .then((data) => {
       const get = (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), data);
