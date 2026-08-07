@@ -420,6 +420,12 @@
 
     // ---- projekte / partner cards (CMS) ----
     "In Vorbereitung": "In preparation",
+    "Garten- & Landschaftsbau": "Garden & Landscaping",
+    "Garten- & Landschaftsbau ↗": "Garden & Landscaping ↗",
+    "de Vries Galabau": "de Vries Galabau",
+    "Garten- und Landschaftsbau aus Salzhemmendorf — Familienbetrieb seit 1998, tätig in Hameln, Hildesheim und im Weserbergland. Planung, Gestaltung, Pflege und Bepflanzung aus einer Hand: Pflasterarbeiten, Trockenmauern aus Naturstein, Treppen und Teiche. Wir haben den Webauftritt umgesetzt — bildstark, ruhig und klar auf Anfragen ausgerichtet. Schau es dir live an.":
+      "Garden and landscaping from Salzhemmendorf — a family business since 1998, working in Hameln, Hildesheim and the Weser Uplands. Planning, design, maintenance and planting from a single source: paving, natural-stone dry walls, steps and ponds. We built the web presence — image-led, calm and clearly geared towards enquiries. Take a live look.",
+    "devries-galabau.de ansehen ↗": "view devries-galabau.de ↗",
     "Pflege · Betreuung": "Care · Support",
     "Pflege · Betreuung ↗": "Care · Support ↗",
     "curadoma.de ansehen ↗": "View curadoma.de ↗",
