@@ -425,6 +425,12 @@ input, textarea, select { font: inherit; color: inherit; }
    Loesung: jedes Video traegt seine Poster als CSS-Variablen, die Auswahl
    macht die Media-Query. Ein <video> ohne dekodierten Frame ist transparent,
    der Hintergrund scheint also durch (im Browser gegengeprueft).
+
+   ⚠️ Die Pfade in --poster MUESSEN absolut sein (/assets/...). Ein url() aus
+   einer Custom Property loest der Browser gegen das Stylesheet auf, in dem
+   das var() steht — also gegen assets/css/, nicht gegen das Dokument. Aus
+   "assets/images/x.jpg" wurde dadurch /assets/css/assets/images/x.jpg → 404
+   auf sechs Seiten. Absolute Pfade sind gegen diese Aufloesung immun.
    ========================================================= */
 .hero__video,
 .bg-loop__video,

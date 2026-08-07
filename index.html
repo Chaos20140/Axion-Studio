@@ -78,14 +78,14 @@
        Hintergrund beim Runterscrollen sichtbar wird, steht sofort ein echtes
        Bild statt Schwarz (das Video decodiert dahinter). Konkurriert nicht mit dem Hero. -->
   <link rel="preload" href="assets/images/scroll-poster.jpg?v=20260726h" as="image" fetchpriority="low" />
-  <link rel="stylesheet" href="assets/css/style.css?v=20260726p" />
+  <link rel="stylesheet" href="assets/css/style.css?v=20260726t" />
 </head>
 <body>
   <a class="skip-link" href="#content">Zum Inhalt springen</a>
 
   <!-- BACKGROUND SCROLL VIDEO (manifest → contact) -->
   <div class="bg-scroll" id="bgScroll" aria-hidden="true">
-    <video class="bg-scroll__video" id="bgScrollVideo" muted playsinline preload="auto" style="--poster:url(&quot;assets/images/scroll-poster.jpg?v=20260726l&quot;);--poster-mobile:url(&quot;assets/images/scroll-poster-mobile.jpg?v=20260726l&quot;)" disablepictureinpicture></video>
+    <video class="bg-scroll__video" id="bgScrollVideo" muted playsinline preload="auto" style="--poster:url(&quot;/assets/images/scroll-poster.jpg?v=20260726l&quot;);--poster-mobile:url(&quot;/assets/images/scroll-poster-mobile.jpg?v=20260726l&quot;)" disablepictureinpicture></video>
     <canvas class="bg-scroll__canvas" id="bgScrollCanvas" aria-hidden="true"></canvas>
     <div class="bg-scroll__tint"></div>
     <div class="bg-scroll__grid"></div>
@@ -162,7 +162,7 @@
          Der Mobile-Clip ist der mittige 9:16-Ausschnitt — exakt das, was
          object-fit:cover auf dem Handy ohnehin zeigt, nur ohne die ~60 %
          unsichtbare Breite mitzuladen (5.25 MB -> 1.58 MB). -->
-    <video class="hero__video" autoplay muted loop playsinline preload="auto" style="--poster:url(&quot;assets/images/hero-poster.jpg?v=20260726l&quot;);--poster-mobile:url(&quot;assets/images/hero-poster-mobile.jpg?v=20260726l&quot;)">
+    <video class="hero__video" autoplay muted loop playsinline preload="auto" style="--poster:url(&quot;/assets/images/hero-poster.jpg?v=20260726l&quot;);--poster-mobile:url(&quot;/assets/images/hero-poster-mobile.jpg?v=20260726l&quot;)">
       <source src="assets/video/hero.mp4?v=20260726i" type="video/mp4" media="(min-width: 901px)" />
       <source src="assets/video/hero-mobile.mp4?v=20260726i" type="video/mp4" media="(max-width: 900px)" />
       <source src="assets/video/hero.mp4?v=20260726i" type="video/mp4" />
