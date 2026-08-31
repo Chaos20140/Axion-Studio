@@ -39,7 +39,7 @@
       const media = h("div", { class: "case-feature__media" }, [
         h("img", {
           src: (typeof item.image === "string" && SAFE_SRC.test(item.image) ? item.image : null),
-          alt: "Vorschau der Website von " + (item.name || ""),
+          alt: "Vorschau der Website von " + (item.name || "") + (item.category ? " — " + item.category : ""),
           loading: "lazy", decoding: "async",
         }),
         h("span", { class: "case-feature__badge", text: "Live ↗" }),
@@ -118,7 +118,7 @@
   // Fester Versions-Stempel statt Date.now(): mit ?ts= war JEDE URL einzigartig
   // → garantierter Cache-Miss (Browser UND Edge) auf jedem Seitenaufruf.
   // Beim CMS-Publish/Commit denselben Stempel bumpen wie bei den Scripts.
-  fetch("content/site.json?v=20260831a")
+  fetch("content/site.json?v=20260831b")
     .then((r) => (r.ok ? r.json() : Promise.reject(new Error("no content"))))
     .then((data) => {
       const get = (path) => path.split(".").reduce((o, k) => (o == null ? undefined : o[k]), data);

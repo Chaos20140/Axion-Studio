@@ -428,6 +428,15 @@
     "Werbeagentur für Textildruck, Leuchtreklame und Printprodukte. Unser Partner, wenn deine Marke auch offline sichtbar werden soll — von der Visitenkarte bis zum Banner —":
       "Advertising agency for textile printing, illuminated signage and print products. Our partner when your brand needs to be visible offline too — from business card to banner —",
     "PRINT & WERBUNG": "PRINT & ADVERTISING",
+    "Familienbetrieb seit über 25 Jahren: liebevolle": "A family business for over 25 years: caring",
+    "Seniorenbetreuung": "senior support",
+    "und Haushaltshilfe in Salzhemmendorf — anerkannt nach §§ 45a/45b SGB XI, direkt mit der Pflegekasse abgerechnet. Wir haben den Webauftritt umgesetzt: warm, vertrauensvoll und klar auf Angehörige zugeschnitten. Schau es dir live an.":
+      "and household help in Salzhemmendorf — certified under §§ 45a/45b SGB XI (German long-term care act), billed directly with the care insurance fund. We built the web presence: warm, trustworthy and clearly aimed at relatives. Take a live look.",
+    "Vorschau der Website von Bauschreinerei Urra — Fenster · Türen · Tore": "Preview of the Bauschreinerei Urra website — Windows · Doors · Gates",
+    "Vorschau der Website von de Vries Galabau — Garten- & Landschaftsbau": "Preview of the de Vries Galabau website — Garden & Landscaping",
+    "Vorschau der Website von Puron Media Agency — Social Media · Creative Agency": "Preview of the Puron Media Agency website — Social Media · Creative Agency",
+    "Vorschau der Website von Cura Doma — Pflege · Betreuung": "Preview of the Cura Doma website — Care · Support",
+    "Vorschau der Website von de Vries Betreuung — Seniorenbetreuung · Haushaltshilfe": "Preview of the de Vries Betreuung website — Senior Support · Household Help",
     "Fenster · Türen · Tore": "Windows · Doors · Gates",
     "Fenster · Türen · Tore ↗": "Windows · Doors · Gates ↗",
     "urra-fenster.de ansehen ↗": "view urra-fenster.de ↗",
@@ -445,10 +454,10 @@
     "puron-media.de ansehen ↗": "View puron-media.de ↗",
     "Ambulanter Betreuungsdienst mit Herz — „Sie können nicht immer da sein. Wir können es.\" Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause: klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an.":
       "Outpatient care service with heart — “You can't always be there. We can.” A warm, trustworthy presence for care and support at home: clearly structured, welcoming and tailored to relatives. Take a live look.",
-    "Ambulanter Betreuungsdienst mit Herz:": "Outpatient care service with heart:",
+    "Ambulanter Betreuungsdienst mit Herz —": "Outpatient care service with heart —",
     "„Sie können nicht immer da sein. Wir können es.“": "“You can't always be there. We can.”",
-    "Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause — klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an.":
-      "A warm, trustworthy presence for care and support at home — clearly structured, welcoming and tailored to relatives. Take a live look.",
+    "Ein warmer, vertrauensvoller Auftritt für Pflege & Betreuung zuhause: klar strukturiert, einladend und auf Angehörige zugeschnitten. Schau es dir live an.":
+      "A warm, trustworthy presence for care and support at home: clearly structured, welcoming and tailored to relatives. Take a live look.",
     "Social-Media- & Creative-Agency mit einem klaren Auftrag:": "Social media & creative agency with a clear mission:",
     "Social-Media- & Creative-Agency mit einem klaren Auftrag: Sichtbarkeit ist kein Zufall. Wir haben den digitalen Auftritt umgesetzt — mit Bewegtbild-Hero, animiertem Partikel-Raum und markanter Typografie. Schau es dir live an.":
       "Social media & creative agency with a clear mission: visibility is no accident. We delivered the digital presence — with a motion hero, an animated particle space and bold typography. Take a live look.",
