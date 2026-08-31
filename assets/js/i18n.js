@@ -428,6 +428,11 @@
     "Werbeagentur für Textildruck, Leuchtreklame und Printprodukte. Unser Partner, wenn deine Marke auch offline sichtbar werden soll — von der Visitenkarte bis zum Banner —":
       "Advertising agency for textile printing, illuminated signage and print products. Our partner when your brand needs to be visible offline too — from business card to banner —",
     "PRINT & WERBUNG": "PRINT & ADVERTISING",
+    "Fenster · Türen · Tore": "Windows · Doors · Gates",
+    "Fenster · Türen · Tore ↗": "Windows · Doors · Gates ↗",
+    "urra-fenster.de ansehen ↗": "view urra-fenster.de ↗",
+    "Bauschreinerei aus Olsberg — Fenster, Türen und Tore, inhabergeführt seit 2003. RAL-zertifizierte Montage nach EnEV, millimetergenaues digitales Aufmaß und ein eigenes Montage-Team; im Einsatz im Sauerland, in Ostwestfalen-Lippe und im Ruhrgebiet. Wir haben den Webauftritt umgesetzt — ruhig, handwerklich präzise und klar auf den Aufmaß-Termin ausgerichtet. Schau es dir live an.":
+      "Joinery workshop from Olsberg — windows, doors and gates, owner-run since 2003. RAL-certified installation compliant with the EnEV (German energy-saving ordinance), millimetre-accurate digital surveying and an in-house fitting team; at work across the Sauerland, East Westphalia-Lippe and the Ruhr region. We built the web presence — calm, precise and clearly geared towards the survey appointment. Take a live look.",
     "Garten- & Landschaftsbau": "Garden & Landscaping",
     "Garten- & Landschaftsbau ↗": "Garden & Landscaping ↗",
     "de Vries Galabau": "de Vries Galabau",
