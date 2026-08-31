@@ -434,7 +434,8 @@ input, textarea, select { font: inherit; color: inherit; }
    ========================================================= */
 .hero__video,
 .bg-loop__video,
-#bgScrollVideo {
+#bgScrollVideo,
+#teamBgVideo {
   background-image: var(--poster);
   background-size: cover;
   background-position: center;
@@ -443,7 +444,8 @@ input, textarea, select { font: inherit; color: inherit; }
 @media (max-width: 900px) {
   .hero__video,
   .bg-loop__video,
-  #bgScrollVideo { background-image: var(--poster-mobile, var(--poster)); }
+  #bgScrollVideo,
+  #teamBgVideo { background-image: var(--poster-mobile, var(--poster)); }
   /* muss dem object-position der Videoflaeche folgen, sonst springt der
      Ausschnitt beim Uebergang Poster -> Wiedergabe (kontakt: Fahrzeugfront) */
   .bg-loop__video--front { background-position: 12% 50%; }
